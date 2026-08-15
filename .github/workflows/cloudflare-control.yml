@@ -86,7 +86,7 @@ jobs:
           fi
           echo "ready=$READY" >> "$GITHUB_OUTPUT"
           if [ "$READY" != "true" ]; then
-            echo "::warning::R2 permission is missing. App data + recovery will deploy now; photo/QR sync will enable after the API token gets R2 edit permission."
+            echo "::warning::R2 permission is missing. App data + recovery will deploy now; photo/QR sync will enable after the API token gets Workers R2 Storage Write permission."
           fi
           exit 0
 
@@ -146,7 +146,7 @@ jobs:
           if [ "$R2_READY" = "true" ]; then
             echo "- R2 photo/QR sync: enabled" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "- R2 photo/QR sync: waiting for API token R2 Edit permission" >> "$GITHUB_STEP_SUMMARY"
+            echo "- R2 photo/QR sync: waiting for Workers R2 Storage Write permission" >> "$GITHUB_STEP_SUMMARY"
           fi
           if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
             echo "- Google Photos OAuth: configured" >> "$GITHUB_STEP_SUMMARY"
