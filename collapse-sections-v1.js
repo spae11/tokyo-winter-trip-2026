@@ -56,6 +56,10 @@
 
 (()=>{
   if(window.__tripToolsLoaderV1)return;window.__tripToolsLoaderV1=true;
+  const loadCloud=()=>{
+    if(document.getElementById('trip-cloud-sync-v2-js'))return;
+    const c=document.createElement('script');c.id='trip-cloud-sync-v2-js';c.src='/tokyo-winter-trip-2026/trip-cloud-sync-v2.js?v=2';c.defer=true;document.body.appendChild(c);
+  };
   const load=()=>{
     if(!document.getElementById('trip-tools-v1-css')){
       const l=document.createElement('link');l.id='trip-tools-v1-css';l.rel='stylesheet';l.href='/tokyo-winter-trip-2026/trip-tools-v1.css?v=1';document.head.appendChild(l);
@@ -63,8 +67,11 @@
     if(!document.getElementById('trip-tools-position-v2-css')){
       const p=document.createElement('link');p.id='trip-tools-position-v2-css';p.rel='stylesheet';p.href='/tokyo-winter-trip-2026/trip-tools-position-v2.css?v=2';document.head.appendChild(p);
     }
-    if(!document.getElementById('trip-tools-v1-js')){
-      const s=document.createElement('script');s.id='trip-tools-v1-js';s.src='/tokyo-winter-trip-2026/trip-tools-v1.js?v=1';s.defer=true;document.body.appendChild(s);
+    const existing=document.getElementById('trip-tools-v1-js');
+    if(existing){
+      if(window.__travelToolsV1Loaded)loadCloud();else existing.addEventListener('load',loadCloud,{once:true});
+    }else{
+      const s=document.createElement('script');s.id='trip-tools-v1-js';s.src='/tokyo-winter-trip-2026/trip-tools-v1.js?v=1';s.defer=true;s.addEventListener('load',loadCloud,{once:true});document.body.appendChild(s);
     }
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});else load();
