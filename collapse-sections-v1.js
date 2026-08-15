@@ -39,12 +39,9 @@
 
   function loadDisneyMatrix(){
     if(!location.pathname.includes('/tokyo/')&&!location.pathname.includes('/hongkong/'))return;
-    if(!document.querySelector('link[data-disney-matrix]')){
-      const l=document.createElement('link');l.rel='stylesheet';l.href='/tokyo-winter-trip-2026/disney-matrix-v1.css?v=31';l.dataset.disneyMatrix='1';document.head.appendChild(l);
-    }
-    if(!document.querySelector('script[data-disney-matrix]')){
-      const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/disney-matrix-v1.js?v=31';s.defer=true;s.dataset.disneyMatrix='1';document.body.appendChild(s);
-    }
+    document.querySelectorAll('link[data-disney-matrix],script[data-disney-matrix]').forEach(x=>x.remove());
+    const l=document.createElement('link');l.rel='stylesheet';l.href='/tokyo-winter-trip-2026/disney-matrix-v2.css?v=32';l.dataset.disneyMatrix='2';document.head.appendChild(l);
+    const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/disney-matrix-v2.js?v=32';s.defer=true;s.dataset.disneyMatrix='2';document.body.appendChild(s);
   }
 
   function boot(){
