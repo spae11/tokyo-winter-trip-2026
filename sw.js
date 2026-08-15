@@ -1,6 +1,6 @@
-const CACHE='travel-hub-v20';
+const CACHE='travel-hub-v21';
 const BASE='/tokyo-winter-trip-2026/';
-const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg',BASE+'plan-extras-v1.js',BASE+'plan-transport-v1.js'];
+const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg',BASE+'plan-extras-v1.js',BASE+'plan-day-tools-v1.js'];
 
 const PLAN_HEAD=`
 <style id="hub-plan-motion">
@@ -72,8 +72,8 @@ const PLAN_END=`
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 <\/script>
-<script src="/tokyo-winter-trip-2026/plan-extras-v1.js?v=20"><\/script>
-<script src="/tokyo-winter-trip-2026/plan-transport-v1.js?v=20"><\/script>`;
+<script src="/tokyo-winter-trip-2026/plan-extras-v1.js?v=21"><\/script>
+<script src="/tokyo-winter-trip-2026/plan-day-tools-v1.js?v=21"><\/script>`;
 
 const ROOT_HEAD=`
 <style id="hub-root-motion-extra">
