@@ -1,0 +1,240 @@
+name: Cloudflare Control Bridge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cloudflare-control.yml'
+      - 'cloudflare/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-travel-hub
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TRAVEL_SYNC_KEY: ${{ secrets.TRAVEL_SYNC_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check Cloudflare secrets
+        id: ready
+        shell: bash
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] && [ -n "$TRAVEL_SYNC_KEY" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Cloudflare bridge is configured."
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare bridge is waiting for CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and TRAVEL_SYNC_KEY repository secrets."
+          fi
+
+      - name: Setup Node
+        if: steps.ready.outputs.ready == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Wrangler
+        if: steps.ready.outputs.ready == 'true'
+        run: npm install --global wrangler@4
+
+      - name: Ensure D1 database exists
+        if: steps.ready.outputs.ready == 'true'
+        id: d1
+        shell: bash
+        run: |
+          set -euo pipefail
+          get_id() {
+            wrangler d1 list --json | node -e '
+              let s="";
+              process.stdin.on("data",d=>s+=d);
+              process.stdin.on("end",()=>{
+                const list=JSON.parse(s);
+                const db=list.find(x=>x.name==="travel-hub-db");
+                if(db) process.stdout.write(db.uuid || db.id || "");
+              });
+            '
+          }
+          DB_ID="$(get_id)"
+          if [ -z "$DB_ID" ]; then
+            echo "Creating D1 database travel-hub-db in APAC..."
+            wrangler d1 create travel-hub-db --location apac
+            DB_ID="$(get_id)"
+          fi
+          if [ -z "$DB_ID" ]; then
+            echo "Unable to resolve D1 database ID" >&2
+            exit 1
+          fi
+          echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
+          echo "D1 database ready."
+
+      - name: Create Worker files
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        env:
+          DB_ID: ${{ steps.d1.outputs.database_id }}
+        run: |
+          cat > worker.js <<'WORKER'
+          const ALLOWED_ORIGINS = new Set([
+            'https://spae11.github.io'
+          ]);
+
+          function cors(origin) {
+            const h = {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'no-store',
+              'Vary': 'Origin'
+            };
+            if (origin && ALLOWED_ORIGINS.has(origin)) {
+              h['Access-Control-Allow-Origin'] = origin;
+              h['Access-Control-Allow-Headers'] = 'Authorization, Content-Type, X-Travel-Key';
+              h['Access-Control-Allow-Methods'] = 'GET, PUT, OPTIONS';
+              h['Access-Control-Max-Age'] = '86400';
+            }
+            return h;
+          }
+
+          function json(data, status = 200, origin = '') {
+            return new Response(JSON.stringify(data), { status, headers: cors(origin) });
+          }
+
+          function authorized(request, env) {
+            if (!env.TRAVEL_SYNC_KEY) return false;
+            const auth = request.headers.get('Authorization') || '';
+            const alt = request.headers.get('X-Travel-Key') || '';
+            return auth === `Bearer ${env.TRAVEL_SYNC_KEY}` || alt === env.TRAVEL_SYNC_KEY;
+          }
+
+          function validTrip(value) {
+            return /^[a-z0-9_-]{1,64}$/i.test(value || '');
+          }
+
+          export default {
+            async fetch(request, env) {
+              const url = new URL(request.url);
+              const origin = request.headers.get('Origin') || '';
+
+              if (request.method === 'OPTIONS') {
+                if (origin && !ALLOWED_ORIGINS.has(origin)) return new Response(null, { status: 403 });
+                return new Response(null, { status: 204, headers: cors(origin) });
+              }
+
+              if (url.pathname === '/health') {
+                return json({ ok: true, service: 'travel-hub-api', database: Boolean(env.DB), auth: Boolean(env.TRAVEL_SYNC_KEY) }, 200, origin);
+              }
+
+              if (!authorized(request, env)) {
+                return json({ ok: false, error: 'unauthorized' }, 401, origin);
+              }
+
+              const match = url.pathname.match(/^\/api\/state\/([^/]+)$/);
+              if (!match) return json({ ok: false, error: 'not_found' }, 404, origin);
+              const trip = decodeURIComponent(match[1]);
+              if (!validTrip(trip)) return json({ ok: false, error: 'invalid_trip' }, 400, origin);
+
+              if (request.method === 'GET') {
+                const row = await env.DB.prepare(
+                  'SELECT payload, version, updated_at FROM trip_state WHERE trip = ?'
+                ).bind(trip).first();
+                if (!row) return json({ ok: true, trip, payload: {}, version: 0, updatedAt: null }, 200, origin);
+                let payload = {};
+                try { payload = JSON.parse(row.payload); } catch (_) {}
+                return json({ ok: true, trip, payload, version: row.version, updatedAt: row.updated_at }, 200, origin);
+              }
+
+              if (request.method === 'PUT') {
+                const length = Number(request.headers.get('Content-Length') || 0);
+                if (length > 1000000) return json({ ok: false, error: 'payload_too_large' }, 413, origin);
+                let body;
+                try { body = await request.json(); } catch (_) {
+                  return json({ ok: false, error: 'invalid_json' }, 400, origin);
+                }
+                if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.payload !== 'object' || body.payload === null) {
+                  return json({ ok: false, error: 'invalid_payload' }, 400, origin);
+                }
+                const payloadText = JSON.stringify(body.payload);
+                if (payloadText.length > 1000000) return json({ ok: false, error: 'payload_too_large' }, 413, origin);
+
+                const current = await env.DB.prepare('SELECT version FROM trip_state WHERE trip = ?').bind(trip).first();
+                const currentVersion = current ? Number(current.version) : 0;
+                if (body.baseVersion !== undefined && Number(body.baseVersion) !== currentVersion) {
+                  const latest = await env.DB.prepare('SELECT payload, version, updated_at FROM trip_state WHERE trip = ?').bind(trip).first();
+                  let latestPayload = {};
+                  if (latest) { try { latestPayload = JSON.parse(latest.payload); } catch (_) {} }
+                  return json({ ok: false, error: 'version_conflict', trip, payload: latestPayload, version: latest ? latest.version : 0, updatedAt: latest ? latest.updated_at : null }, 409, origin);
+                }
+
+                if (currentVersion === 0) {
+                  await env.DB.prepare(
+                    "INSERT INTO trip_state (trip, payload, version, updated_at) VALUES (?, ?, 1, datetime('now'))"
+                  ).bind(trip, payloadText).run();
+                } else {
+                  const result = await env.DB.prepare(
+                    "UPDATE trip_state SET payload = ?, version = version + 1, updated_at = datetime('now') WHERE trip = ? AND version = ?"
+                  ).bind(payloadText, trip, currentVersion).run();
+                  if (!result.success || !result.meta || result.meta.changes !== 1) {
+                    return json({ ok: false, error: 'version_conflict' }, 409, origin);
+                  }
+                }
+
+                const saved = await env.DB.prepare('SELECT version, updated_at FROM trip_state WHERE trip = ?').bind(trip).first();
+                return json({ ok: true, trip, version: saved.version, updatedAt: saved.updated_at }, 200, origin);
+              }
+
+              return json({ ok: false, error: 'method_not_allowed' }, 405, origin);
+            }
+          };
+          WORKER
+
+          cat > wrangler.generated.jsonc <<EOF
+          {
+            "name": "travel-hub-api",
+            "main": "worker.js",
+            "compatibility_date": "2026-08-16",
+            "workers_dev": true,
+            "d1_databases": [
+              {
+                "binding": "DB",
+                "database_name": "travel-hub-db",
+                "database_id": "$DB_ID"
+              }
+            ]
+          }
+          EOF
+
+      - name: Apply D1 schema
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: |
+          wrangler d1 execute travel-hub-db --remote --command="CREATE TABLE IF NOT EXISTS trip_state (trip TEXT PRIMARY KEY, payload TEXT NOT NULL, version INTEGER NOT NULL DEFAULT 1, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);"
+
+      - name: Deploy Worker
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: wrangler deploy --config wrangler.generated.jsonc
+
+      - name: Set Worker sync secret
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: printf '%s' "$TRAVEL_SYNC_KEY" | wrangler secret put TRAVEL_SYNC_KEY --config wrangler.generated.jsonc
+
+      - name: Summary
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: |
+          echo "### Cloudflare Travel Hub" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Worker: travel-hub-api" >> "$GITHUB_STEP_SUMMARY"
+          echo "- D1: travel-hub-db" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Origin allowed: https://spae11.github.io" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Sync API: /api/state/:trip" >> "$GITHUB_STEP_SUMMARY"
