@@ -99,7 +99,7 @@ jobs:
           const c={
             name:'travel-hub-api',
             main:'cloudflare/worker.js',
-            compatibility_date:'2026-08-16',
+            compatibility_date:'2026-08-15',
             workers_dev:true,
             d1_databases:[{binding:'DB',database_name:'travel-hub-db',database_id:process.env.DB_ID}]
           };
