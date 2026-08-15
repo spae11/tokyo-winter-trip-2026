@@ -1,0 +1,45 @@
+/* Compact Countries / Memories sections. Root page only. */
+#countries.section,#memories.section{padding-top:16px!important;padding-bottom:16px!important}
+#countries .section-head,#memories .section-head{margin-bottom:9px!important;align-items:center!important}
+#countries .section-head h2,#memories .section-head h2{font-size:1.45rem!important;margin:1px 0!important;line-height:1.18!important}
+#countries .section-head .ey,#memories .section-head .ey{font-size:.66rem!important}
+#countries .section-head .muted,#memories .section-head .muted{font-size:.76rem!important}
+#countries .country-grid,#memories .memory-grid{gap:9px!important}
+#countries .country-card{border-radius:20px!important}
+#countries .country-card img{height:105px!important}
+#countries .country-card .pad{padding:11px 12px!important}
+#countries .country-card h3{font-size:1.15rem!important;line-height:1.2!important;margin:1px 0 3px!important}
+#countries .tags{gap:4px!important;margin-top:6px!important}
+#countries .tag{padding:4px 7px!important;font-size:.65rem!important}
+#countries .country-card .btn{padding:7px 10px!important;font-size:.72rem!important;margin-top:7px!important}
+#memories .memory-card{border-radius:18px!important}
+#memories .memory-photo,#memories .memory-placeholder{height:115px!important}
+#memories .memory-pad{padding:10px 11px!important}
+#memories .memory-pad h3{font-size:1rem!important;line-height:1.2!important}
+#memories .memory-actions{margin-top:7px!important}
+#memories .memory-actions .btn,#memories #addLocationBtn2{padding:7px 9px!important;font-size:.7rem!important}
+#memories .empty{padding:15px!important;border-radius:16px!important;font-size:.8rem!important}
+@media(max-width:620px){
+  #countries.section,#memories.section{padding-top:11px!important;padding-bottom:11px!important}
+  #countries .section-head,#memories .section-head{margin-bottom:7px!important}
+  #countries .section-head h2,#memories .section-head h2{font-size:1.22rem!important}
+  #countries .section-head .muted,#memories .section-head .muted{display:none!important}
+  #countries .country-grid{grid-template-columns:1fr!important;gap:8px!important}
+  #countries .country-card{display:grid!important;grid-template-columns:105px minmax(0,1fr)!important;min-height:118px!important;overflow:hidden!important;border-radius:18px!important}
+  #countries .country-card img{width:105px!important;height:100%!important;min-height:118px!important;object-fit:cover!important}
+  #countries .country-card .pad{padding:9px 10px!important;min-width:0!important}
+  #countries .country-card .ey{font-size:.62rem!important}
+  #countries .country-card h3{font-size:1.05rem!important;margin:1px 0 2px!important}
+  #countries .country-card .muted{font-size:.7rem!important;line-height:1.3!important;display:-webkit-box!important;-webkit-line-clamp:1!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+  #countries .tags{margin-top:5px!important;gap:3px!important;max-height:25px!important;overflow:hidden!important}
+  #countries .tag{font-size:.59rem!important;padding:3px 5px!important}
+  #countries .country-card .btn{padding:6px 8px!important;font-size:.66rem!important;margin-top:5px!important}
+  #memories .memory-grid{grid-template-columns:1fr!important;gap:7px!important}
+  #memories .memory-card{display:grid!important;grid-template-columns:84px 1fr!important;min-height:88px!important}
+  #memories .memory-photo,#memories .memory-placeholder{width:84px!important;height:100%!important;min-height:88px!important}
+  #memories .memory-pad{padding:8px 9px!important}
+  #memories .memory-pad h3{font-size:.92rem!important}
+  #memories .memory-actions{gap:4px!important;margin-top:5px!important}
+  #memories .memory-actions .btn{padding:5px 7px!important;font-size:.62rem!important}
+  #memories #addLocationBtn2{padding:6px 8px!important;font-size:.66rem!important}
+}
