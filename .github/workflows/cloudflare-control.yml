@@ -201,7 +201,7 @@ jobs:
           {
             "name": "travel-hub-api",
             "main": "worker.js",
-            "compatibility_date": "2026-08-16",
+            "compatibility_date": "2026-08-15",
             "workers_dev": true,
             "d1_databases": [
               {
