@@ -1,0 +1,10 @@
+/* Keep Trip Tools above the mobile bottom tab / browser safe area. */
+@media (max-width: 680px){
+  #tt-launch{
+    bottom:calc(92px + env(safe-area-inset-bottom))!important;
+    right:max(12px,env(safe-area-inset-right))!important;
+  }
+  .tt-toast{
+    bottom:calc(148px + env(safe-area-inset-bottom))!important;
+  }
+}
