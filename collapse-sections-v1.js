@@ -37,16 +37,16 @@
     return true;
   }
 
-  function loadDisneyMatrix(){
+  function loadDisneyBrowser(){
     if(!location.pathname.includes('/tokyo/')&&!location.pathname.includes('/hongkong/'))return;
-    document.querySelectorAll('link[data-disney-matrix],script[data-disney-matrix]').forEach(x=>x.remove());
-    const l=document.createElement('link');l.rel='stylesheet';l.href='/tokyo-winter-trip-2026/disney-matrix-v2.css?v=33';l.dataset.disneyMatrix='2';document.head.appendChild(l);
-    const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/disney-matrix-v2.js?v=33';s.defer=true;s.dataset.disneyMatrix='2';document.body.appendChild(s);
+    document.querySelectorAll('link[data-disney-matrix],script[data-disney-matrix],link[data-disney-browser],script[data-disney-browser]').forEach(x=>x.remove());
+    const l=document.createElement('link');l.rel='stylesheet';l.href='/tokyo-winter-trip-2026/disney-browser-v1.css?v=34';l.dataset.disneyBrowser='1';document.head.appendChild(l);
+    const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/disney-browser-v1.js?v=34';s.defer=true;s.dataset.disneyBrowser='1';document.body.appendChild(s);
   }
 
   function boot(){
     addCountriesFold();
-    loadDisneyMatrix();
+    loadDisneyBrowser();
     const existing=$('#disney-checklist');if(existing)addDisneyFold(existing);
     const mo=new MutationObserver(()=>{const card=$('#disney-checklist');if(card)addDisneyFold(card)});
     mo.observe(document.body,{childList:true,subtree:true});
