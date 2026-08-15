@@ -16,7 +16,13 @@
  function install(box){
    if(box.classList.contains('matrix-ready'))return true;
    const rides=box.querySelector('.rides');if(!rides||!rides.querySelector('.ride'))return false;
-   box.classList.add('matrix-ready');document.body.classList.add('disney-matrix-active');
+   box.classList.add('matrix-ready','matrix-collapsed');document.body.classList.add('disney-matrix-active');
+   const top=box.querySelector('.disneytop');
+   if(top){
+     const fold=document.createElement('button');fold.type='button';fold.className='mx-fold';fold.setAttribute('aria-expanded','false');fold.textContent='ดูตาราง ▾';
+     fold.onclick=()=>{const open=box.classList.toggle('matrix-collapsed')===false;fold.setAttribute('aria-expanded',String(open));fold.textContent=open?'ย่อ ▴':'ดูตาราง ▾';if(open){applyScale(box);setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'nearest'}),60)}};
+     top.appendChild(fold);
+   }
    const toolbar=document.createElement('div');toolbar.className='matrix-toolbar';
    toolbar.innerHTML='<div class="mx-left"><b>🎢 ตารางเครื่องเล่น</b><span>แตะ ⭐ / ✅ ได้เลย</span></div><div class="mx-controls"><button type="button" class="mx-out" aria-label="ย่อตาราง">−</button><button type="button" class="mx-fit" aria-label="พอดีจอ"><span class="mx-zoom-label"></span></button><button type="button" class="mx-in" aria-label="ขยายตาราง">+</button></div>';
    rides.before(toolbar);
@@ -27,6 +33,7 @@
    rides.addEventListener('touchstart',e=>{if(e.touches.length===2){startDist=distance(e.touches);startScale=scale}},{passive:true});
    rides.addEventListener('touchmove',e=>{if(e.touches.length===2&&startDist){e.preventDefault();scale=clamp(startScale*(distance(e.touches)/startDist),.55,1.35);applyScale(box)}},{passive:false});
    rides.addEventListener('touchend',e=>{if(e.touches.length<2)startDist=0},{passive:true});
+   if(location.hash==='#disney-checklist'){box.classList.remove('matrix-collapsed');const f=box.querySelector('.mx-fold');if(f){f.setAttribute('aria-expanded','true');f.textContent='ย่อ ▴'}}
    applyScale(box);
    return true;
  }
