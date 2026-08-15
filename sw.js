@@ -1,6 +1,6 @@
-const CACHE='travel-hub-v18';
+const CACHE='travel-hub-v19';
 const BASE='/tokyo-winter-trip-2026/';
-const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg'];
+const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg',BASE+'plan-extras-v1.js'];
 
 const PLAN_HEAD=`
 <style id="hub-plan-motion">
@@ -57,8 +57,8 @@ const PLAN_END=`
   const addBack=()=>{
     if(document.querySelector('.hub-back-btn'))return;
     const a=document.createElement('a');
-    a.className='hub-back-btn';a.href='../';a.setAttribute('aria-label','ย้อนกลับไป Travel Hub');a.innerHTML='← <span>ย้อนกลับ</span>';
-    a.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();document.documentElement.classList.add('hub-plan-leaving');setTimeout(()=>location.href=a.href,260)});
+    a.className='hub-back-btn';a.href='/tokyo-winter-trip-2026/';a.setAttribute('aria-label','ย้อนกลับไป Travel Hub');a.innerHTML='← <span>ย้อนกลับ</span>';
+    a.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();document.documentElement.classList.add('hub-plan-leaving');setTimeout(()=>location.assign(a.href),260)});
     document.body.appendChild(a);
   };
   const boot=()=>{
@@ -68,9 +68,11 @@ const PLAN_END=`
       document.documentElement.classList.add('hub-plan-ready');
     }));
   };
+  window.addEventListener('pageshow',()=>{document.documentElement.classList.remove('hub-plan-leaving');document.documentElement.classList.add('hub-plan-ready')});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
-<\/script>`;
+<\/script>
+<script src="/tokyo-winter-trip-2026/plan-extras-v1.js?v=19"><\/script>`;
 
 const ROOT_HEAD=`
 <style id="hub-root-motion-extra">
@@ -81,11 +83,22 @@ html.hub-trip-leave body{opacity:0!important;transform:translateY(7px)!important
 const ROOT_END=`
 <script id="hub-root-trip-transition">
 (()=>{
+  const restoreHub=()=>{
+    document.documentElement.classList.remove('hub-trip-leave');
+    if(sessionStorage.getItem('hubUnlocked')==='1'||sessionStorage.getItem('unlock')==='1'){
+      document.body.classList.add('unlocked');
+      const gate=document.getElementById('gate');if(gate)gate.classList.add('hide');
+    }
+  };
+  restoreHub();
+  window.addEventListener('pageshow',restoreHub);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)restoreHub()});
   document.querySelectorAll('a[href="./tokyo/"],a[href="./hongkong/"]').forEach(a=>a.addEventListener('click',e=>{
     if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
     e.preventDefault();
     document.documentElement.classList.add('hub-trip-leave');
-    setTimeout(()=>location.href=a.href,220);
+    const fallback=setTimeout(()=>document.documentElement.classList.remove('hub-trip-leave'),1200);
+    setTimeout(()=>{clearTimeout(fallback);location.href=a.href},220);
   }));
 })();
 <\/script>`;
