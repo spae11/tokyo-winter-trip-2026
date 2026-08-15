@@ -22,6 +22,8 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       TRAVEL_SYNC_KEY: ${{ secrets.TRAVEL_SYNC_KEY }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
     steps:
       - name: Checkout
@@ -117,6 +119,16 @@ jobs:
         shell: bash
         run: printf '%s' "$TRAVEL_SYNC_KEY" | wrangler secret put TRAVEL_SYNC_KEY --config wrangler.generated.jsonc
 
+      - name: Set Google OAuth client ID
+        if: ${{ env.GOOGLE_CLIENT_ID != '' }}
+        shell: bash
+        run: printf '%s' "$GOOGLE_CLIENT_ID" | wrangler secret put GOOGLE_CLIENT_ID --config wrangler.generated.jsonc
+
+      - name: Set Google OAuth client secret
+        if: ${{ env.GOOGLE_CLIENT_SECRET != '' }}
+        shell: bash
+        run: printf '%s' "$GOOGLE_CLIENT_SECRET" | wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.generated.jsonc
+
       - name: Verify Worker health
         shell: bash
         run: |
@@ -135,4 +147,9 @@ jobs:
             echo "- R2 photo/QR sync: enabled" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "- R2 photo/QR sync: waiting for API token R2 Edit permission" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
+            echo "- Google Photos OAuth: configured" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- Google Photos OAuth: waiting for GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET repository secrets" >> "$GITHUB_STEP_SUMMARY"
           fi
