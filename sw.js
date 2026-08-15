@@ -1,6 +1,6 @@
-const CACHE='travel-hub-v25';
+const CACHE='travel-hub-v26';
 const BASE='/tokyo-winter-trip-2026/';
-const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg',BASE+'plan-extras-v1.js',BASE+'plan-day-tools-v1.js',BASE+'disney-meta-v1.js',BASE+'map-trip-routes-v1.js',BASE+'map-trip-routes-v2.js'];
+const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg',BASE+'plan-extras-v1.js',BASE+'plan-day-tools-v1.js',BASE+'disney-meta-v1.js',BASE+'map-trip-routes-v1.js',BASE+'map-trip-routes-v2.js',BASE+'map-theme-v1.css'];
 
 const PLAN_HEAD=`
 <style id="hub-plan-motion">
@@ -40,7 +40,7 @@ const PLAN_END=`
 <script src="/tokyo-winter-trip-2026/plan-day-tools-v1.js?v=25"><\/script>
 <script src="/tokyo-winter-trip-2026/disney-meta-v1.js?v=25"><\/script>`;
 
-const ROOT_HEAD=`<style id="hub-root-motion-extra">html.hub-trip-leave body{opacity:0!important;transform:translateY(7px)!important;filter:blur(2px)!important;transition:opacity .24s ease,transform .24s ease,filter .24s ease!important}@media(prefers-reduced-motion:reduce){html.hub-trip-leave body{transition:none!important}}</style>`;
+const ROOT_HEAD=`<style id="hub-root-motion-extra">html.hub-trip-leave body{opacity:0!important;transform:translateY(7px)!important;filter:blur(2px)!important;transition:opacity .24s ease,transform .24s ease,filter .24s ease!important}@media(prefers-reduced-motion:reduce){html.hub-trip-leave body{transition:none!important}}</style><link rel="stylesheet" href="/tokyo-winter-trip-2026/map-theme-v1.css?v=26">`;
 const ROOT_END=`<script id="hub-root-trip-transition">(()=>{const restoreHub=()=>{document.documentElement.classList.remove('hub-trip-leave');if(sessionStorage.getItem('hubUnlocked')==='1'||sessionStorage.getItem('unlock')==='1'){document.body.classList.add('unlocked');const gate=document.getElementById('gate');if(gate)gate.classList.add('hide');}};restoreHub();window.addEventListener('pageshow',restoreHub);document.addEventListener('visibilitychange',()=>{if(!document.hidden)restoreHub()});document.querySelectorAll('a[href="./tokyo/"],a[href="./hongkong/"]').forEach(a=>a.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();document.documentElement.classList.add('hub-trip-leave');const fallback=setTimeout(()=>document.documentElement.classList.remove('hub-trip-leave'),1200);setTimeout(()=>{clearTimeout(fallback);location.href=a.href},220)}));})();<\/script><script src="/tokyo-winter-trip-2026/map-trip-routes-v1.js?v=25"><\/script><script src="/tokyo-winter-trip-2026/map-trip-routes-v2.js?v=25"><\/script>`;
 function injectHtml(text,url){const isPlan=url.pathname.startsWith(BASE+'tokyo/')||url.pathname.startsWith(BASE+'hongkong/');const isRoot=url.pathname===BASE||url.pathname===BASE+'index.html';if(isPlan){text=text.replace(/<\/head>/i,PLAN_HEAD+'</head>');text=text.replace(/<\/body>/i,PLAN_END+'</body>');}else if(isRoot){text=text.replace(/<\/head>/i,ROOT_HEAD+'</head>');text=text.replace(/<\/body>/i,ROOT_END+'</body>');}return text;}
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));});
