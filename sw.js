@@ -1,4 +1,4 @@
-const CACHE='travel-hub-v17';
+const CACHE='travel-hub-v18';
 const BASE='/tokyo-winter-trip-2026/';
 const CORE=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'earth-icon-v14.svg'];
 
@@ -7,14 +7,16 @@ const PLAN_HEAD=`
 .gate{display:none!important}
 html.hub-plan-loading body{opacity:0;transform:translateY(14px) scale(.995);filter:blur(2px)}
 html.hub-plan-ready body{opacity:1;transform:none;filter:none}
+html.hub-plan-leaving body{opacity:0;transform:translateY(8px) scale(.995);filter:blur(2px)}
 body{transition:opacity .58s ease,transform .58s cubic-bezier(.22,1,.36,1),filter .58s ease}
+.hub-back-btn{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(14px + env(safe-area-inset-bottom));z-index:95;display:inline-flex;align-items:center;gap:7px;padding:11px 15px;border-radius:999px;background:#1E2428eF;color:#fff!important;text-decoration:none!important;font:800 14px/1.2 'Noto Sans Thai',system-ui,sans-serif;box-shadow:0 10px 30px #0003;backdrop-filter:blur(10px);border:1px solid #ffffff20;transition:transform .22s ease,opacity .22s ease,background .22s ease}.hub-back-btn:active{transform:scale(.96)}
 .day .body{display:block!important;height:0;overflow:hidden;opacity:0;transform:translateY(-10px);padding:0 16px!important;visibility:hidden;pointer-events:none;transition:height .52s cubic-bezier(.22,1,.36,1),opacity .34s ease,transform .42s cubic-bezier(.22,1,.36,1),padding-bottom .42s ease,visibility 0s linear .52s;will-change:height,opacity,transform}
 .day.open .body{opacity:1;transform:translateY(0);padding-bottom:20px!important;visibility:visible;pointer-events:auto;transition:height .52s cubic-bezier(.22,1,.36,1),opacity .34s .04s ease,transform .42s cubic-bezier(.22,1,.36,1),padding-bottom .42s ease,visibility 0s}
 .day .dayhero{opacity:.72;transform:scale(.994);transition:opacity .42s ease,transform .5s cubic-bezier(.22,1,.36,1)}
 .day.open .dayhero{opacity:1;transform:scale(1)}
 .daybtn>*:last-child{transition:transform .36s cubic-bezier(.22,1,.36,1)}
 .day.open .daybtn>*:last-child{transform:rotate(180deg)}
-@media(prefers-reduced-motion:reduce){body,.day .body,.day .dayhero,.daybtn>*:last-child{transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){body,.day .body,.day .dayhero,.daybtn>*:last-child,.hub-back-btn{transition:none!important;transform:none!important}}
 </style>
 <script>document.documentElement.classList.add('hub-plan-loading');<\/script>`;
 
@@ -52,8 +54,15 @@ const PLAN_END=`
       new MutationObserver(muts=>{for(const m of muts){if(m.attributeName==='class'){day.classList.contains('open')?setOpen(day,true):setClosed(day,true);break}}}).observe(day,{attributes:true,attributeFilter:['class']});
     });
   };
+  const addBack=()=>{
+    if(document.querySelector('.hub-back-btn'))return;
+    const a=document.createElement('a');
+    a.className='hub-back-btn';a.href='../';a.setAttribute('aria-label','ย้อนกลับไป Travel Hub');a.innerHTML='← <span>ย้อนกลับ</span>';
+    a.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();document.documentElement.classList.add('hub-plan-leaving');setTimeout(()=>location.href=a.href,260)});
+    document.body.appendChild(a);
+  };
   const boot=()=>{
-    initDays();
+    initDays();addBack();
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       document.documentElement.classList.remove('hub-plan-loading');
       document.documentElement.classList.add('hub-plan-ready');
