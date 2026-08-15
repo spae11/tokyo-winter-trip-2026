@@ -1,0 +1,29 @@
+/* Compact Disney recommendation UI for mobile-friendly trip pages. */
+.disneybox{margin-top:13px!important;padding:11px!important;border-radius:17px!important}
+.disneytop{align-items:center!important}
+.disneytop h3{font-size:1.02rem!important;margin:1px 0!important}
+.disneytop .meter{min-width:94px!important;font-size:.75rem!important}
+.disneytop .track{height:6px!important;margin-top:3px!important}
+.reco-title{margin:8px 0 3px!important;font-size:.83rem!important}
+.zones{gap:5px!important;padding:6px 0 2px!important}
+.zonebtn{padding:5px 8px!important;font-size:10.5px!important}
+.disney-live-note{padding:6px 8px!important;margin:5px 0!important;border-radius:10px!important;font-size:.68rem!important;line-height:1.35!important}
+.reco,.rides{grid-auto-columns:minmax(205px,70%)!important;gap:7px!important;padding:4px 1px 5px!important}
+.ride{min-height:0!important;padding:9px!important;border-radius:13px!important}
+.ride h4{font-size:.86rem!important;line-height:1.22!important;margin:4px 0 2px!important}
+.ridezone{font-size:.62rem!important}
+.ride-rank{padding:3px 6px!important;font-size:8.5px!important;margin-top:2px!important}
+.ride-meta{gap:4px!important;margin:4px 0 0!important}
+.ride-pill,.badge{padding:4px 6px!important;font-size:9px!important}
+.ride-tip{font-size:.64rem!important;line-height:1.3!important;margin-top:3px!important;display:-webkit-box!important;-webkit-line-clamp:1!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.rideflags{gap:4px!important;margin-top:6px!important}
+.toggle{padding:5px 7px!important;font-size:9.5px!important}
+.hint{font-size:.66rem!important;margin-top:2px!important}
+@media(max-width:620px){
+  .disneybox{padding:9px!important;margin-top:10px!important}
+  .disneytop h3{font-size:.94rem!important}
+  .reco,.rides{grid-auto-columns:72%!important}
+  .ride{padding:8px!important}
+  .ride h4{font-size:.82rem!important}
+  .disney-live-note{font-size:.64rem!important}
+}
