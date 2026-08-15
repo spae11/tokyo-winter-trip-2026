@@ -1,8 +1,11 @@
 /* Unified compact Disney matrix: list + checklist in one view. */
 .disneybox.matrix-ready{padding:11px!important;overflow:hidden!important}
 .disneybox.matrix-ready .reco-title,.disneybox.matrix-ready .reco,.disneybox.matrix-ready .zones,.disneybox.matrix-ready .recommended-label,.disneybox.matrix-ready .disney-live-note,.disneybox.matrix-ready .hint{display:none!important}
-.disneybox.matrix-ready .disneytop{margin-bottom:7px!important}
+.disneybox.matrix-ready .disneytop{margin-bottom:7px!important;align-items:center!important}
 .disneybox.matrix-ready .disneytop h3{font-size:1rem!important;line-height:1.2!important}
+.disneybox.matrix-ready .mx-fold{border:1px solid #0001;background:#fff;color:#B21F2D;border-radius:999px;padding:6px 9px;font:900 11px 'Noto Sans Thai',system-ui;cursor:pointer;white-space:nowrap;margin-left:auto}
+.disneybox.matrix-ready.matrix-collapsed .matrix-toolbar,.disneybox.matrix-ready.matrix-collapsed .rides,.disneybox.matrix-ready.matrix-collapsed .matrix-legend{display:none!important}
+.disneybox.matrix-ready.matrix-collapsed{padding-bottom:9px!important}
 .disneybox.matrix-ready .matrix-toolbar{display:flex;align-items:center;justify-content:space-between;gap:7px;margin:7px 0 8px;padding:6px 7px;background:#f4f1ea;border-radius:12px}
 .matrix-toolbar .mx-left{display:flex;align-items:center;gap:6px;min-width:0}.matrix-toolbar .mx-left b{font-size:.76rem}.matrix-toolbar .mx-left span{font-size:.65rem;color:#72777b;white-space:nowrap}
 .matrix-toolbar .mx-controls{display:flex;gap:4px;flex:none}.matrix-toolbar button{border:1px solid #0001;background:#fff;color:#1e2428;border-radius:9px;min-width:34px;height:31px;padding:0 8px;font:900 12px 'Noto Sans Thai',system-ui;cursor:pointer}.matrix-toolbar button.mx-fit{min-width:62px;color:#B21F2D}.matrix-toolbar button:active{transform:scale(.96)}
@@ -27,4 +30,5 @@ body.disney-matrix-active .dc-card{display:none!important}
  .disneybox.matrix-ready .ride h4{font-size:8.2px!important;min-height:19px!important}
  .matrix-toolbar .mx-left span{display:none}
  .matrix-toolbar button{height:29px;min-width:32px;padding:0 6px}.matrix-toolbar button.mx-fit{min-width:56px}
+ .disneybox.matrix-ready .mx-fold{padding:5px 8px;font-size:10px}
 }
