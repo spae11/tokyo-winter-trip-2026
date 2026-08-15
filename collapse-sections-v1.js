@@ -57,8 +57,9 @@
 (()=>{
   if(window.__tripToolsLoaderV1)return;window.__tripToolsLoaderV1=true;
   const loadCloud=()=>{
-    if(document.getElementById('trip-cloud-sync-v2-js'))return;
-    const c=document.createElement('script');c.id='trip-cloud-sync-v2-js';c.src='/tokyo-winter-trip-2026/trip-cloud-sync-v2.js?v=2';c.defer=true;document.body.appendChild(c);
+    if(document.getElementById('trip-cloud-sync-v3-js'))return;
+    document.getElementById('trip-cloud-sync-v2-js')?.remove();
+    const c=document.createElement('script');c.id='trip-cloud-sync-v3-js';c.src='/tokyo-winter-trip-2026/trip-cloud-sync-v3.js?v=3';c.defer=true;document.body.appendChild(c);
   };
   const load=()=>{
     if(!document.getElementById('trip-tools-v1-css')){
