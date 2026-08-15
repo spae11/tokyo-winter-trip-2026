@@ -1,0 +1,35 @@
+/* Disney matrix v2: stable tap targets, density-based zoom, mobile first. */
+.disneybox.matrix-ready{--mx-cols:4;padding:10px!important;overflow:hidden!important}
+.disneybox.matrix-ready .reco-title,.disneybox.matrix-ready .reco,.disneybox.matrix-ready .zones,.disneybox.matrix-ready .recommended-label,.disneybox.matrix-ready .disney-live-note,.disneybox.matrix-ready .hint{display:none!important}
+.disneybox.matrix-ready .disneytop{align-items:center!important;gap:7px!important;margin-bottom:6px!important}
+.disneybox.matrix-ready .disneytop h3{font-size:.98rem!important;line-height:1.2!important;margin:1px 0!important}
+.disneybox.matrix-ready .disneytop .small{font-size:.66rem!important;line-height:1.3!important}
+.disneybox.matrix-ready .meter{min-width:76px!important;font-size:.72rem!important}
+.disneybox.matrix-ready .track{height:5px!important}
+.mx-fold{border:0;background:#1E2428;color:#fff;border-radius:999px;padding:7px 9px;font:900 10px/1 'Noto Sans Thai',system-ui;white-space:nowrap;cursor:pointer;touch-action:manipulation}
+.disneybox.matrix-ready.matrix-collapsed .matrix-toolbar,.disneybox.matrix-ready.matrix-collapsed .rides,.disneybox.matrix-ready.matrix-collapsed .matrix-legend{display:none!important}
+.matrix-toolbar{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:6px 0 7px;padding:6px 7px;background:#f4f1ea;border-radius:11px}
+.matrix-toolbar .mx-left{display:flex;align-items:center;gap:5px;min-width:0}.matrix-toolbar .mx-left b{font-size:.72rem;white-space:nowrap}.matrix-toolbar .mx-left span{font-size:.62rem;color:#72777b;white-space:nowrap}
+.mx-controls{display:flex;gap:3px;flex:none}.mx-controls button{height:30px;min-width:31px;border:1px solid #0001;background:#fff;color:#1E2428;border-radius:8px;padding:0 6px;font:900 11px 'Noto Sans Thai',system-ui;cursor:pointer;touch-action:manipulation}.mx-controls .mx-fit{min-width:48px;color:#B21F2D}
+.disneybox.matrix-ready .rides{display:grid!important;grid-template-columns:repeat(var(--mx-cols),minmax(0,1fr))!important;gap:4px!important;overflow:visible!important;padding:0!important;scroll-snap-type:none!important;touch-action:pan-y!important;width:100%!important;zoom:1!important;transform:none!important}
+.disneybox.matrix-ready .ride{min-width:0!important;min-height:92px!important;padding:6px!important;border-radius:9px!important;scroll-snap-align:none!important;box-shadow:none!important;display:flex!important;flex-direction:column!important;position:relative!important;overflow:hidden!important;background:#fff!important}
+.disneybox.matrix-ready .ride.reco,.disneybox.matrix-ready .ride.recommended{border-color:#D9A441!important;background:#fffaf0!important}
+.disneybox.matrix-ready .ride .rank,.disneybox.matrix-ready .ride .ride-rank{position:absolute!important;top:3px!important;right:3px!important;margin:0!important;padding:2px 3px!important;font-size:6.5px!important;line-height:1!important;max-width:42px!important;overflow:hidden!important;white-space:nowrap!important}
+.disneybox.matrix-ready .ride .ridezone{font-size:6.7px!important;line-height:1.1!important;margin:0 0 3px!important;padding-right:20px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.disneybox.matrix-ready .ride h4{font-size:8.5px!important;line-height:1.12!important;margin:2px 0 4px!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;min-height:19px!important}
+.disneybox.matrix-ready .ride .ride-meta,.disneybox.matrix-ready .ride .meta,.disneybox.matrix-ready .ride .ride-tip,.disneybox.matrix-ready .ride>.small.muted,.disneybox.matrix-ready .ride .cross{display:none!important}
+.disneybox.matrix-ready .ride .rideflags{display:grid!important;grid-template-columns:1fr 1fr!important;gap:3px!important;margin-top:auto!important}
+.disneybox.matrix-ready .ride .toggle{position:relative!important;z-index:2!important;margin:0!important;padding:0!important;border-radius:7px!important;font-size:0!important;line-height:1!important;min-width:0!important;min-height:30px!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;pointer-events:auto!important;touch-action:manipulation!important;user-select:none!important;-webkit-user-select:none!important;-webkit-tap-highlight-color:transparent!important}
+.disneybox.matrix-ready .ride .toggle.want:before{content:'⭐';font-size:14px}.disneybox.matrix-ready .ride .toggle.done:before{content:'✅';font-size:14px}.disneybox.matrix-ready .ride .toggle:not(.want):not(.done){font-size:8px!important}
+.disneybox.matrix-ready .ride .toggle.on.want{background:#ffe7a0!important;border-color:#d8a832!important;box-shadow:inset 0 0 0 1px #d8a83255!important}.disneybox.matrix-ready .ride .toggle.on.done{background:#cfead9!important;border-color:#72b78b!important;box-shadow:inset 0 0 0 1px #72b78b55!important}
+.disneybox.matrix-ready .ride .toggle:active{transform:scale(.93)!important}
+.matrix-legend{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px;color:#72777b;font-size:.62rem;font-weight:800}
+body.disney-matrix-active .dc-card{display:none!important}
+@media(max-width:620px){
+ .disneybox.matrix-ready{padding:8px!important}
+ .matrix-toolbar .mx-left span{display:none!important}
+ .disneybox.matrix-ready .ride{min-height:88px!important;padding:5px!important}
+ .disneybox.matrix-ready .ride h4{font-size:7.8px!important;min-height:18px!important}
+ .disneybox.matrix-ready .ride .toggle{min-height:31px!important}
+ .disneybox.matrix-ready .ride .toggle.want:before,.disneybox.matrix-ready .ride .toggle.done:before{font-size:14px!important}
+}
