@@ -11,8 +11,49 @@
 .matrix-toolbar{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:6px 0 7px;padding:6px 7px;background:#f4f1ea;border-radius:11px}
 .matrix-toolbar .mx-left{display:flex;align-items:center;gap:5px;min-width:0}.matrix-toolbar .mx-left b{font-size:.72rem;white-space:nowrap}.matrix-toolbar .mx-left span{font-size:.62rem;color:#72777b;white-space:nowrap}
 .mx-controls{display:flex;gap:3px;flex:none}.mx-controls button{height:30px;min-width:31px;border:1px solid #0001;background:#fff;color:#1E2428;border-radius:8px;padding:0 6px;font:900 11px 'Noto Sans Thai',system-ui;cursor:pointer;touch-action:manipulation}.mx-controls .mx-fit{min-width:48px;color:#B21F2D}
-.disneybox.matrix-ready .rides{display:grid!important;grid-template-columns:repeat(var(--mx-cols),minmax(0,1fr))!important;gap:4px!important;overflow:visible!important;padding:0!important;scroll-snap-type:none!important;touch-action:pan-y!important;width:100%!important;zoom:1!important;transform:none!important}
-.disneybox.matrix-ready .ride{min-width:0!important;min-height:92px!important;padding:6px!important;border-radius:9px!important;scroll-snap-align:none!important;box-shadow:none!important;display:flex!important;flex-direction:column!important;position:relative!important;overflow:hidden!important;background:#fff!important}
+/* Important: the original Disney list is a horizontal auto-flow grid. Reset ALL of those rules here. */
+.disneybox.matrix-ready .rides{
+ display:grid!important;
+ grid-template-columns:repeat(var(--mx-cols),minmax(0,1fr))!important;
+ grid-template-rows:none!important;
+ grid-auto-flow:row!important;
+ grid-auto-columns:minmax(0,1fr)!important;
+ grid-auto-rows:auto!important;
+ align-items:stretch!important;
+ justify-items:stretch!important;
+ gap:4px!important;
+ overflow:visible!important;
+ overflow-x:visible!important;
+ overflow-y:visible!important;
+ padding:0!important;
+ margin:0!important;
+ scroll-snap-type:none!important;
+ touch-action:pan-y!important;
+ width:100%!important;
+ max-width:100%!important;
+ zoom:1!important;
+ transform:none!important;
+}
+.disneybox.matrix-ready .ride{
+ width:100%!important;
+ max-width:none!important;
+ min-width:0!important;
+ height:auto!important;
+ min-height:92px!important;
+ margin:0!important;
+ padding:6px!important;
+ border-radius:9px!important;
+ grid-column:auto!important;
+ grid-row:auto!important;
+ scroll-snap-align:none!important;
+ box-shadow:none!important;
+ display:flex!important;
+ flex-direction:column!important;
+ position:relative!important;
+ overflow:hidden!important;
+ transform:none!important;
+ background:#fff!important;
+}
 .disneybox.matrix-ready .ride.reco,.disneybox.matrix-ready .ride.recommended{border-color:#D9A441!important;background:#fffaf0!important}
 .disneybox.matrix-ready .ride .rank,.disneybox.matrix-ready .ride .ride-rank{position:absolute!important;top:3px!important;right:3px!important;margin:0!important;padding:2px 3px!important;font-size:6.5px!important;line-height:1!important;max-width:42px!important;overflow:hidden!important;white-space:nowrap!important}
 .disneybox.matrix-ready .ride .ridezone{font-size:6.7px!important;line-height:1.1!important;margin:0 0 3px!important;padding-right:20px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
@@ -28,8 +69,8 @@ body.disney-matrix-active .dc-card{display:none!important}
 @media(max-width:620px){
  .disneybox.matrix-ready{padding:8px!important}
  .matrix-toolbar .mx-left span{display:none!important}
- .disneybox.matrix-ready .ride{min-height:88px!important;padding:5px!important}
+ .disneybox.matrix-ready .ride{min-height:84px!important;padding:5px!important}
  .disneybox.matrix-ready .ride h4{font-size:7.8px!important;min-height:18px!important}
- .disneybox.matrix-ready .ride .toggle{min-height:31px!important}
+ .disneybox.matrix-ready .ride .toggle{min-height:29px!important}
  .disneybox.matrix-ready .ride .toggle.want:before,.disneybox.matrix-ready .ride .toggle.done:before{font-size:14px!important}
 }
