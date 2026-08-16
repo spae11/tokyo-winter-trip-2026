@@ -1,0 +1,80 @@
+name: Restore latest Journey logo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/restore-latest-logo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Rebuild icon set from latest colorful Earth logo
+        run: |
+          python -m pip install --quiet pillow
+          git show 3dfaae8b37bc4c1ac66ae74e5bea8cfc64022247:apple-touch-icon-v18.png > /tmp/journey-logo.png
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import json, re
+
+          root=Path('.')
+          src=Image.open('/tmp/journey-logo.png').convert('RGBA')
+          for size in (180,192,512):
+              im=src.resize((size,size), Image.Resampling.LANCZOS)
+              im.save(root/f'our-journey-icon-{size}-v3.png', format='PNG', optimize=True)
+
+          manifest_path=root/'manifest.webmanifest'
+          manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest['start_url']='/tokyo-winter-trip-2026/?pwa=21'
+          manifest['icons']=[
+              {'src':'/tokyo-winter-trip-2026/our-journey-icon-180-v3.png','sizes':'180x180','type':'image/png','purpose':'any'},
+              {'src':'/tokyo-winter-trip-2026/our-journey-icon-192-v3.png','sizes':'192x192','type':'image/png','purpose':'any'},
+              {'src':'/tokyo-winter-trip-2026/our-journey-icon-512-v3.png','sizes':'512x512','type':'image/png','purpose':'any maskable'},
+          ]
+          manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+
+          replacements={
+              'our-journey-icon-180-v2.png':'our-journey-icon-180-v3.png',
+              'our-journey-icon-192-v2.png':'our-journey-icon-192-v3.png',
+              'our-journey-icon-512-v2.png':'our-journey-icon-512-v3.png',
+          }
+          for p in [root/'index.html', root/'sw.js']:
+              text=p.read_text(encoding='utf-8')
+              for a,b in replacements.items(): text=text.replace(a,b)
+              text=text.replace('manifest.webmanifest?v=26','manifest.webmanifest?v=59')
+              if p.name=='sw.js':
+                  text=re.sub(r"const CACHE='our-journey-v\d+'", "const CACHE='our-journey-v59'", text, count=1)
+                  text=re.sub(r'\?v=57', '?v=59', text)
+                  text=text.replace('ui-motion-v1.js?v=1','ui-motion-v1.js?v=2')
+              else:
+                  text=re.sub(r'our-journey-icon-(180|192)-v3\.png\?v=\d+', lambda m:f'our-journey-icon-{m.group(1)}-v3.png?v=59', text)
+              p.write_text(text,encoding='utf-8')
+
+          for old in ('our-journey-icon-180-v2.png','our-journey-icon-192-v2.png','our-journey-icon-512-v2.png'):
+              q=root/old
+              if q.exists(): q.unlink()
+          PY
+
+      - name: Commit restored logo
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Restore latest colorful Earth app icon' || exit 0
+          git push
