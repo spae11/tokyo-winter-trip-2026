@@ -1,0 +1,30 @@
+name: Fix Da Nang Travel Apps Note
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/danang-note-v65.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Patch note
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('plan-extras-v1.js'); s=p.read_text(encoding='utf-8')
+          old="const note=trip==='hongkong'?'ฮ่องกงไม่จำเป็นต้องใช้ DiDi/Alipay เป็นหลักเหมือนจีนแผ่นดินใหญ่ — Octopus + MTR Mobile + Uber เหมาะกับทริปนี้มากกว่า':'ญี่ปุ่นใช้ IC Card + Maps เป็นหลัก ส่วนแท็กซี่ติด GO ไว้เป็นตัวสำรอง';"
+          new="const note=trip==='hongkong'?'ฮ่องกงไม่จำเป็นต้องใช้ DiDi/Alipay เป็นหลักเหมือนจีนแผ่นดินใหญ่ — Octopus + MTR Mobile + Uber เหมาะกับทริปนี้มากกว่า':trip==='danang'?'เวียดนามใช้ Grab + Google Maps เป็นหลัก • เตรียมเงิน VND สดไว้สำหรับร้านเล็กและตลาด':'ญี่ปุ่นใช้ IC Card + Maps เป็นหลัก ส่วนแท็กซี่ติด GO ไว้เป็นตัวสำรอง';"
+          if old not in s: raise SystemExit('travel apps note marker not found')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+          rm -f .github/workflows/danang-note-v65.yml
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Fix Da Nang travel apps guidance'
+          git push
