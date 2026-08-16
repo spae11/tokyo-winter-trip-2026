@@ -1,5 +1,6 @@
 /* Plan First v2 — Trips stay primary; everything else remains available on demand */
 body.pfx-v2 #tt-launch{display:none!important}
+body.pfx-v2 .hub-back-btn{display:none!important}
 body.pfx-v2 .pfx-status-side{display:none!important}
 body.pfx-v2 .pfx-primary{grid-template-columns:minmax(0,1fr)!important}
 body.pfx-v2 .pfx-dash-card{max-width:980px;margin-inline:auto}
