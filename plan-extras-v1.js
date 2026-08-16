@@ -3,7 +3,7 @@
   window.__travelPlanExtrasLoaded=true;
 
   const path=location.pathname;
-  const trip=path.includes('/tokyo/')?'tokyo':path.includes('/hongkong/')?'hongkong':null;
+  const trip=path.includes('/tokyo/')?'tokyo':path.includes('/hongkong/')?'hongkong':path.includes('/danang/')?'danang':null;
   if(!trip)return;
 
   const DATA={
@@ -95,6 +95,8 @@
     }
   };
 
+
+DATA.danang={emoji:'🇻🇳',seasonTitle:'ช่วงที่เหมาะกับทริปนี้',seasonBadge:'แนะนำ • มี.ค. – ส.ค.',seasonLead:'เหมาะกับทะเล + Ba Na Hills + Hoi An',seasonText:'ช่วงมีนาคมถึงสิงหาคมโดยทั่วไปแดดเยอะ ฝนน้อยและทะเลค่อนข้างสงบ เหมาะกับกิจกรรมกลางแจ้ง ส่วนกุมภาพันธ์ถึงเมษายนมักอากาศสบายกว่าช่วงกลางฤดูร้อน',seasonChips:['🌊 My Khe','🌉 Golden Bridge','🏮 Hoi An','☀️ Outdoor friendly'],seasonNote:'กันยายนเป็นต้นไปมีโอกาสฝนมากขึ้น ควรเช็กพยากรณ์ก่อนวัน Ba Na Hills และ Hoi An',groups:[{title:'เอกสาร & Booking',icon:'🪪',items:[['passport','พาสปอร์ต + รูป/สำเนาเก็บในมือถือ'],['flight','ตั๋วเครื่องบิน Bangkok ↔ Da Nang'],['insurance','ประกันเดินทาง + เบอร์ติดต่อฉุกเฉิน'],['hotel','Booking Da Nang + Hoi An'],['bana','Ba Na Hills / Golden Bridge ticket'],['basket','Basket Boat / Coconut Village ถ้าจะจองล่วงหน้า']]},{title:'เงิน เน็ต & แอป',icon:'📱',items:[['esim','eSIM / SIM Vietnam'],['grab','ติดตั้ง Grab + ผูกบัตรหรือเตรียมเงินสด'],['maps','Google Maps + เซฟโรงแรม/ร้านฮาลาล'],['cash','เงิน VND สดสำหรับร้านเล็ก/ตลาด'],['power','Power bank + สายชาร์จ'],['translate','Google Translate / ดาวน์โหลด Vietnamese offline']]},{title:'ทะเล & เดินเที่ยว',icon:'🌊',items:[['sun','กันแดด + แว่นกันแดด'],['shoes','รองเท้าเดินสบายสำหรับ Marble Mountains / Hoi An'],['umbrella','ร่มพับ / เสื้อกันฝนบาง'],['jacket','เสื้อคลุมบางสำหรับ Ba Na Hills'],['bag','กระเป๋าสะพายเล็ก'],['bottle','ขวดน้ำพกพา']]},{title:'Muslim-friendly',icon:'🕌',items:[['prayer','แอปเวลาละหมาด + Qibla'],['mat','ผ้าปูละหมาดพกพา'],['halal1','เซฟ Belanga Bay Da Nang'],['halal2','เซฟร้านฮาลาลใน Hoi An และเช็กเวลาเปิดก่อนวันจริง'],['snack','พก snack สำรองสำหรับ Ba Na Hills'],['ingredients','เช็กวัตถุดิบ/แอลกอฮอล์ในเมนูที่ไม่ระบุ Halal']] }]};
   const d=DATA[trip];
   const style=document.createElement('style');
   style.id='plan-extras-style';
@@ -120,7 +122,7 @@
   checklist.className='px-sec px-fade';
   checklist.id='trip-checklist';
   const allItems=d.groups.flatMap(g=>g.items);
-  checklist.innerHTML=`<div class="px-wrap"><div class="px-ey">PRE-TRIP CHECKLIST</div><h2 class="px-title">ของที่ต้องเตรียมก่อนทริป ${d.emoji}</h2><div class="px-progress-card"><div class="px-progress-head"><b>ความพร้อมของทริป</b><span id="px-count">0 / ${allItems.length}</span></div><div class="px-progress-track"><div class="px-progress-bar" id="px-bar"></div></div></div><div class="px-check-grid">${d.groups.map(g=>`<div class="px-group"><h3>${g.icon} ${esc(g.title)}</h3>${g.items.map(([id,label])=>`<label class="px-item"><input type="checkbox" data-px-id="${trip}-${id}"><span>${esc(label)}</span></label>`).join('')}</div>`).join('')}</div><div class="px-tools"><button class="px-reset" type="button" id="px-reset">ล้าง Checklist</button></div></div>`;
+  checklist.innerHTML=`<div class="px-wrap"><div class="px-ey">TRIP READINESS</div><h2 class="px-title">ของที่ต้องเตรียมก่อนทริป ${d.emoji}</h2><div class="px-progress-card"><div class="px-progress-head"><b>ความพร้อมของทริป</b><span id="px-count">0 / ${allItems.length}</span></div><div class="px-progress-track"><div class="px-progress-bar" id="px-bar"></div></div></div><div class="px-check-grid">${d.groups.map(g=>`<div class="px-group"><h3>${g.icon} ${esc(g.title)}</h3>${g.items.map(([id,label])=>`<label class="px-item"><input type="checkbox" data-px-id="${trip}-${id}"><span>${esc(label)}</span></label>`).join('')}</div>`).join('')}</div><div class="px-tools"><button class="px-reset" type="button" id="px-reset">ล้าง Checklist</button></div></div>`;
 
   const footer=document.querySelector('footer');
   if(footer)footer.before(checklist);else if(main)main.appendChild(checklist);else document.body.appendChild(checklist);
@@ -143,6 +145,11 @@
 
   /* TRAVEL_APPS_V64 */
   const APP_DATA={
+    danang:[
+      {icon:'🚕',name:'Grab',badge:'ต้องมี • เดินทาง',platform:'iPhone + Android',desc:'ใช้เรียกรถจากสนามบิน ไป Ba Na Hills ระหว่าง Da Nang–Hoi An และกลับโรงแรม พร้อมเห็นค่าโดยสารก่อนจอง',url:'https://www.grab.com/global/airport-rides/da-nang-international-airport/'},
+      {icon:'🗺️',name:'Google Maps',badge:'ต้องมี',platform:'iPhone + Android',desc:'เซฟโรงแรม ร้านฮาลาล จุดรับ Grab และสถานที่เที่ยวทั้งหมดไว้ก่อนเดินทาง',url:'https://www.google.com/maps'},
+      {icon:'🗣️',name:'Google Translate',badge:'แนะนำ',platform:'iPhone + Android',desc:'ดาวน์โหลดภาษา Vietnamese แบบ Offline ไว้ช่วยอ่านเมนู ป้าย และสื่อสารกับคนขับหรือร้านเล็ก',url:'https://translate.google.com/'}
+    ],
     tokyo:[
       {icon:'💳',name:'Welcome Suica Mobile',badge:'ต้องมี • iPhone',platform:'iOS / Apple Wallet',desc:'ใช้รถไฟ รถบัส และจ่ายร้านค้าที่มี IC ได้สะดวกมาก • Android ให้ใช้ Suica/PASMO แบบบัตรแทน',url:'https://www.jreast.co.jp/en/multi/welcomesuicamobile/?lng=en'},
       {icon:'🗺️',name:'Google Maps',badge:'ต้องมี',platform:'iPhone + Android',desc:'ดูรถไฟ ทางออกสถานี เวลาเดิน และเส้นทางแบบ Transit • เซฟโรงแรมกับจุดเที่ยวไว้ก่อนเดินทาง',url:'https://www.google.com/maps'},
@@ -171,5 +178,29 @@
     if(checklist?.parentNode)checklist.parentNode.insertBefore(sec,checklist);else document.querySelector('main')?.appendChild(sec);
   }
   injectTravelApps();
+
+
+
+  /* COUPLE_PLANNER_V65 — shared wishlist + offline emergency card in the existing plan extras module. */
+  const EMERGENCY={
+    tokyo:{main:'ตำรวจ 110 • ดับเพลิง/รถพยาบาล 119',help:'JNTO Visitor Hotline +81-50-3816-2787',hotel:'APA Hotel Asakusa Tawaramachi-Ekimae'},
+    hongkong:{main:'Police / Fire / Ambulance 999',help:'มือถือใน Hong Kong โทร 112 เพื่อเชื่อม 999 ได้',hotel:'Holiday Inn Golden Mile Hong Kong'},
+    danang:{main:'ตำรวจ 113 • ดับเพลิง 114 • รถพยาบาล 115 • กู้ภัย 112',help:'Da Nang Visitor Center +84 236 355 0111',hotel:'HAIAN Beach Hotel & Spa / Little Riverside Hoi An'}
+  };
+  function injectCouplePlanner(){
+    if(document.getElementById('couple-planner'))return;
+    style.textContent+=`.px-couple-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.px-couple-card{background:#fff;border:1px solid #00000012;border-radius:20px;padding:16px;box-shadow:0 10px 28px #372a2510}.px-couple-card h3{margin:0 0 5px}.px-wish-form{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-top:11px}.px-wish-form input{min-width:0;border:1px solid #ddd5c8;border-radius:12px;padding:9px;font:inherit}.px-wish-add{border:0;border-radius:12px;background:#1e2428;color:#fff;padding:9px 12px;font-weight:900}.px-wish-list{display:grid;gap:7px;margin-top:10px}.px-wish{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;background:#faf8f3;border-radius:13px;padding:9px}.px-wish-toggle,.px-wish-del{border:0;background:transparent;font-size:1rem}.px-wish.done .px-wish-name{text-decoration:line-through;color:#888}.px-em-row{padding:9px 0;border-top:1px dashed #0001}.px-em-row:first-of-type{border-top:0}.px-em-note{width:100%;margin-top:8px;border:1px solid #ddd5c8;border-radius:12px;padding:10px;font:inherit;min-height:66px;resize:vertical}@media(max-width:700px){.px-couple-grid{grid-template-columns:1fr}.px-wish-form{grid-template-columns:1fr}.px-wish-add{width:100%}}`;
+    const sec=document.createElement('section');sec.id='couple-planner';sec.className='px-sec px-fade';
+    const em=EMERGENCY[trip];
+    sec.innerHTML=`<div class="px-wrap"><div class="px-ey">COUPLE PLANNER</div><h2 class="px-title">วางแผนร่วมกัน ❤️</h2><div class="px-couple-grid"><article class="px-couple-card"><h3>💞 Shared Wishlist</h3><div class="muted" style="font-size:.8rem">เก็บสถานที่ “อยากไปถ้ามีเวลา” แยกจากแพลนจริง เพื่อลดการอัด Location ลง Day</div><div class="px-wish-form"><input id="pxWishName" placeholder="สถานที่อยากไป"><input id="pxWishNote" placeholder="เหตุผล / โน้ต"><button class="px-wish-add" id="pxWishAdd" type="button">＋ เพิ่ม</button></div><div class="px-wish-list" id="pxWishList"></div></article><article class="px-couple-card"><h3>🆘 Emergency Card</h3><div class="muted" style="font-size:.8rem">เก็บข้อมูลสำคัญไว้ในหน้า Trip เดียว เปิดได้แม้เน็ตมีปัญหา</div><div class="px-em-row"><b>เหตุฉุกเฉิน</b><div>${esc(em.main)}</div></div><div class="px-em-row"><b>ช่วยเหลือนักท่องเที่ยว</b><div>${esc(em.help)}</div></div><div class="px-em-row"><b>ที่พักในแพลน</b><div>${esc(em.hotel)}</div></div><textarea class="px-em-note" id="pxEmergencyNote" placeholder="เลขประกัน / เบอร์คนติดต่อ / ข้อมูลที่อยากเก็บเพิ่ม"></textarea></article></div></div>`;
+    const target=document.getElementById('travel-apps')||document.getElementById('trip-checklist');if(target?.parentNode)target.insertAdjacentElement('afterend',sec);else document.querySelector('main')?.appendChild(sec);
+    const WKEY='travelHubWishlistV1',EKEY='travelHubEmergencyV1';
+    const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch{return d}},write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new Event('online'))}catch{}};
+    const list=sec.querySelector('#pxWishList');
+    function renderWish(){const all=read(WKEY,{}),a=Array.isArray(all[trip])?all[trip]:[];list.innerHTML=a.length?a.map(x=>`<div class="px-wish ${x.done?'done':''}" data-id="${x.id}"><button class="px-wish-toggle" type="button">${x.done?'✅':'🤍'}</button><div><b class="px-wish-name">${esc(x.name)}</b>${x.note?`<div class="muted" style="font-size:.72rem">${esc(x.note)}</div>`:''}</div><button class="px-wish-del" type="button" aria-label="ลบ">×</button></div>`).join(''):'<div class="muted" style="font-size:.78rem;padding:8px 0">ยังไม่มี Wishlist</div>';list.querySelectorAll('.px-wish').forEach(row=>{row.querySelector('.px-wish-toggle').onclick=()=>{const o=read(WKEY,{}),a=o[trip]||[],x=a.find(v=>v.id===row.dataset.id);if(x)x.done=!x.done;o[trip]=a;write(WKEY,o);renderWish()};row.querySelector('.px-wish-del').onclick=()=>{const o=read(WKEY,{});o[trip]=(o[trip]||[]).filter(v=>v.id!==row.dataset.id);write(WKEY,o);renderWish()}})}
+    sec.querySelector('#pxWishAdd').onclick=()=>{const n=sec.querySelector('#pxWishName'),note=sec.querySelector('#pxWishNote');if(!n.value.trim())return;const o=read(WKEY,{}),a=Array.isArray(o[trip])?o[trip]:[];a.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:n.value.trim(),note:note.value.trim(),done:false});o[trip]=a.slice(-50);write(WKEY,o);n.value='';note.value='';renderWish()};renderWish();
+    const en=sec.querySelector('#pxEmergencyNote'),eo=read(EKEY,{});en.value=eo[trip]||'';let timer;en.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{const o=read(EKEY,{});o[trip]=en.value;write(EKEY,o)},350)});
+  }
+  injectCouplePlanner();
 
 })();

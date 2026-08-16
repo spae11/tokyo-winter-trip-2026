@@ -1,15 +1,15 @@
 (()=>{
 'use strict';
 if(window.__planMemoryLinkV2Loaded)return;window.__planMemoryLinkV2Loaded=true;
-const trip=location.pathname.includes('/tokyo/')?'tokyo':location.pathname.includes('/hongkong/')?'hongkong':null;if(!trip)return;
-const country=trip==='tokyo'?'japan':'hongkong',MEM_KEY='travelHubMemoriesV1',STATE_KEY='travelHubStateV2';
+const trip=location.pathname.includes('/tokyo/')?'tokyo':location.pathname.includes('/hongkong/')?'hongkong':location.pathname.includes('/danang/')?'danang':null;if(!trip)return;
+const country=trip==='tokyo'?'japan':trip==='hongkong'?'hongkong':'vietnam',MEM_KEY='travelHubMemoriesV1',STATE_KEY='travelHubStateV2';
 const norm=s=>String(s||'').toLowerCase().normalize('NFKD').replace(/[^a-z0-9ก-๙]+/g,' ').trim();
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch{return d}};
 const memories=()=>{const a=load(MEM_KEY,[]);return Array.isArray(a)?a:[]};
 const tripMems=()=>memories().filter(m=>(m.trip===trip)||(!m.trip&&m.country===country));
 const start=()=>{const s=load(STATE_KEY,{})[trip]?.start;if(/^\d{4}-\d{2}-\d{2}$/.test(s||''))return s;return trip==='tokyo'?'2026-12-05':''};
 const addDays=(iso,n)=>{if(!iso)return'';const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
-const regionFor=text=>{const s=norm(text);if(trip==='tokyo'){if(/disney|maihama|cinderella/.test(s))return'Chiba';if(/kawaguchiko|oishi|fuji|ropeway/.test(s))return'Yamanashi';return'Tokyo'}if(/disney|ngong|tung chung|tian tan|citygate|airport|hkia/.test(s))return'Lantau';if(/central|pmq|wan chai|causeway|peak|masjid ammar|islamic centre/.test(s))return'Hong Kong Island';return'Kowloon'};
+const regionFor=text=>{const s=norm(text);if(trip==='tokyo'){if(/disney|maihama|cinderella/.test(s))return'Chiba';if(/kawaguchiko|oishi|fuji|ropeway/.test(s))return'Yamanashi';return'Tokyo'}if(trip==='danang'){if(/hoi an|cam thanh|coconut|maxim|baba|ancient|thu bon/.test(s))return'Hoi An';return'Da Nang'}if(/disney|ngong|tung chung|tian tan|citygate|airport|hkia/.test(s))return'Lantau';if(/central|pmq|wan chai|causeway|peak|masjid ammar|islamic centre/.test(s))return'Hong Kong Island';return'Kowloon'};
 function openRoot(id=''){if(id)sessionStorage.setItem('hubOpenMemoryId',id);document.documentElement.classList.add('hub-plan-leaving');setTimeout(()=>location.assign('/tokyo-winter-trip-2026/#memories'),180)}
 function openDb(){return new Promise((res,rej)=>{const q=indexedDB.open('travelHubMemoryDB',1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('photos'))q.result.createObjectStore('photos')};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 async function getPhoto(id){try{const db=await openDb();return await new Promise((res,rej)=>{const q=db.transaction('photos').objectStore('photos').get(id);q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)})}catch{return null}}
