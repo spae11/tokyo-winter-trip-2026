@@ -26,3 +26,6 @@
 @media(max-width:700px){.mj-locs{grid-template-columns:1fr}.mj-best-grid{grid-auto-columns:72%}.mj-photos{columns:2 140px}.mj-hero-in{padding:18px}.mj-map-canvas{min-height:330px;height:52vh}.mj-detail-panel{max-height:96dvh}}
 @media(max-width:420px){.mj-toolbar{align-items:flex-start}.mj-cloud{width:100%;justify-content:center}.mj-photo-name{max-width:72%}}
 @media(prefers-reduced-motion:reduce){.mj-view,.mj-detail-panel{animation:none!important}}
+
+/* trip combo v71 */
+.mj-trip-pills{display:none!important}.mj-trip-combo{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;min-width:min(330px,100%);padding:7px 9px;border:1px solid var(--line);border-radius:16px;background:#fff}.mj-trip-combo span{font-size:.7rem;font-weight:900;color:var(--muted)}#mjTripSelect{width:100%;min-width:0;border:0;border-radius:12px;background:var(--cream);color:var(--dark);padding:9px 34px 9px 10px;font:900 .8rem 'Noto Sans Thai',system-ui,sans-serif;outline:none}@media(max-width:420px){.mj-trip-combo{width:100%;min-width:0}}

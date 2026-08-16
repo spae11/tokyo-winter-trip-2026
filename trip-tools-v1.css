@@ -24,3 +24,6 @@
 #tcs3-card #tcs3-auto:checked:before{transform:translateX(20px)!important}
 #tcs3-card #tcs3-auto:focus-visible{box-shadow:0 0 0 3px #247f4c24,inset 0 0 0 1px #00000012!important}
 @media(max-width:420px){#tcs3-card>label.tt-item{gap:10px!important;padding:10px 12px!important}#tcs3-card>label.tt-item .tt-muted{font-size:.76rem!important;line-height:1.35}#tcs3-card #tcs3-auto{flex-basis:44px!important;width:44px!important;min-width:44px!important;max-width:44px!important}}
+
+/* scalable trip combo v71 */
+.tt-trip-pick{display:none!important}.tt-trip-combo{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px;margin-bottom:11px;padding:8px 10px;border:1px solid var(--tt-line);border-radius:16px;background:#fff}.tt-trip-combo>span{font-size:.72rem;font-weight:900;color:var(--tt-muted)}.tt-trip-select{width:100%;min-width:0;border:0;background:var(--tt-cream);color:var(--tt-dark);border-radius:12px;padding:10px 36px 10px 11px;font:900 13px 'Noto Sans Thai',system-ui,sans-serif;outline:none}.tt-trip-select:focus{box-shadow:0 0 0 3px #b21f2d15}

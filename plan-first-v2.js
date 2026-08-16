@@ -3,7 +3,7 @@
 if(window.__planFirstV2)return;window.__planFirstV2=true;
 const BASE='/tokyo-winter-trip-2026/',API='https://travel-hub-api.mlrkdee44.workers.dev',CFG='travelToolsCloudV3',TAB_KEY='travelHubHomeTabV1';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const path=location.pathname,isRoot=path===BASE||path===BASE+'index.html',isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'hongkong/')||path.startsWith(BASE+'danang/')||path.startsWith(BASE+'yunnan/');if(!isRoot&&!isPlan)return;
+const path=location.pathname,isRoot=path===BASE||path===BASE+'index.html',isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'hongkong/')||path.startsWith(BASE+'danang/')||path.startsWith(BASE+'yunnan/')||path.startsWith(BASE+'chongqing/');if(!isRoot&&!isPlan)return;
 document.body.classList.add('pfx-v2');
 if(isPlan&&!document.querySelector('script[data-plan-photo-memory]')){const s=document.createElement('script');s.src=BASE+'plan-photo-memory-v1.js?v=69';s.async=true;s.dataset.planPhotoMemory='1';document.head.appendChild(s)}
 if(isRoot&&!document.querySelector('script[data-memory-delete-everywhere]')){const s=document.createElement('script');s.src=BASE+'memory-delete-everywhere-v1.js?v=69';s.async=true;s.dataset.memoryDeleteEverywhere='1';document.head.appendChild(s)}
