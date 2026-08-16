@@ -27,3 +27,6 @@
 
 /* scalable trip combo v71 */
 .tt-trip-pick{display:none!important}.tt-trip-combo{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px;margin-bottom:11px;padding:8px 10px;border:1px solid var(--tt-line);border-radius:16px;background:#fff}.tt-trip-combo>span{font-size:.72rem;font-weight:900;color:var(--tt-muted)}.tt-trip-select{width:100%;min-width:0;border:0;background:var(--tt-cream);color:var(--tt-dark);border-radius:12px;padding:10px 36px 10px 11px;font:900 13px 'Noto Sans Thai',system-ui,sans-serif;outline:none}.tt-trip-select:focus{box-shadow:0 0 0 3px #b21f2d15}
+
+/* country-first picker v73 */
+.tt-country-trip-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:11px}.tt-country-trip-picker .tt-trip-combo{margin-bottom:0}.tt-trip-combo-one{display:none!important}@media(max-width:520px){.tt-country-trip-picker{grid-template-columns:1fr}}

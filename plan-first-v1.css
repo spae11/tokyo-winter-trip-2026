@@ -13,3 +13,6 @@ body.pfx-plan #days{scroll-margin-top:128px}body.pfx-plan .day{scroll-margin-top
 
 /* scalable dashboard trip combo v71 */
 .pfx-focus-tabs{display:none!important}.pfx-trip-combo{align-self:start;display:grid;gap:4px;min-width:210px}.pfx-trip-combo>span{font-size:.62rem;font-weight:900;color:#ffffffa8;letter-spacing:.08em}.pfx-trip-combo select{width:100%;border:1px solid #ffffff2a;border-radius:13px;background:#ffffff16;color:#fff;padding:9px 34px 9px 10px;font:850 .72rem 'Noto Sans Thai',system-ui,sans-serif;outline:none}.pfx-trip-combo select option{color:#1e2428;background:#fff}@media(max-width:760px){.pfx-trip-combo{width:100%;min-width:0}.pfx-trip-combo select{font-size:.76rem}}
+
+/* country-first picker v73 */
+.pfx-country-trip-picker{align-self:start;display:grid;grid-template-columns:minmax(190px,1fr) minmax(210px,1fr);gap:7px;min-width:min(440px,46vw)}.pfx-country-trip-picker .pfx-trip-combo{min-width:0}.pfx-trip-combo-one{display:none!important}@media(max-width:760px){.pfx-country-trip-picker{width:100%;min-width:0;grid-template-columns:1fr}.pfx-country-trip-picker .pfx-trip-combo{width:100%}}
