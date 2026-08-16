@@ -2,7 +2,7 @@
 'use strict';
 if(window.__planUiFixesV1)return;window.__planUiFixesV1=true;
 const BASE='/tokyo-winter-trip-2026/';
-const path=location.pathname;if(!path.startsWith(BASE+'tokyo/')&&!path.startsWith(BASE+'hongkong/'))return;
+const path=location.pathname;if(!path.startsWith(BASE+'tokyo/')&&!path.startsWith(BASE+'hongkong/')&&!path.startsWith(BASE+'danang/')&&!path.startsWith(BASE+'yunnan/'))return;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const style=document.createElement('style');style.textContent=`
 body .hub-back-btn,body .floatback{display:none!important}

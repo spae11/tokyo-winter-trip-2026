@@ -8,7 +8,7 @@
     sec.classList.add('hub-fold','hub-collapsed');
     const copy=head.querySelector('div');
     if(copy&&!$('.hub-country-summary',copy)){
-      const s=document.createElement('div');s.className='hub-country-summary';s.textContent='Japan • Hong Kong • Thailand';copy.appendChild(s);
+      const s=document.createElement('div');s.className='hub-country-summary';s.textContent='Japan • Hong Kong • Vietnam • China • Thailand';copy.appendChild(s);
     }
     const btn=document.createElement('button');
     btn.type='button';btn.className='hub-collapse-toggle hub-country-toggle';btn.setAttribute('aria-expanded','false');btn.innerHTML='ดู <span class="chev">⌄</span>';

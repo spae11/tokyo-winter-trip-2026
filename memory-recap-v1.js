@@ -6,7 +6,7 @@ const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelecto
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const load=()=>{try{const a=JSON.parse(localStorage.getItem(MEM_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return[]}};
 const save=a=>{try{localStorage.setItem(MEM_KEY,JSON.stringify(a))}catch{}};
-const countryCode=k=>({japan:'JP',hongkong:'HK',thailand:'TH',vietnam:'VN',vn:'VN'}[k]||(String(k||'').length===2?String(k).toUpperCase():''));
+const countryCode=k=>({japan:'JP',hongkong:'HK',thailand:'TH',vietnam:'VN',vn:'VN',china:'CN',cn:'CN'}[k]||(String(k||'').length===2?String(k).toUpperCase():''));
 const flag=cc=>String(cc||'').replace(/[A-Z]/g,x=>String.fromCodePoint(127397+x.charCodeAt()));
 const countryName=k=>{const cc=countryCode(k);try{return cc?new Intl.DisplayNames(['th','en'],{type:'region'}).of(cc):String(k||'ไม่ระบุประเทศ')}catch{return String(k||'ไม่ระบุประเทศ')}};
 const dateOf=m=>String(m.date||m.createdAt||'').slice(0,10);

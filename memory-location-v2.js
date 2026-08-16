@@ -21,6 +21,11 @@
     'Da Nang':['Da Nang International Airport','HAIAN Beach Hotel & Spa','My Khe Beach','Dragon Bridge','Belanga Bay Da Nang','Ba Na Hills','Sun World Ba Na Hills','Golden Bridge','French Village Ba Na Hills','Marble Mountains','Son Tra Peninsula','Linh Ung Pagoda','Han Market'],
     'Hoi An':['Little Riverside Hoi An','Hoi An Ancient Town','Japanese Covered Bridge','Thu Bon River','Cam Thanh Coconut Village','Basket Boat Hoi An']
   }};
+  PLAN.china={trip:'Yunnan • Kunming + Dali 6D5N',regions:{
+    'Kunming':['Kunming Changshui International Airport','Kunming Old Street','Shuncheng Mosque','Nanping Pedestrian Street','Stone Forest Scenic Area','Kunming South Railway Station','Dianchi Haigeng Park','Dounan Flower Market'],
+    'Dali':['Dali Railway Station','Dali Ancient City','Erhai Lake','Xizhou Ancient Town','Three Pagodas']
+  }};
+
 
   const sheet=document.getElementById('memorySheet');
   const country=document.getElementById('memCountry');

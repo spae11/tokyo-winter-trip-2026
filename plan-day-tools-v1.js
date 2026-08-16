@@ -2,7 +2,7 @@
   if(window.__planDayToolsLoaded)return;
   window.__planDayToolsLoaded=true;
 
-  const trip=location.pathname.includes('/tokyo/')?'tokyo':location.pathname.includes('/hongkong/')?'hongkong':null;
+  const trip=location.pathname.includes('/tokyo/')?'tokyo':location.pathname.includes('/hongkong/')?'hongkong':location.pathname.includes('/danang/')?'danang':location.pathname.includes('/yunnan/')?'yunnan':null;
   if(!trip)return;
 
   const ROUTES={
@@ -62,6 +62,9 @@
       }
     ]
   };
+  ROUTES.danang=[{0:{mode:'🚕',title:'Da Nang Airport → My Khe',lines:['เปิด Grab ที่สนามบิน DAD','เลือกจุดรับรถตามป้ายสนามบิน','ไป HAIAN / My Khe แล้วเช็กอิน'],note:'เก็บชื่อโรงแรมในแอปไว้ก่อน'}},{0:{mode:'🚕',title:'My Khe → Ba Na Hills',lines:['Grab/รถจองล่วงหน้าไป Sun World Ba Na Hills','นัดเวลารับกลับหรือจองไป-กลับ'],note:'ออกเช้าเพื่อลดคิว'}},{0:{mode:'🚕',title:'Da Nang → Marble Mountains → Hoi An',lines:['เช็กเอาต์ Da Nang','แวะ Marble Mountains','ต่อรถไป Hoi An'],note:'เหมารถ/Grab แบบหลายจุดสะดวกกว่าสำหรับ 2 คนพร้อมกระเป๋า'}},{0:{mode:'🚕',title:'Hoi An → Cam Thanh',lines:['เรียก Grab/Taxi ไป Coconut Village','กลับ Ancient Town ช่วงบ่าย'],note:'เช็กจุดรับ-ส่งกับผู้ให้บริการ Basket Boat'}},{0:{mode:'🚕',title:'Hoi An → Da Nang / Son Tra',lines:['รถกลับ Da Nang','ต่อ Grab ไป Son Tra / Linh Ung','กลับ My Khe ช่วงเย็น'],note:'เผื่อเวลาและสภาพอากาศ'}},{3:{mode:'✈️',title:'Hotel → DAD Airport',lines:['รับกระเป๋า','Grab ไป Da Nang International Airport','ถึงสนามบินก่อนบินประมาณ 3 ชั่วโมง'],note:'เช็ก terminal/flight ในวันจริง'}}];
+  ROUTES.yunnan=[{0:{mode:'🚕',title:'Kunming Airport → City',lines:['ใช้ DiDi/Alipay Taxi หรือ Metro ตามเวลาจริง','ส่งชื่อโรงแรมภาษาจีนให้คนขับ'],note:'Amap เป็น Maps หลักในจีน'}},{0:{mode:'🚐',title:'Kunming → Stone Forest',lines:['เลือกทัวร์/รถรับส่งหรือรถสาธารณะตามรอบจริง','เปิด 石林风景区 ใน Amap'],note:'วันนี้ออกเช้าและพก snack halal'}},{0:{mode:'🚄',title:'Kunming → Dali',lines:['Kunming South 昆明南站','รถไฟความเร็วสูงไป Dali 大理站','DiDi/Taxi ต่อเข้า Dali Ancient City'],note:'ชื่อบนตั๋วต้องตรง Passport'}},{0:{mode:'🚕',title:'Dali • Erhai • Xizhou',lines:['ใช้ DiDi/รถพร้อมคนขับสำหรับหลายจุด','Erhai → Xizhou → Three Pagodas → Old Town'],note:'เส้นรอบ Erhai ระยะไกลกว่าที่เห็นในแผนที่'}},{0:{mode:'🚄',title:'Dali → Kunming',lines:['Dali Station → Kunming South','ต่อ Metro/DiDi ไป Dianchi / Dounan'],note:'เผื่อเวลาจากสถานีเข้าเมือง'}},{2:{mode:'✈️',title:'Kunming City → Airport',lines:['DiDi/Metro ไป Kunming Changshui Airport','ถึงก่อนบินประมาณ 3 ชั่วโมง'],note:'ทริปนี้ไม่มีเที่ยวบินภายในจีน'}}];
+
 
   const DISNEY={
     tokyo:[
@@ -141,6 +144,7 @@
   const otherPark=trip==='tokyo'?'hongkong':'tokyo';
 
   function addDisneyChecklist(){
+    if(!DISNEY[trip])return;
     const day=document.querySelectorAll('.day')[1];if(!day||day.querySelector('.dc-card'))return;
     const body=day.querySelector('.body');if(!body)return;
     const rides=DISNEY[trip];
