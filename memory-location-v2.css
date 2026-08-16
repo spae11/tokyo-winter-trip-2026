@@ -1,0 +1,16 @@
+/* Location-memory form UX v2 */
+#memorySheet .ml-select{width:100%;border:1px solid #ddd;border-radius:12px;padding:10px 38px 10px 10px;font:inherit;background:#fff;color:var(--dark);appearance:auto}
+#memorySheet .ml-helper{margin-top:6px;font-size:.74rem;color:var(--muted);line-height:1.45}
+#memorySheet .ml-native-file{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;clip-path:inset(50%)!important}
+#memorySheet .ml-photo-ui{margin-top:4px}
+#memorySheet .ml-photo-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#memorySheet .ml-photo-btn{border:0;border-radius:13px;background:var(--red);color:#fff;padding:10px 12px;font:800 .8rem 'Noto Sans Thai',system-ui,sans-serif;cursor:pointer}
+#memorySheet .ml-photo-btn.soft{background:var(--cream);color:var(--dark);border:1px solid var(--line)}
+#memorySheet .ml-photo-count{margin-left:auto;min-width:50px;text-align:center;border-radius:999px;padding:6px 9px;background:var(--cream);font-size:.74rem;font-weight:900;color:var(--muted)}
+#memorySheet .ml-photo-preview{margin-top:9px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;min-height:72px}
+#memorySheet .ml-photo-empty{grid-column:1/-1;min-height:72px;border:1.5px dashed #0002;border-radius:14px;background:#faf9f6;display:grid;place-items:center;text-align:center;padding:10px;color:var(--muted);font-size:.74rem}
+#memorySheet .ml-thumb{position:relative;aspect-ratio:1;border-radius:13px;overflow:hidden;background:var(--cream);border:1px solid var(--line)}
+#memorySheet .ml-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+#memorySheet .ml-thumb button{position:absolute;right:4px;top:4px;width:24px;height:24px;border:0;border-radius:50%;background:#1e2428dd;color:#fff;font-size:18px;line-height:1;display:grid;place-items:center;cursor:pointer}
+#memorySheet .ml-thumb span{position:absolute;left:5px;bottom:5px;min-width:20px;height:20px;border-radius:999px;background:#fff;color:var(--dark);display:grid;place-items:center;font-size:.65rem;font-weight:900;box-shadow:0 2px 8px #0002}
+@media(max-width:520px){#memorySheet .ml-photo-preview{grid-template-columns:repeat(3,minmax(0,1fr))}#memorySheet .ml-photo-count{margin-left:0}.ml-plan-field{grid-column:auto}}
