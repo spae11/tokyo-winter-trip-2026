@@ -1,0 +1,26 @@
+name: Refresh PWA v66
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/swreload-v66.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Refresh controller reload key
+        run: sed -i "s/ourJourneySWReloadV63/ourJourneySWReloadV66/g" index.html
+      - name: Commit
+        run: |
+          rm -f .github/workflows/swreload-v66.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Refresh installed PWA after travel rules update'
+          git push
