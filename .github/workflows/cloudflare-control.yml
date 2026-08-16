@@ -80,8 +80,7 @@ jobs:
             main:'cloudflare/worker.js',
             compatibility_date:'2026-08-15',
             workers_dev:true,
-            d1_databases:[{binding:'DB',database_name:'travel-hub-db',database_id:process.env.DB_ID}],
-            r2_buckets:[{binding:'MEDIA',bucket_name:'travel-hub-media'}]
+            d1_databases:[{binding:'DB',database_name:'travel-hub-db',database_id:process.env.DB_ID}]
           };
           fs.writeFileSync('wrangler.generated.jsonc',JSON.stringify(c,null,2));
           NODE
@@ -116,11 +115,11 @@ jobs:
         shell: bash
         run: |
           echo "### Cloudflare Travel Hub" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Worker: travel-hub-api" >> "$GITHUB_STEP_SUMMARY"
           echo "- D1 full app sync + Recovery: enabled" >> "$GITHUB_STEP_SUMMARY"
-          echo "- R2 photo/QR sync: bound directly to travel-hub-media" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Media: Google Photos (no R2 subscription required)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- PDF documents: Google Drive API via drive.file (no Apps Script)" >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
-            echo "- Google Photos OAuth: configured" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Google OAuth: configured" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "- Google Photos OAuth: waiting for GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET repository secrets" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Google OAuth: waiting for GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET" >> "$GITHUB_STEP_SUMMARY"
           fi
