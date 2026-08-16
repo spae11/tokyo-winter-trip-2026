@@ -1,0 +1,10 @@
+/* Memory Attachments v5 */
+#memorySheet .mm-field.mm-attachments-v5{margin:4px 0 2px;padding:13px;border:1px solid #00000012;border-radius:17px;background:linear-gradient(135deg,#faf8f3,#fff)}
+#memorySheet .mm-field.mm-attachments-v5>label{display:flex;align-items:center;justify-content:space-between;font-size:.82rem;font-weight:900;margin-bottom:8px}
+#memorySheet .mm-field.mm-attachments-v5>label:after{content:'Video + Documents';font-size:.62rem;color:var(--muted);font-weight:700}
+#memorySheet .mm-field.mm-attachments-v5 .mm-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:0}
+#memorySheet .mm-field.mm-attachments-v5 .mm-btn{min-height:44px;border-radius:14px;font-size:.78rem}
+#memorySheet .mm-field.mm-attachments-v5 .mm-count{align-self:center;margin:0;white-space:nowrap}
+#memorySheet .mm-field.mm-attachments-v5 .mm-help{background:#f4f1ea;border-radius:11px;padding:8px 9px;margin-top:8px}
+#memorySheet .mm-field.mm-attachments-v5 .mm-selected{margin-top:8px}
+@media(max-width:520px){#memorySheet .mm-field.mm-attachments-v5{padding:11px}#memorySheet .mm-field.mm-attachments-v5 .mm-actions{grid-template-columns:1fr 1fr}#memorySheet .mm-field.mm-attachments-v5 .mm-count{grid-column:1/-1;justify-self:start}}
