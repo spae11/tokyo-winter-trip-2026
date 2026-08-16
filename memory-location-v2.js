@@ -2,6 +2,7 @@
   if(window.__memoryLocationV2Loaded)return;
   window.__memoryLocationV2Loaded=true;
 
+  const PHOTO_MAX=20;
   const PLAN={
     japan:{trip:'Tokyo Winter Trip 2026',regions:{
       Tokyo:[
@@ -24,6 +25,7 @@
   const photos=document.getElementById('memPhotos');
   const pickBtn=document.getElementById('pickLocationBtn');
   if(!sheet||!country||!region||!name||!photos)return;
+  photos.accept='image/*,.heic,.heif,image/heic,image/heif';
 
   const regionField=region.closest('.field');
   const nameField=name.closest('.field');
@@ -98,25 +100,25 @@
   photos.classList.add('ml-native-file');
   const photoUI=document.createElement('div');
   photoUI.className='ml-photo-ui';
-  photoUI.innerHTML=`<div class="ml-photo-actions"><button type="button" class="ml-photo-btn" id="mlGallery">🖼️ เลือกรูป</button><button type="button" class="ml-photo-btn soft" id="mlCamera">📷 ถ่ายรูป</button><span class="ml-photo-count" id="mlPhotoCount">0 / 5</span></div><div class="ml-photo-preview" id="mlPhotoPreview"><div class="ml-photo-empty">เพิ่มรูปได้สูงสุด 5 รูป • รูปจะถูกย่อให้อัตโนมัติ</div></div>`;
+  photoUI.innerHTML=`<div class="ml-photo-actions"><button type="button" class="ml-photo-btn" id="mlGallery">🖼️ เลือกรูป</button><button type="button" class="ml-photo-btn soft" id="mlCamera">📷 ถ่ายรูป</button><span class="ml-photo-count" id="mlPhotoCount">0 / ${PHOTO_MAX}</span></div><div class="ml-photo-preview" id="mlPhotoPreview"><div class="ml-photo-empty">เพิ่มรูปได้สูงสุด ${PHOTO_MAX} รูป • รองรับ HEIC/HEIF • รูปจะถูกย่อให้อัตโนมัติ</div></div>`;
   photoField.appendChild(photoUI);
   const galleryBtn=photoUI.querySelector('#mlGallery');
   const cameraBtn=photoUI.querySelector('#mlCamera');
   const count=photoUI.querySelector('#mlPhotoCount');
   const preview=photoUI.querySelector('#mlPhotoPreview');
   const camera=document.createElement('input');
-  camera.type='file';camera.accept='image/*';camera.capture='environment';camera.hidden=true;
+  camera.type='file';camera.accept='image/*,.heic,.heif,image/heic,image/heif';camera.capture='environment';camera.hidden=true;
   photoField.appendChild(camera);
 
   let previewUrls=[];let normalizing=false;
   function revoke(){previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[]}
   function writeFiles(files){
     if(typeof DataTransfer==='undefined')return false;
-    const dt=new DataTransfer();files.slice(0,5).forEach(f=>dt.items.add(f));photos.files=dt.files;return true;
+    const dt=new DataTransfer();files.slice(0,PHOTO_MAX).forEach(f=>dt.items.add(f));photos.files=dt.files;return true;
   }
   function renderPhotos(){
-    revoke();const files=[...photos.files].slice(0,5);count.textContent=`${files.length} / 5`;
-    if(!files.length){preview.innerHTML='<div class="ml-photo-empty">แตะ “เลือกรูป” หรือ “ถ่ายรูป” • สูงสุด 5 รูป</div>';return}
+    revoke();const files=[...photos.files].slice(0,PHOTO_MAX);count.textContent=`${files.length} / ${PHOTO_MAX}`;
+    if(!files.length){preview.innerHTML=`<div class="ml-photo-empty">แตะ “เลือกรูป” หรือ “ถ่ายรูป” • สูงสุด ${PHOTO_MAX} รูป • HEIC/HEIF รองรับ</div>`;return}
     preview.innerHTML=files.map((f,i)=>{const u=URL.createObjectURL(f);previewUrls.push(u);return `<div class="ml-thumb"><img src="${u}" alt="รูปที่ ${i+1}"><button type="button" data-remove="${i}" aria-label="ลบรูป">×</button><span>${i+1}</span></div>`}).join('');
     preview.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{
       const idx=Number(btn.dataset.remove),next=[...photos.files];next.splice(idx,1);if(writeFiles(next)){photos.dispatchEvent(new Event('change',{bubbles:true}))}
@@ -125,13 +127,13 @@
   photos.addEventListener('change',()=>{
     if(normalizing)return;
     const files=[...photos.files];
-    if(files.length>5&&writeFiles(files.slice(0,5))){normalizing=true;photos.dispatchEvent(new Event('change',{bubbles:true}));normalizing=false}
+    if(files.length>PHOTO_MAX&&writeFiles(files.slice(0,PHOTO_MAX))){normalizing=true;photos.dispatchEvent(new Event('change',{bubbles:true}));normalizing=false}
     renderPhotos();
   });
   galleryBtn.addEventListener('click',()=>photos.click());
   cameraBtn.addEventListener('click',()=>camera.click());
   camera.addEventListener('change',()=>{
-    const merged=[...photos.files,...camera.files].slice(0,5);
+    const merged=[...photos.files,...camera.files].slice(0,PHOTO_MAX);
     if(writeFiles(merged)){photos.dispatchEvent(new Event('change',{bubbles:true}))}
     camera.value='';
   });
