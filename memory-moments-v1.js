@@ -9,7 +9,7 @@ const dateOf=m=>String(m?.date||m?.createdAt||'').slice(0,10);
 const monthKey=m=>dateOf(m).slice(0,7),yearKey=m=>dateOf(m).slice(0,4);
 const provinceOf=m=>m?.geoHierarchy?.province||m?.geoHierarchy?.state||m?.region||'';
 const districtOf=m=>m?.geoHierarchy?.district||m?.geoHierarchy?.county||m?.geoHierarchy?.cityDistrict||m?.geoHierarchy?.city||'';
-const countryCode=m=>String(m?.countryCode||({japan:'JP',hongkong:'HK',thailand:'TH'}[m?.country])||(String(m?.country||'').length===2?String(m.country).toUpperCase():'')).toUpperCase();
+const countryCode=m=>String(m?.countryCode||({japan:'JP',hongkong:'HK',thailand:'TH',vietnam:'VN',vn:'VN'}[m?.country])||(String(m?.country||'').length===2?String(m.country).toUpperCase():'')).toUpperCase();
 const flag=cc=>String(cc||'').replace(/[A-Z]/g,x=>String.fromCodePoint(127397+x.charCodeAt()));
 function countryName(m){if(m?.countryNameTh)return m.countryNameTh;const cc=countryCode(m);try{return cc?new Intl.DisplayNames(['th','en'],{type:'region'}).of(cc):String(m?.country||'ไม่ระบุประเทศ')}catch{return String(m?.country||'ไม่ระบุประเทศ')}}
 const unique=a=>[...new Set(a.filter(Boolean))];
