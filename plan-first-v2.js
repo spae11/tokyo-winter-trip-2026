@@ -5,6 +5,7 @@ const BASE='/tokyo-winter-trip-2026/',API='https://travel-hub-api.mlrkdee44.work
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const path=location.pathname,isRoot=path===BASE||path===BASE+'index.html',isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'hongkong/');if(!isRoot&&!isPlan)return;
 document.body.classList.add('pfx-v2');
+if(isPlan&&!document.querySelector('script[data-plan-photo-memory]')){const s=document.createElement('script');s.src=BASE+'plan-photo-memory-v1.js?v=1';s.async=true;s.dataset.planPhotoMemory='1';document.head.appendChild(s)}
 function load(k,d={}){try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch{return d}}
 function scrollToTarget(sel){const el=$(sel);if(!el)return false;const sec=el.closest('.section');if(sec)sec.classList.add('pfx-extra-open');el.classList.add('pfx-extra-open');setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),30);return true}
 function simplifyDashboard(){const title=$('.pfx-dash-title'),sub=$('.pfx-dash-sub');if(title)title.textContent='ทริปของเรา';if(sub)sub.textContent='เปิดดูหรือแก้ไขแพลนร่วมกันได้ทันที • ส่วนเสริมอื่นซ่อนไว้ให้หน้าหลักไม่รก';const top=$('.pfx-dash-top');if(top&&!$('.pfx-live-dot',top)){const d=document.createElement('div');d.className='pfx-live-dot';d.textContent='Auto update';top.querySelector('div')?.appendChild(d)}const plan=$('#pfxBottomNav .pfx-navbtn:first-child');if(plan){plan.lastChild.nodeValue='Trips';plan.setAttribute('aria-label','Trips')}}
