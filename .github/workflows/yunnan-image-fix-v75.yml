@@ -1,0 +1,94 @@
+name: Yunnan Day Image Fix v75
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/yunnan-image-fix-v75.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Fix Yunnan day images and add safe fallback
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('yunnan/index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_css = ".dayhero{width:100%;height:190px;display:block;object-fit:cover;background:#e9e6df}"
+          new_css = ".daymedia{position:relative;overflow:hidden;background:linear-gradient(135deg,#e9e6df,#f5efe4)}.dayhero{width:100%;height:190px;display:block;object-fit:cover;background:#e9e6df}.photo-credit{position:absolute;right:8px;bottom:8px;z-index:2;max-width:calc(100% - 16px);padding:4px 7px;border-radius:999px;background:#111a;color:#fff;text-decoration:none;font-size:.58rem;font-weight:700;line-height:1.2;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}"
+          if new_css not in s:
+              if old_css not in s:
+                  raise SystemExit('dayhero css pattern not found')
+              s = s.replace(old_css, new_css, 1)
+
+          old_images = 'const dayImages=["https://www.jigsky.com/wp-content/uploads/2025/01/Kunming-Old-Street-.png","https://images.unsplash.com/photo-1537531383496-f4749b8032cf?auto=format&fit=crop&w=1400&q=82","https://dulichviet.com.vn/images/bandidau/pho-co-dai-ly-trung-quoc.jpg","https://gd-hbimg.huaban.com/a6c40b56294dac8ad6fde14cfbe54bb7135cf61deace4-EYaFm7_fw658","https://www.kunming.cn/en/upload/resources/image/2026/02/27/2055777_2048x2048.png","https://www.kunming.cn/en/upload/resources/image/2026/01/15/2033543_600x400.jpg"];'
+          new_images = '''const dayImages=[
+"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/%E6%98%86%E6%98%8E%E8%80%81%E8%A1%97-%E4%BA%91%E7%91%9E%E4%B8%9C%E8%B7%AF.jpg/960px-%E6%98%86%E6%98%8E%E8%80%81%E8%A1%97-%E4%BA%91%E7%91%9E%E4%B8%9C%E8%B7%AF.jpg",
+"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Stone_Forest%2C_Yunnan.jpg/960px-Stone_Forest%2C_Yunnan.jpg",
+"https://upload.wikimedia.org/wikipedia/commons/4/49/The_old_town_of_Dali.JPG",
+"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Lake_Erha%C3%AF.jpg/960px-Lake_Erha%C3%AF.jpg",
+"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/%E6%98%86%E6%98%8E%E6%BB%87%E6%B1%A0.jpg/960px-%E6%98%86%E6%98%8E%E6%BB%87%E6%B1%A0.jpg",
+"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/%E6%98%86%E6%98%8E%E8%80%81%E8%A1%97-%E6%96%87%E5%BA%99%E7%9B%B4%E8%A1%97.jpg/960px-%E6%98%86%E6%98%8E%E8%80%81%E8%A1%97-%E6%96%87%E5%BA%99%E7%9B%B4%E8%A1%97.jpg"
+];
+const dayCredits=[
+['瑞丽江的河水 · CC BY-SA 4.0','https://commons.wikimedia.org/wiki/File:昆明老街-云瑞东路.jpg'],
+['钉钉 · CC BY-SA 4.0','https://commons.wikimedia.org/wiki/File:Stone_Forest,_Yunnan.jpg'],
+['Inhorw · CC BY-SA 3.0','https://commons.wikimedia.org/wiki/File:The_old_town_of_Dali.JPG'],
+['Richard Weil · CC BY-SA 2.0','https://commons.wikimedia.org/wiki/File:Lake_Erhaï.jpg'],
+['Emit Chan · CC BY 2.5','https://commons.wikimedia.org/wiki/File:昆明滇池.jpg'],
+['瑞丽江的河水 · CC BY-SA 4.0','https://commons.wikimedia.org/wiki/File:昆明老街-文庙直街.jpg']
+];
+const dayFallback=label=>'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efe7d8"/><stop offset="1" stop-color="#dbe8df"/></linearGradient></defs><rect width="1200" height="500" fill="url(#g)"/><text x="60" y="220" font-size="72">🇨🇳</text><text x="60" y="315" font-family="system-ui,sans-serif" font-size="50" font-weight="700" fill="#1E2428">${label}</text></svg>`);'''
+          if new_images not in s:
+              if old_images not in s:
+                  raise SystemExit('dayImages pattern not found')
+              s = s.replace(old_images, new_images, 1)
+
+          old_render = 'el.innerHTML=`<img class="dayhero" src="${dayImages[i]}" alt="${d[0]}" loading="lazy"><button class="daybtn">'
+          new_render = 'el.innerHTML=`<div class="daymedia"><img class="dayhero" src="${dayImages[i]}" alt="${d[0]}" loading="lazy" decoding="async" referrerpolicy="no-referrer"><a class="photo-credit" href="${dayCredits[i][1]}" target="_blank" rel="noopener">📷 ${dayCredits[i][0]}</a></div><button class="daybtn">'
+          if new_render not in s:
+              if old_render not in s:
+                  raise SystemExit('day image render pattern not found')
+              s = s.replace(old_render, new_render, 1)
+
+          old_tail = "el.querySelector('.daybtn').onclick=()=>el.classList.toggle('open');box.appendChild(el)});"
+          new_tail = "const img=el.querySelector('.dayhero');img?.addEventListener('error',()=>{img.src=dayFallback(d[0])},{once:true});el.querySelector('.daybtn').onclick=()=>el.classList.toggle('open');box.appendChild(el)});"
+          if new_tail not in s:
+              if old_tail not in s:
+                  raise SystemExit('day render tail pattern not found')
+              s = s.replace(old_tail, new_tail, 1)
+
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('sw.js')
+          s = p.read_text(encoding='utf-8')
+          if "const CACHE='our-journey-v75';" not in s:
+              if "const CACHE='our-journey-v74';" not in s:
+                  raise SystemExit('unexpected service worker version')
+              s = s.replace("const CACHE='our-journey-v74';", "const CACHE='our-journey-v75';", 1)
+              s = s.replace('?v=74', '?v=75')
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('manifest.webmanifest?v=74', 'manifest.webmanifest?v=75')
+          s = s.replace('ourJourneySWReloadV74', 'ourJourneySWReloadV75')
+          s = s.replace("./sw.js?v=74", "./sw.js?v=75")
+          p.write_text(s, encoding='utf-8')
+      - name: Commit app changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add yunnan/index.html sw.js index.html
+          git diff --cached --check
+          git commit -m 'Fix Yunnan day image loading'
+          git push
