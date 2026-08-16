@@ -23,11 +23,12 @@ jobs:
         run: |
           python3 -m pip install --quiet pillow
           python3 <<'PY'
-          from PIL import Image
+          from PIL import Image, ImageFile
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
           src=Image.open('apple-touch-icon.png').convert('RGBA')
           for size in (180,192,512):
               out=src.resize((size,size),Image.Resampling.LANCZOS)
-              out.save(f'our-journey-icon-{size}-v2.png',optimize=True)
+              out.save(f'our-journey-icon-{size}-v2.png',format='PNG',optimize=True)
           PY
 
       - name: Remove legacy icon references and visible old branding
