@@ -98,7 +98,7 @@ let state=load();state.dates=Object.assign({tokyo:DATA.tokyo.start,hongkong:'',d
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast('พื้นที่บันทึกในเครื่องเต็ม • ลบรูปเก่าบางรูปก่อน')}}
 function currentTrip(){return DATA[state.selected]||DATA.tokyo}
 function maps(q){if(['yunnan','chongqing','harbin'].includes(state.selected))return'https://uri.amap.com/search?keyword='+encodeURIComponent(q)+'&view=map&src=ourjourney&callnative=1';return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
-function mapProvider(){return ['yunnan','chongqing'].includes(state.selected)?'Amap':'Google Maps'}
+function mapProvider(){return ['yunnan','chongqing','harbin'].includes(state.selected)?'Amap':'Google Maps'}
 function fmtMoney(n){return new Intl.NumberFormat('th-TH',{maximumFractionDigits:0}).format(Number(n)||0)}
 function localDate(tz,d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);const g=t=>p.find(x=>x.type===t)?.value;return`${g('year')}-${g('month')}-${g('day')}`}
 function localTime(tz,d=new Date()){return new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',hour12:false}).format(d)}
