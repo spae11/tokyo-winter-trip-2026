@@ -30,9 +30,10 @@ jobs:
           git show 3dfaae8b37bc4c1ac66ae74e5bea8cfc64022247:apple-touch-icon-v18.png > /tmp/journey-logo.png
           python - <<'PY'
           from pathlib import Path
-          from PIL import Image
+          from PIL import Image, ImageFile
           import json, re
 
+          ImageFile.LOAD_TRUNCATED_IMAGES=True
           root=Path('.')
           src=Image.open('/tmp/journey-logo.png').convert('RGBA')
           for size in (180,192,512):
