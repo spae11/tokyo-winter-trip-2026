@@ -68,39 +68,9 @@ jobs:
           test -n "$DB_ID"
           echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
 
-      - name: Check or create R2 media bucket
-        id: r2
-        shell: bash
-        run: |
-          set +e
-          LIST="$(wrangler r2 bucket list 2>&1)"
-          RC=$?
-          READY=false
-          if [ $RC -eq 0 ]; then
-            if echo "$LIST" | grep -q 'travel-hub-media'; then
-              READY=true
-            else
-              CREATE_LOG="$(wrangler r2 bucket create travel-hub-media 2>&1)"
-              CREATE_RC=$?
-              if [ $CREATE_RC -eq 0 ]; then
-                READY=true
-              else
-                echo "::warning::R2 create failed: $CREATE_LOG"
-              fi
-            fi
-          else
-            echo "::warning::R2 list failed: $LIST"
-          fi
-          echo "ready=$READY" >> "$GITHUB_OUTPUT"
-          if [ "$READY" != "true" ]; then
-            echo "::warning::R2 is not available to this deploy token. App data + recovery will deploy; media binding stays off."
-          fi
-          exit 0
-
       - name: Generate Wrangler config
         env:
           DB_ID: ${{ steps.d1.outputs.database_id }}
-          R2_READY: ${{ steps.r2.outputs.ready }}
         shell: bash
         run: |
           node <<'NODE'
@@ -110,9 +80,9 @@ jobs:
             main:'cloudflare/worker.js',
             compatibility_date:'2026-08-15',
             workers_dev:true,
-            d1_databases:[{binding:'DB',database_name:'travel-hub-db',database_id:process.env.DB_ID}]
+            d1_databases:[{binding:'DB',database_name:'travel-hub-db',database_id:process.env.DB_ID}],
+            r2_buckets:[{binding:'MEDIA',bucket_name:'travel-hub-media'}]
           };
-          if(process.env.R2_READY==='true') c.r2_buckets=[{binding:'MEDIA',bucket_name:'travel-hub-media'}];
           fs.writeFileSync('wrangler.generated.jsonc',JSON.stringify(c,null,2));
           NODE
 
@@ -143,18 +113,12 @@ jobs:
           curl --fail --silent --show-error https://travel-hub-api.mlrkdee44.workers.dev/health
 
       - name: Summary
-        env:
-          R2_READY: ${{ steps.r2.outputs.ready }}
         shell: bash
         run: |
           echo "### Cloudflare Travel Hub" >> "$GITHUB_STEP_SUMMARY"
           echo "- Worker: travel-hub-api" >> "$GITHUB_STEP_SUMMARY"
           echo "- D1 full app sync + Recovery: enabled" >> "$GITHUB_STEP_SUMMARY"
-          if [ "$R2_READY" = "true" ]; then
-            echo "- R2 photo/QR sync: enabled" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "- R2 photo/QR sync: unavailable to deploy token" >> "$GITHUB_STEP_SUMMARY"
-          fi
+          echo "- R2 photo/QR sync: bound directly to travel-hub-media" >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
             echo "- Google Photos OAuth: configured" >> "$GITHUB_STEP_SUMMARY"
           else
