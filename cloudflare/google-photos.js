@@ -99,7 +99,7 @@ async function photoBytesResponse(env,roomId,origin,localId){
 async function ensureDriveFolder(env,roomId,access){
   const row=await env.DB.prepare('SELECT folder_id FROM google_drive_folders WHERE room_id=?').bind(roomId).first();
   if(row?.folder_id)return row.folder_id;
-  const data=await googleJson('https://www.googleapis.com/drive/v3/files?fields=id,name',access,{method:'POST',body:{name:'Our Travel Hub Documents',mimeType:'application/vnd.google-apps.folder'}});
+  const data=await googleJson('https://www.googleapis.com/drive/v3/files?fields=id,name',access,{method:'POST',body:{name:'Our Journey Documents',mimeType:'application/vnd.google-apps.folder'}});
   if(!data?.id)throw Object.assign(new Error('drive_folder_create_failed'),{status:502});
   await env.DB.prepare(`INSERT INTO google_drive_folders(room_id,folder_id,updated_at) VALUES(?,?,CURRENT_TIMESTAMP) ON CONFLICT(room_id) DO UPDATE SET folder_id=excluded.folder_id,updated_at=CURRENT_TIMESTAMP`).bind(roomId,data.id).run();
   return data.id;
@@ -116,7 +116,7 @@ async function uploadDrivePdf(req,env,roomId,origin,url){
   const len=Number(req.headers.get('Content-Length')||0);if(len>30000000)return json({ok:false,error:'pdf_too_large'},413,origin);
   const bytes=await req.arrayBuffer();if(bytes.byteLength>30000000)return json({ok:false,error:'pdf_too_large'},413,origin);
   const access=await tokenForRoom(env,roomId),folderId=await ensureDriveFolder(env,roomId,access);
-  const boundary='travelhub_'+randomToken(12);const meta=JSON.stringify({name:filename,parents:[folderId],description:`Our Travel Hub${trip?' • '+trip:''}`});
+  const boundary='travelhub_'+randomToken(12);const meta=JSON.stringify({name:filename,parents:[folderId],description:`Our Journey${trip?' • '+trip:''}`});
   const body=new Blob([
     `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n`,
     `--${boundary}\r\nContent-Type: application/pdf\r\n\r\n`,

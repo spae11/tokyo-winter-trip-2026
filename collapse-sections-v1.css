@@ -1,4 +1,4 @@
-/* Collapsed-by-default sections for mobile-friendly Travel Hub */
+/* Collapsed-by-default sections for mobile-friendly Our Journey */
 .hub-collapse-toggle{border:1px solid #00000012;background:#fff;color:#1E2428;border-radius:999px;padding:8px 11px;font:900 12px/1 'Noto Sans Thai',system-ui,sans-serif;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;box-shadow:0 5px 16px #0000000b}
 .hub-collapse-toggle .chev{display:inline-block;transition:transform .28s cubic-bezier(.22,1,.36,1)}
 .hub-collapse-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
