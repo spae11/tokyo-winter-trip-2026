@@ -12,7 +12,7 @@ body.pfx-v2 .pfx-trip-actions{margin-top:14px}
 body.pfx-v2 .pfx-bottomnav{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:470px}
 body.pfx-v2 .pfx-bottomnav>.pfx-navbtn{display:flex!important}
 body.pfx-v2 .pfx-bottomnav>.pfx-navbtn:first-child span:after{content:''}
-body.pfx-root.pfx-v2 #pfxBottomNav{display:none!important}
+body.pfx-root.pfx-v2 #pfxBottomNav,body.pfx-root.pfx-v2 .bottomnav{display:none!important}
 body.pfx-root.pfx-v2{padding-bottom:22px!important}
 body.pfx-root.pfx-v2 .section.pfx-extra-section:not(.pfx-extra-open),body.pfx-root.pfx-v2 .pfx-extra-special:not(.pfx-extra-open){display:none!important}
 body.pfx-root.pfx-v2.pfx-show-all .section.pfx-extra-section,body.pfx-root.pfx-v2.pfx-show-all .pfx-extra-special{display:block!important}
