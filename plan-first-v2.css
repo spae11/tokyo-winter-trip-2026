@@ -1,6 +1,6 @@
 /* Plan First v2 — one navigation system, Trips first, legacy UI kept only as data source. */
 body.pfx-v2 #tt-launch{display:none!important}
-body.pfx-v2 .hub-back-btn,body.pfx-v2 .floatback,body.pfx-v2>.bottomnav{display:none!important}
+body.pfx-v2 .hub-back-btn,body.pfx-v2 .floatback,body.pfx-v2 .bottomnav{display:none!important}
 body.pfx-v2 .pfx-status-side{display:none!important}
 body.pfx-v2 .pfx-primary{grid-template-columns:minmax(0,1fr)!important;padding-top:0}
 body.pfx-v2 .pfx-dash-card{max-width:980px;margin-inline:auto}
@@ -12,7 +12,7 @@ body.pfx-v2 .pfx-bottomnav{grid-template-columns:repeat(4,minmax(0,1fr))!importa
 body.pfx-v2 .pfx-bottomnav>.pfx-navbtn{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-width:0}
 body.pfx-v2 #pfxBottomNav .pfx-navbtn.active{background:#343a3f;color:#fff}
 body.pfx-root.pfx-v2 #pfxBottomNav{display:grid!important}
-body.pfx-root.pfx-v2{padding-bottom:104px!important}
+body.pfx-root.pfx-v2{padding-bottom:calc(132px + env(safe-area-inset-bottom))!important}
 body.pfx-root.pfx-v2 .section.pfx-core-section{display:none!important}
 body.pfx-root.pfx-v2 .section.pfx-extra-section:not(.pfx-extra-open),body.pfx-root.pfx-v2 .pfx-extra-special:not(.pfx-extra-open){display:none!important}
 body.pfx-root.pfx-v2 .pfx-extra-open{display:block!important}
@@ -50,3 +50,8 @@ body.pfx-v2.pfx-page-leaving{opacity:0;transform:translateY(6px);filter:blur(2px
 
 @media(max-width:620px){body.pfx-v2 .pfx-dashboard{padding-top:12px!important}body.pfx-v2 .pfx-dash-top{padding:18px 16px 14px!important}body.pfx-v2 .pfx-dash-title{font-size:1.62rem!important;line-height:1.16!important}body.pfx-v2 .pfx-dash-sub{font-size:.78rem!important;line-height:1.45!important;margin-top:5px}body.pfx-v2 .pfx-primary{padding:14px!important}body.pfx-v2 .pfx-trip-main{padding:15px!important}body.pfx-root.pfx-v2 .pfx-trip-main:before{height:145px;border-radius:15px;margin-bottom:13px}body.pfx-v2 .pfx-trip-actions{display:grid!important;grid-template-columns:1fr 1fr!important}body.pfx-v2 .pfx-trip-actions .pfx-action.soft{grid-column:1/-1;width:max-content}body.pfx-v2 .pfx-bottomnav{width:calc(100% - 22px)!important;max-width:430px!important}.pfx-v2-more{padding:0}.pfx-v2-more-panel{border-radius:26px 26px 0 0;max-height:90vh}}
 @media(prefers-reduced-motion:reduce){body.pfx-v2 .pfx-navbtn,body.pfx-v2 .pfx-v2-item,body.pfx-v2 .pfx-focus,body.pfx-v2 .pfx-action,body.pfx-v2 .pfx-mini-btn,body.pfx-v2 .btn,body.pfx-v2 .pfx-v2-more,body.pfx-v2 .pfx-v2-more-panel,body.pfx-v2 .pfx-sheet,body.pfx-v2 .sheet,body.pfx-v2 .pfx-sheet-panel,body.pfx-v2 .sheet-panel{transition:none!important;animation:none!important}body.pfx-v2 .pfx-add-form.open,body.pfx-v2 .pfx-editing .pfx-day-editbar,body.pfx-v2 .pfx-editing .pfx-custom-tools,body.pfx-v2 .day.open .timeline .step{animation:none!important}}
+
+/* IPHONE_NAV_FIX_V64 */
+body.pfx-root.pfx-v2 .bottomnav{display:none!important}
+body.pfx-root.pfx-v2 #pfxBottomNav{bottom:max(10px,env(safe-area-inset-bottom))!important;background:#171b1ef8!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+@supports(padding:max(0px)){body.pfx-root.pfx-v2{padding-bottom:calc(132px + env(safe-area-inset-bottom))!important}}
