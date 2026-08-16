@@ -1,0 +1,43 @@
+name: One-time app icon cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/icon-cleanup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Build fresh Our Journey icons
+        shell: bash
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 <<'PY'
+          from PIL import Image
+          src=Image.open('apple-touch-icon.png').convert('RGBA')
+          for size in (180,192,512):
+              out=src.resize((size,size),Image.Resampling.LANCZOS)
+              out.save(f'our-journey-icon-{size}-v2.png',optimize=True)
+          PY
+
+      - name: Remove legacy icon references and visible old branding
+        run: node .github/scripts/icon-cleanup.mjs
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Remove legacy app icons and refresh Our Journey branding"
+          git push origin HEAD:main
