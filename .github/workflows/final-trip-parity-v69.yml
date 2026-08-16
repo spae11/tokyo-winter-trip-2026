@@ -1,0 +1,67 @@
+name: Final Trip Parity v69
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/final-trip-parity-v69.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Fix trip picker and native map provider
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def patch(path, pairs):
+              p=Path(path); s=p.read_text(encoding='utf-8'); original=s
+              for old,new in pairs:
+                  if old not in s:
+                      print('MISS',path,old[:80])
+                  s=s.replace(old,new)
+              if s!=original:
+                  p.write_text(s,encoding='utf-8');print('UPDATED',path)
+              else: print('UNCHANGED',path)
+
+          patch('trip-tools-v1.js',[
+            ("function tripPicker(){return`<div class=\"tt-trip-pick\"><button data-pick=\"tokyo\" class=\"${state.selected==='tokyo'?'on':''}\">🇯🇵 Tokyo</button><button data-pick=\"hongkong\" class=\"${state.selected==='hongkong'?'on':''}\">🇭🇰 Hong Kong</button></div>`}",
+             "function tripPicker(){return`<div class=\"tt-trip-pick\"><button data-pick=\"tokyo\" class=\"${state.selected==='tokyo'?'on':''}\">🇯🇵 Tokyo</button><button data-pick=\"hongkong\" class=\"${state.selected==='hongkong'?'on':''}\">🇭🇰 Hong Kong</button><button data-pick=\"danang\" class=\"${state.selected==='danang'?'on':''}\">🇻🇳 Da Nang</button><button data-pick=\"yunnan\" class=\"${state.selected==='yunnan'?'on':''}\">🇨🇳 Yunnan</button></div>`}"),
+            ("function maps(q){if(state.selected==='yunnan')return'https://uri.amap.com/search?keyword='+encodeURIComponent(q)+'&view=map&src=ourjourney&callnative=1';return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}",
+             "function maps(q){if(state.selected==='yunnan')return'https://uri.amap.com/search?keyword='+encodeURIComponent(q)+'&view=map&src=ourjourney&callnative=1';return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}\nfunction mapProvider(){return state.selected==='yunnan'?'Amap':'Google Maps'}"),
+            ("<a target=\"_blank\" href=\"${maps(x[1])}\">📍 Google Maps</a>","<a target=\"_blank\" href=\"${maps(x[1])}\">📍 ${mapProvider()}</a>"),
+            ("<br><a target=\"_blank\" href=\"${maps(x[1])}\">เปิด Google Maps</a>","<br><a target=\"_blank\" href=\"${maps(x[1])}\">เปิด ${mapProvider()}</a>"),
+            ("แผนที่ออนไลน์โหลดไม่ได้ • ใช้ปุ่ม Google Maps ด้านล่างได้","แผนที่ออนไลน์โหลดไม่ได้ • ใช้ปุ่ม ${mapProvider()} ด้านล่างได้")
+          ])
+
+          patch('plan-first-v2.js',[
+            ("isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'hongkong/')||path.startsWith(BASE+'danang/');","isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'hongkong/')||path.startsWith(BASE+'danang/')||path.startsWith(BASE+'yunnan/');"),
+            ("plan-photo-memory-v1.js?v=57","plan-photo-memory-v1.js?v=69"),
+            ("memory-delete-everywhere-v1.js?v=57","memory-delete-everywhere-v1.js?v=69")
+          ])
+
+          patch('sw.js',[("const CACHE='our-journey-v68'","const CACHE='our-journey-v69'"),("?v=68","?v=69")])
+          patch('index.html',[("ourJourneySWReloadV68","ourJourneySWReloadV69"),("sw.js?v=68","sw.js?v=69")])
+          PY
+      - name: Verify critical parity
+        run: |
+          grep -q 'data-pick="danang"' trip-tools-v1.js
+          grep -q 'data-pick="yunnan"' trip-tools-v1.js
+          grep -q "state.selected==='yunnan'?'Amap':'Google Maps'" trip-tools-v1.js
+          grep -q "path.startsWith(BASE+'yunnan/')" plan-first-v2.js
+          grep -q "our-journey-v69" sw.js
+          grep -q "ourJourneySWReloadV69" index.html
+      - name: Commit
+        run: |
+          rm -f .github/workflows/final-trip-parity-v69.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Finish four-trip parity and native China map routing'
+          git push
