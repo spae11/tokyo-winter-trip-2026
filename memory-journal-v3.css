@@ -28,7 +28,7 @@
 @media(prefers-reduced-motion:reduce){.mj-view,.mj-detail-panel{animation:none!important}}
 
 /* trip combo v71 */
-.mj-trip-pills{display:none!important}.mj-trip-combo{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;min-width:min(330px,100%);padding:7px 9px;border:1px solid var(--line);border-radius:16px;background:#fff}.mj-trip-combo span{font-size:.7rem;font-weight:900;color:var(--muted)}#mjTripSelect{width:100%;min-width:0;border:0;border-radius:12px;background:var(--cream);color:var(--dark);padding:9px 34px 9px 10px;font:900 .8rem 'Noto Sans Thai',system-ui,sans-serif;outline:none}@media(max-width:420px){.mj-trip-combo{width:100%;min-width:0}}
+.mj-trip-pills{display:none!important}.mj-trip-combo{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;min-width:min(330px,100%);padding:7px 9px;border:1px solid var(--line);border-radius:16px;background:#fff}.mj-trip-combo span{font-size:.7rem;font-weight:900;color:var(--muted)}#mjTripSelect,#mjCountrySelect{width:100%;min-width:0;border:0;border-radius:12px;background:var(--cream);color:var(--dark);padding:9px 34px 9px 10px;font:900 .8rem 'Noto Sans Thai',system-ui,sans-serif;outline:none}@media(max-width:420px){.mj-trip-combo{width:100%;min-width:0}}
 
 /* country-first picker v73 */
 .mj-country-trip-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;flex:1 1 560px;max-width:650px}.mj-country-trip-picker .mj-trip-combo{min-width:0;width:100%}.mj-country-trip-picker [hidden]{display:none!important}@media(max-width:560px){.mj-country-trip-picker{grid-template-columns:1fr;flex-basis:100%;max-width:none}}
