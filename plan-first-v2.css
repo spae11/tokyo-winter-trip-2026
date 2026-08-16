@@ -10,10 +10,18 @@ body.pfx-v2 .pfx-primary{padding-top:0}
 body.pfx-v2 .pfx-trip-main{min-height:0}
 body.pfx-v2 .pfx-trip-actions{margin-top:14px}
 body.pfx-v2 .pfx-bottomnav{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:470px}
-body.pfx-v2 .pfx-bottomnav>.pfx-navbtn{display:flex!important}
+body.pfx-v2 .pfx-bottomnav>.pfx-navbtn{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
 body.pfx-v2 .pfx-bottomnav>.pfx-navbtn:first-child span:after{content:''}
-body.pfx-root.pfx-v2 #pfxBottomNav,body.pfx-root.pfx-v2 .bottomnav{display:none!important}
-body.pfx-root.pfx-v2{padding-bottom:22px!important}
+/* Root: keep only the new bottom navigation; legacy floating nav stays hidden. */
+body.pfx-root.pfx-v2 #pfxBottomNav{display:grid!important}
+body.pfx-root.pfx-v2 .bottomnav{display:none!important}
+body.pfx-root.pfx-v2{padding-bottom:102px!important}
+/* Trip cards must remain in normal document flow. This prevents the inner-scroll/clipped-card bug on mobile. */
+body.pfx-root.pfx-v2 .pfx-core-section,
+body.pfx-root.pfx-v2 .pfx-core-section>.wrap,
+body.pfx-root.pfx-v2 .pfx-core-section .trip-list{height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;contain:none!important;transform:none!important;opacity:1!important}
+body.pfx-root.pfx-v2 .pfx-core-section .trip-list{align-items:stretch!important;scroll-behavior:auto!important}
+body.pfx-root.pfx-v2 .pfx-core-section .trip-card{height:auto!important;max-height:none!important;min-height:0!important;transform:none!important;opacity:1!important}
 body.pfx-root.pfx-v2 .section.pfx-extra-section:not(.pfx-extra-open),body.pfx-root.pfx-v2 .pfx-extra-special:not(.pfx-extra-open){display:none!important}
 body.pfx-root.pfx-v2.pfx-show-all .section.pfx-extra-section,body.pfx-root.pfx-v2.pfx-show-all .pfx-extra-special{display:block!important}
 body.pfx-root.pfx-v2 .section.pfx-core-section{display:block!important}
@@ -26,4 +34,4 @@ body.pfx-root.pfx-v2 .section.pfx-core-section{display:block!important}
 .pfx-v2-extra-banner{display:none;align-items:center;justify-content:space-between;gap:10px;margin:10px auto 0;width:min(980px,calc(100% - 22px));padding:10px 12px;border-radius:14px;background:#fff6e8;border:1px solid #ead7b9;font-size:.73rem;font-weight:800}.pfx-show-all .pfx-v2-extra-banner{display:flex}.pfx-v2-extra-banner button{border:0;border-radius:999px;background:#1e2428;color:#fff;padding:7px 10px;font:800 .7rem inherit}
 .pfx-live-dot{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;color:#1f8b4c;font-weight:900}.pfx-live-dot:before{content:'';width:7px;height:7px;border-radius:50%;background:#2bbd68;box-shadow:0 0 0 4px #2bbd6818}
 body.pfx-v2 #pfxBottomNav .pfx-navbtn.active{background:#343a3f;color:#fff}
-@media(max-width:620px){body.pfx-v2 .pfx-dashboard{padding-top:12px!important}body.pfx-v2 .pfx-dash-top{padding:18px 16px 14px!important}body.pfx-v2 .pfx-dash-title{font-size:1.62rem!important;line-height:1.16!important}body.pfx-v2 .pfx-dash-sub{font-size:.78rem!important;line-height:1.45!important;margin-top:5px}body.pfx-v2 .pfx-primary{padding:14px!important}body.pfx-v2 .pfx-trip-main{padding:15px!important}body.pfx-v2 .pfx-trip-actions{display:grid!important;grid-template-columns:1fr 1fr!important}body.pfx-v2 .pfx-trip-actions .pfx-action.soft{grid-column:1/-1;width:max-content}body.pfx-v2 .pfx-bottomnav{width:calc(100% - 22px)!important;max-width:430px!important}.pfx-feature-tabs{width:calc(100% - 22px);margin-top:9px;margin-bottom:11px}.pfx-feature-tabs button{padding:8px 11px;font-size:.7rem}.pfx-v2-more{padding:0}.pfx-v2-more-panel{border-radius:26px 26px 0 0;max-height:90vh}.pfx-v2-extra-banner{width:calc(100% - 22px)}}
+@media(max-width:620px){body.pfx-v2 .pfx-dashboard{padding-top:12px!important}body.pfx-v2 .pfx-dash-top{padding:18px 16px 14px!important}body.pfx-v2 .pfx-dash-title{font-size:1.62rem!important;line-height:1.16!important}body.pfx-v2 .pfx-dash-sub{font-size:.78rem!important;line-height:1.45!important;margin-top:5px}body.pfx-v2 .pfx-primary{padding:14px!important}body.pfx-v2 .pfx-trip-main{padding:15px!important}body.pfx-v2 .pfx-trip-actions{display:grid!important;grid-template-columns:1fr 1fr!important}body.pfx-v2 .pfx-trip-actions .pfx-action.soft{grid-column:1/-1;width:max-content}body.pfx-v2 .pfx-bottomnav{width:calc(100% - 22px)!important;max-width:430px!important}.pfx-feature-tabs{width:calc(100% - 22px);margin-top:9px;margin-bottom:11px}.pfx-feature-tabs button{padding:8px 11px;font-size:.7rem}.pfx-v2-more{padding:0}.pfx-v2-more-panel{border-radius:26px 26px 0 0;max-height:90vh}.pfx-v2-extra-banner{width:calc(100% - 22px)}body.pfx-root.pfx-v2 .pfx-core-section .trip-list{grid-template-columns:1fr!important;gap:12px!important}}
