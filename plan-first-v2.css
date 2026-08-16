@@ -25,4 +25,28 @@ body.pfx-root.pfx-v2:has(.pfx-focus[data-pfx-focus="hongkong"].on) .pfx-trip-mai
 .pfx-live-dot{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;color:#56d68b;font-weight:900;margin-top:5px}.pfx-live-dot:before{content:'';width:7px;height:7px;border-radius:50%;background:#2bbd68;box-shadow:0 0 0 4px #2bbd6818}
 body.pfx-plan .pfx-planbar{z-index:120!important}body.pfx-plan #pfxBottomNav{z-index:9990!important}body.pfx-plan main{overflow:visible!important}body.pfx-plan .day{overflow:visible!important}body.pfx-plan .day .body{max-width:100%!important}body.pfx-plan .day.open .body{overflow:visible!important}
 #memorySheet .mm-field~.mm-field{display:none!important}
+
+/* Motion layer — fades tab content and every common open/close surface. */
+body.pfx-v2 .pfx-navbtn{transition:background-color .22s ease,color .22s ease,opacity .22s ease,transform .18s ease!important}
+body.pfx-v2 #pfxBottomNav .pfx-navbtn.active span{animation:pfxNavPop .3s cubic-bezier(.22,1,.36,1)}
+body.pfx-v2 .pfx-v2-item,body.pfx-v2 .pfx-focus,body.pfx-v2 .pfx-action,body.pfx-v2 .pfx-mini-btn,body.pfx-v2 .btn{transition:opacity .2s ease,transform .2s cubic-bezier(.22,1,.36,1),background-color .2s ease,border-color .2s ease,color .2s ease}
+body.pfx-v2 .pfx-v2-item:active,body.pfx-v2 .pfx-action:active,body.pfx-v2 .pfx-mini-btn:active{transform:scale(.985);opacity:.82}
+
+body.pfx-v2 .pfx-v2-more{display:flex;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s linear .24s}
+body.pfx-v2 .pfx-v2-more.open{display:flex;opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+body.pfx-v2 .pfx-v2-more-panel{opacity:0;transform:translateY(22px) scale(.99);transition:opacity .24s ease,transform .32s cubic-bezier(.22,1,.36,1)}
+body.pfx-v2 .pfx-v2-more.open .pfx-v2-more-panel{opacity:1;transform:none}
+
+body.pfx-v2 .pfx-sheet,body.pfx-v2 .sheet{display:flex!important;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s linear .24s}
+body.pfx-v2 .pfx-sheet.open,body.pfx-v2 .sheet.open{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+body.pfx-v2 .pfx-sheet-panel,body.pfx-v2 .sheet-panel{animation:none!important;opacity:0;transform:translateY(22px) scale(.99);transition:opacity .24s ease,transform .32s cubic-bezier(.22,1,.36,1)}
+body.pfx-v2 .pfx-sheet.open .pfx-sheet-panel,body.pfx-v2 .sheet.open .sheet-panel{opacity:1;transform:none}
+
+body.pfx-v2 .pfx-add-form.open,body.pfx-v2 .pfx-editing .pfx-day-editbar,body.pfx-v2 .pfx-editing .pfx-custom-tools{animation:pfxSoftIn .28s cubic-bezier(.22,1,.36,1)}
+body.pfx-v2 .day.open .timeline .step{animation:pfxSoftIn .26s cubic-bezier(.22,1,.36,1)}
+body.pfx-v2.pfx-page-leaving{opacity:0;transform:translateY(6px);filter:blur(2px);transition:opacity .2s ease,transform .22s ease,filter .2s ease}
+@keyframes pfxSoftIn{from{opacity:0;transform:translateY(8px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@keyframes pfxNavPop{0%{transform:scale(.9);opacity:.55}100%{transform:scale(1);opacity:1}}
+
 @media(max-width:620px){body.pfx-v2 .pfx-dashboard{padding-top:12px!important}body.pfx-v2 .pfx-dash-top{padding:18px 16px 14px!important}body.pfx-v2 .pfx-dash-title{font-size:1.62rem!important;line-height:1.16!important}body.pfx-v2 .pfx-dash-sub{font-size:.78rem!important;line-height:1.45!important;margin-top:5px}body.pfx-v2 .pfx-primary{padding:14px!important}body.pfx-v2 .pfx-trip-main{padding:15px!important}body.pfx-root.pfx-v2 .pfx-trip-main:before{height:145px;border-radius:15px;margin-bottom:13px}body.pfx-v2 .pfx-trip-actions{display:grid!important;grid-template-columns:1fr 1fr!important}body.pfx-v2 .pfx-trip-actions .pfx-action.soft{grid-column:1/-1;width:max-content}body.pfx-v2 .pfx-bottomnav{width:calc(100% - 22px)!important;max-width:430px!important}.pfx-v2-more{padding:0}.pfx-v2-more-panel{border-radius:26px 26px 0 0;max-height:90vh}}
+@media(prefers-reduced-motion:reduce){body.pfx-v2 .pfx-navbtn,body.pfx-v2 .pfx-v2-item,body.pfx-v2 .pfx-focus,body.pfx-v2 .pfx-action,body.pfx-v2 .pfx-mini-btn,body.pfx-v2 .btn,body.pfx-v2 .pfx-v2-more,body.pfx-v2 .pfx-v2-more-panel,body.pfx-v2 .pfx-sheet,body.pfx-v2 .sheet,body.pfx-v2 .pfx-sheet-panel,body.pfx-v2 .sheet-panel{transition:none!important;animation:none!important}body.pfx-v2 .pfx-add-form.open,body.pfx-v2 .pfx-editing .pfx-day-editbar,body.pfx-v2 .pfx-editing .pfx-custom-tools,body.pfx-v2 .day.open .timeline .step{animation:none!important}}
