@@ -80,13 +80,20 @@ jobs:
             if echo "$LIST" | grep -q 'travel-hub-media'; then
               READY=true
             else
-              wrangler r2 bucket create travel-hub-media >/tmp/r2-create.log 2>&1
-              if [ $? -eq 0 ]; then READY=true; fi
+              CREATE_LOG="$(wrangler r2 bucket create travel-hub-media 2>&1)"
+              CREATE_RC=$?
+              if [ $CREATE_RC -eq 0 ]; then
+                READY=true
+              else
+                echo "::warning::R2 create failed: $CREATE_LOG"
+              fi
             fi
+          else
+            echo "::warning::R2 list failed: $LIST"
           fi
           echo "ready=$READY" >> "$GITHUB_OUTPUT"
           if [ "$READY" != "true" ]; then
-            echo "::warning::R2 permission is missing. App data + recovery will deploy now; photo/QR sync will enable after the API token gets Workers R2 Storage Write permission."
+            echo "::warning::R2 is not available to this deploy token. App data + recovery will deploy; media binding stays off."
           fi
           exit 0
 
@@ -146,7 +153,7 @@ jobs:
           if [ "$R2_READY" = "true" ]; then
             echo "- R2 photo/QR sync: enabled" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "- R2 photo/QR sync: waiting for Workers R2 Storage Write permission" >> "$GITHUB_STEP_SUMMARY"
+            echo "- R2 photo/QR sync: unavailable to deploy token" >> "$GITHUB_STEP_SUMMARY"
           fi
           if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
             echo "- Google Photos OAuth: configured" >> "$GITHUB_STEP_SUMMARY"
