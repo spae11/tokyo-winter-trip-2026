@@ -1,0 +1,56 @@
+name: Memory Picker UI v74
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/memory-picker-ui-v74.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Match country selector styling to city selector
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def patch(path, old, new):
+              p = Path(path)
+              s = p.read_text(encoding='utf-8')
+              if new in s:
+                  return
+              if old not in s:
+                  raise SystemExit(f'missing pattern in {path}: {old}')
+              p.write_text(s.replace(old, new), encoding='utf-8')
+
+          patch('memory-journal-v3.css', '#mjTripSelect{', '#mjTripSelect,#mjCountrySelect{')
+
+          p = Path('sw.js')
+          s = p.read_text(encoding='utf-8')
+          if "const CACHE='our-journey-v74';" not in s:
+              if "const CACHE='our-journey-v73';" not in s:
+                  raise SystemExit('unexpected service worker cache version')
+              s = s.replace("const CACHE='our-journey-v73';", "const CACHE='our-journey-v74';", 1)
+              s = s.replace('?v=73', '?v=74')
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('manifest.webmanifest?v=73', 'manifest.webmanifest?v=74')
+          s = s.replace("ourJourneySWReloadV73", "ourJourneySWReloadV74")
+          s = s.replace("./sw.js?v=73", "./sw.js?v=74")
+          p.write_text(s, encoding='utf-8')
+      - name: Commit app changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add memory-journal-v3.css sw.js index.html
+          git diff --cached --check
+          git commit -m 'Match country and trip picker UI'
+          git push
