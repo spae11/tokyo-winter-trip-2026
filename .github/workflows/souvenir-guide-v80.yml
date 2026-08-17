@@ -19,6 +19,8 @@ jobs:
           fetch-depth: 0
       - name: Apply souvenir guide
         run: python3 scripts/souvenir_patch_v80.py
+      - name: Validate JavaScript
+        run: node --check plan-extras-v1.js
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
