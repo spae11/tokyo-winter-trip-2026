@@ -7,7 +7,7 @@ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelect
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const DATA={
- tokyo:{name:'Tokyo Winter Trip',emoji:'🇯🇵',city:'Tokyo',country:'Japan',tz:'Asia/Tokyo',currency:'JPY',budget:65000,start:'2026-12-05',center:[35.6812,139.7671],zoom:10,
+ tokyo:{name:'Tokyo Winter Trip',emoji:'🇯🇵',city:'Tokyo',country:'Japan',tz:'Asia/Tokyo',currency:'JPY',budget:85000,start:'2026-12-05',center:[35.6812,139.7671],zoom:10,
   days:[
    {title:'Welcome to Tokyo',items:[['หลังออกสนามบิน','Airport → Asakusa','Asakusa Station Tokyo'],['18:30','Senso-ji • Nakamise','Senso-ji Temple Tokyo'],['20:00','Halal dinner Asakusa','Asakusa Tokyo']]},
    {title:'Tokyo Disneyland 🎢',items:[['06:45','ออกจากโรงแรม','APA Hotel Asakusa Tawaramachi-Ekimae'],['07:50','Maihama Station','Maihama Station'],['09:00','Tokyo Disneyland','Tokyo Disneyland'],['12:00','เครื่องเล่น Must Ride','Tokyo Disneyland'],['18:00','Parade / Castle / Night','Cinderella Castle Tokyo Disneyland'],['21:00','กลับ Asakusa','APA Hotel Asakusa Tawaramachi-Ekimae']]},
@@ -21,7 +21,7 @@ const DATA={
   ],
   muslim:[['🕌 Tokyo Camii','Tokyo Camii & Turkish Culture Center','Prayer + mosque'],['🍛 Halal Asakusa','halal restaurant Asakusa Tokyo','ค้นร้านฮาลาลใกล้โรงแรม'],['🍜 Halal Ueno','halal restaurant Ueno Tokyo','ค้นร้านฮาลาลใกล้ Ueno'],['🍽️ Halal Shibuya','halal restaurant Shibuya Tokyo','ค้นร้านฮาลาลใกล้ Shibuya']]
  },
- hongkong:{name:'Hong Kong 6D5N',emoji:'🇭🇰',city:'Hong Kong',country:'Hong Kong',tz:'Asia/Hong_Kong',currency:'HKD',budget:55000,start:'',center:[22.3005,114.1694],zoom:11,
+ hongkong:{name:'Hong Kong 6D5N',emoji:'🇭🇰',city:'Hong Kong',country:'Hong Kong',tz:'Asia/Hong_Kong',currency:'HKD',budget:70000,start:'',center:[22.3005,114.1694],zoom:11,
   days:[
    {title:'Arrival • Tsim Sha Tsui • Harbour',items:[['10:00','Hong Kong International Airport','Hong Kong International Airport'],['11:30','Airport → Hotel','Holiday Inn Golden Mile Hong Kong'],['16:00','Kowloon Mosque','Kowloon Mosque Hong Kong'],['18:00','Avenue of Stars','Avenue of Stars Hong Kong'],['20:00','Halal dinner','Tsim Sha Tsui Hong Kong']]},
    {title:'Hong Kong Disneyland 🎢',items:[['07:30','Breakfast','Holiday Inn Golden Mile Hong Kong'],['08:15','TST → Disneyland','Disneyland Resort Station Hong Kong'],['10:00','Main Street + Castle','Hong Kong Disneyland'],['12:30','Lunch / Prayer break','Hong Kong Disneyland'],['14:00','World of Frozen + Toy Story Land','Hong Kong Disneyland'],['20:00','Momentous / Night Show','Hong Kong Disneyland']]},
@@ -37,7 +37,7 @@ const DATA={
  }
 };
 
-DATA.danang={name:'Da Nang + Hoi An 6D5N',emoji:'🇻🇳',city:'Da Nang',country:'Vietnam',tz:'Asia/Ho_Chi_Minh',currency:'VND',budget:45000,start:'',center:[16.0544,108.2022],zoom:10,
+DATA.danang={name:'Da Nang + Hoi An 6D5N',emoji:'🇻🇳',city:'Da Nang',country:'Vietnam',tz:'Asia/Ho_Chi_Minh',currency:'VND',budget:50000,start:'',center:[16.0544,108.2022],zoom:10,
  days:[
   {title:'Arrival • My Khe • Dragon Bridge',items:[['หลังถึง DAD','Da Nang International Airport','Da Nang International Airport'],['14:00','HAIAN Beach Hotel & Spa','HAIAN Beach Hotel & Spa Da Nang'],['16:30','My Khe Beach','My Khe Beach Da Nang'],['18:30','Belanga Bay Halal Restaurant','Belanga Bay Restaurant Da Nang'],['20:00','Dragon Bridge','Dragon Bridge Da Nang']]},
   {title:'Ba Na Hills • Golden Bridge',items:[['07:00','ออกจากโรงแรม','HAIAN Beach Hotel & Spa Da Nang'],['08:30','Sun World Ba Na Hills','Sun World Ba Na Hills'],['09:15','Golden Bridge','Golden Bridge Ba Na Hills'],['11:00','French Village','French Village Ba Na Hills'],['17:30','กลับ Da Nang','HAIAN Beach Hotel & Spa Da Nang']]},
@@ -49,7 +49,19 @@ DATA.danang={name:'Da Nang + Hoi An 6D5N',emoji:'🇻🇳',city:'Da Nang',countr
  places:[['🏨','HAIAN Beach Hotel & Spa',16.0538,108.2457,'hotel'],['🌊','My Khe Beach',16.0611,108.246,'sight'],['🌉','Dragon Bridge',16.0612,108.2279,'sight'],['🌉','Golden Bridge / Ba Na Hills',15.995,107.996,'sight'],['⛰️','Marble Mountains',16.0036,108.264,'sight'],['🏮','Hoi An Ancient Town',15.8801,108.338,'sight'],['🛶','Bay Mau Coconut Forest',15.881,108.38,'sight'],['🌿','Son Tra Peninsula',16.119,108.277,'sight'],['✈️','Da Nang International Airport',16.0439,108.1993,'station']],
  muslim:[['🍽️ Belanga Bay','Belanga Bay Restaurant Da Nang','Halal • Da Nang'],['🍽️ Maxim Halal Hoi An','Maxim Halal Restaurant Hoi An','เช็กเวลาเปิดวันจริง'],['🍛 Baba’s Kitchen Hoi An','Babas Kitchen Hoi An','เช็กสถานะฮาลาล/เมนูก่อนสั่ง']]
 };
-DATA.yunnan={name:'Yunnan • Kunming + Dali 6D5N',emoji:'🇨🇳',city:'Kunming / Dali',country:'China',tz:'Asia/Shanghai',currency:'CNY',budget:48000,start:'',center:[25.04,102.71],zoom:7,
+DATA.kansai={name:'Osaka + Kyoto + Nara + Kobe 6D5N',emoji:'🇯🇵',city:'Osaka / Kyoto / Nara / Kobe',country:'Japan',tz:'Asia/Tokyo',currency:'JPY',budget:90000,start:'',center:[34.6937,135.5023],zoom:8,
+ days:[
+  {title:'Arrival • Namba • Dotonbori',items:[['หลังถึง KIX','Kansai International Airport','Kansai International Airport'],['15:30','Namba / Hotel','Namba Osaka'],['17:00','Shinsaibashi','Shinsaibashi Osaka'],['19:00','Dotonbori','Dotonbori Osaka']]},
+  {title:'Kyoto East • Fushimi Inari • Kiyomizu • Gion',items:[['07:00','Osaka → Kyoto','Kyoto Station'],['08:00','Fushimi Inari Taisha','Fushimi Inari Taisha Kyoto'],['11:30','Kiyomizu-dera / Sannenzaka','Kiyomizu-dera Kyoto'],['16:00','Gion / Yasaka','Gion Kyoto']]},
+  {title:'Kyoto West • Arashiyama • Kinkaku-ji',items:[['07:30','Osaka → Arashiyama','Arashiyama Kyoto'],['09:00','Arashiyama Bamboo Grove','Arashiyama Bamboo Grove Kyoto'],['10:30','Togetsukyo Bridge','Togetsukyo Bridge Kyoto'],['14:00','Kinkaku-ji','Kinkaku-ji Kyoto']]},
+  {title:'Nara • Deer Park • Todai-ji',items:[['08:00','Osaka → Nara','Kintetsu Nara Station'],['09:30','Nara Park','Nara Park'],['11:00','Todai-ji','Todai-ji Nara'],['14:00','Kasuga Taisha / Naramachi','Kasuga Taisha Nara']]},
+  {title:'Kobe • Harborland • Kitano',items:[['09:00','Osaka → Kobe','Sannomiya Station Kobe'],['10:30','Kitano / Nunobiki','Kitano Ijinkan Kobe'],['14:00','Kobe Harborland','Kobe Harborland'],['17:30','Meriken Park','Meriken Park Kobe']]},
+  {title:'Osaka Castle • Kuromon • Airport',items:[['08:30','Check-out / ฝากกระเป๋า','Namba Osaka'],['09:30','Osaka Castle','Osaka Castle'],['12:00','Kuromon / Namba','Kuromon Ichiba Market'],['ก่อนบิน 4 ชม.','Kansai International Airport','Kansai International Airport']]}
+ ],
+ places:[['🏯','Osaka Castle',34.6873,135.5262,'sight'],['🌃','Dotonbori',34.6687,135.5013,'sight'],['⛩️','Fushimi Inari Taisha',34.9671,135.7727,'sight'],['🎋','Arashiyama',35.0094,135.6668,'sight'],['🦌','Nara Park',34.6850,135.8430,'sight'],['🌊','Kobe Harborland',34.6796,135.1850,'sight'],['✈️','Kansai International Airport',34.4347,135.2440,'station']],
+ muslim:[['🍽️ Halal Osaka','halal restaurant Namba Osaka','ค้นร้านฮาลาลใกล้ Namba / Shinsaibashi'],['🕌 Osaka mosque search','mosque Osaka Japan','เซฟจุดละหมาดตาม Route'],['🍜 Halal Kyoto','halal restaurant Kyoto','ค้นร้านฮาลาลใกล้ Kyoto Station / Gion'],['🥪 Nara / Kobe backup','halal restaurant Nara Kobe Japan','เช็กเวลาเปิดและพก snack สำรอง']]
+};
+DATA.yunnan={name:'Yunnan • Kunming + Dali 6D5N',emoji:'🇨🇳',city:'Kunming / Dali',country:'China',tz:'Asia/Shanghai',currency:'CNY',budget:52000,start:'',center:[25.04,102.71],zoom:7,
  days:[
   {title:'Arrival • Kunming Old Street',items:[['หลังถึง KMG','Kunming Changshui International Airport','昆明长水国际机场'],['15:00','Kunming Old Street','昆明老街'],['16:30','Shuncheng Mosque','顺城清真寺'],['18:30','Nanping Street','南屏步行街']]},
   {title:'Stone Forest Day Trip',items:[['07:30','ออกจาก Kunming','昆明市'],['09:30','Stone Forest Scenic Area','石林风景区'],['16:30','กลับ Kunming','昆明市'],['18:30','Muslim dinner','顺城街清真美食']]},
@@ -62,7 +74,7 @@ DATA.yunnan={name:'Yunnan • Kunming + Dali 6D5N',emoji:'🇨🇳',city:'Kunmin
  muslim:[['🕌 Shuncheng Mosque','顺城清真寺','Prayer • Kunming'],['🍜 Shuncheng Muslim food','顺城街清真美食','Kunming halal area'],['🍽️ Dali halal search','大理清真餐厅','ใช้ Amap หา 清真 / halal ใกล้ Location']]
 };
 
-DATA.chongqing={name:'Chongqing + Wulong 6D5N',emoji:'🇨🇳',city:'Chongqing / Wulong',country:'China',tz:'Asia/Shanghai',currency:'CNY',budget:50000,start:'',center:[29.563,106.551],zoom:9,
+DATA.chongqing={name:'Chongqing + Wulong 6D5N',emoji:'🇨🇳',city:'Chongqing / Wulong',country:'China',tz:'Asia/Shanghai',currency:'CNY',budget:60000,start:'',center:[29.563,106.551],zoom:9,
  days:[
   {title:'Arrival • Jiefangbei • Hongya Cave',items:[['หลังถึง CKG','Chongqing Jiangbei International Airport','重庆江北国际机场'],['15:30','Jiefangbei','解放碑步行街'],['18:30','Hongya Cave','洪崖洞'],['20:30','Muslim dinner','重庆清真餐厅']]},
   {title:'Liziba • Eling • Raffles City',items:[['09:00','Liziba Station','李子坝站'],['11:00','Eling / Testbed 2','鹅岭二厂'],['15:00','Chaotianmen / Raffles City','重庆来福士'],['19:00','Jiefangbei','解放碑步行街']]},
@@ -74,7 +86,7 @@ DATA.chongqing={name:'Chongqing + Wulong 6D5N',emoji:'🇨🇳',city:'Chongqing 
  places:[['🌃','Hongya Cave',29.5637,106.579,'sight'],['🏙️','Jiefangbei',29.557,106.577,'sight'],['🚝','Liziba Station',29.5528,106.548,'sight'],['🏮','Ciqikou Ancient Town',29.579,106.449,'sight'],['🚡','Yangtze River Cableway',29.556,106.583,'sight'],['🏞️','Three Natural Bridges',29.425,107.79,'sight'],['🌲','Fairy Mountain',29.49,107.72,'sight'],['🗿','Dazu Rock Carvings',29.75,105.80,'sight'],['✈️','Chongqing Jiangbei Airport',29.719,106.641,'station']],
  muslim:[['🕌 Chongqing Muslim search','重庆清真寺','ใช้ Amap ค้นมัสยิด'],['🍜 Halal near Jiefangbei','解放碑 清真餐厅','ค้น 清真 ใกล้ที่พัก'],['🍽️ Wulong halal search','武隆 清真餐厅','เช็กก่อนออก Day Trip']]
 };
-DATA.harbin={name:'Harbin + Yabuli + Snow Town 6D5N',emoji:'🇨🇳',city:'Harbin / Yabuli / Xuexiang',country:'China',tz:'Asia/Shanghai',currency:'CNY',budget:58000,start:'',center:[45.76,126.64],zoom:6,
+DATA.harbin={name:'Harbin + Yabuli + Snow Town 6D5N',emoji:'🇨🇳',city:'Harbin / Yabuli / Xuexiang',country:'China',tz:'Asia/Shanghai',currency:'CNY',budget:75000,start:'',center:[45.76,126.64],zoom:6,
  days:[
   {title:'Arrival • Saint Sophia • Central Street',items:[['หลังถึง HRB','Harbin Taiping International Airport','哈尔滨太平国际机场'],['15:00','Saint Sophia Cathedral','圣索菲亚教堂'],['16:30','Central Street','中央大街'],['19:00','Songhua River / Stalin Park','斯大林公园 松花江']]},
   {title:'Sun Island • Ice & Snow World',items:[['09:30','Sun Island Scenic Area','太阳岛风景区'],['13:30','พัก / Lunch','哈尔滨市'],['15:00','Harbin Ice & Snow World','哈尔滨冰雪大世界'],['20:30','กลับ Central Street','中央大街']]},
@@ -88,13 +100,15 @@ DATA.harbin={name:'Harbin + Yabuli + Snow Town 6D5N',emoji:'🇨🇳',city:'Harb
 };
 const TT_COUNTRY_META={japan:{label:'🇯🇵 ญี่ปุ่น'},hongkong:{label:'🇭🇰 ฮ่องกง'},vietnam:{label:'🇻🇳 เวียดนาม'},china:{label:'🇨🇳 จีน'}};
 const TT_COUNTRY_ORDER=['japan','hongkong','vietnam','china'];
-const TT_TRIP_COUNTRY={tokyo:'japan',hongkong:'hongkong',danang:'vietnam',yunnan:'china',chongqing:'china',harbin:'china'};
+const TT_TRIP_COUNTRY={tokyo:'japan',kansai:'japan',hongkong:'hongkong',danang:'vietnam',yunnan:'china',chongqing:'china',harbin:'china'};
 const ttTripsByCountry=c=>Object.keys(DATA).filter(k=>TT_TRIP_COUNTRY[k]===c);
 const ttCountryForTrip=k=>TT_TRIP_COUNTRY[k]||'japan';
-const ttTripLabel=k=>k==='tokyo'?'Tokyo':k==='hongkong'?'Hong Kong':k==='danang'?'Da Nang':k==='yunnan'?'Yunnan':k==='chongqing'?'Chongqing':'Harbin';
-function defaults(){return{selected:location.pathname.includes('/hongkong/')?'hongkong':location.pathname.includes('/danang/')?'danang':location.pathname.includes('/yunnan/')?'yunnan':location.pathname.includes('/chongqing/')?'chongqing':location.pathname.includes('/harbin/')?'harbin':'tokyo',dates:{tokyo:DATA.tokyo.start,hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''},budgets:{tokyo:65000,hongkong:55000,danang:45000,yunnan:48000,chongqing:50000,harbin:58000},done:{tokyo:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}},expenses:[],wallet:[],notes:[],api:{},lastTab:'today'};}
+const ttTripLabel=k=>k==='tokyo'?'Tokyo':k==='kansai'?'Kansai':k==='hongkong'?'Hong Kong':k==='danang'?'Da Nang':k==='yunnan'?'Yunnan':k==='chongqing'?'Chongqing':'Harbin';
+function defaults(){return{selected:location.pathname.includes('/kansai/')?'kansai':location.pathname.includes('/hongkong/')?'hongkong':location.pathname.includes('/danang/')?'danang':location.pathname.includes('/yunnan/')?'yunnan':location.pathname.includes('/chongqing/')?'chongqing':location.pathname.includes('/harbin/')?'harbin':'tokyo',dates:{tokyo:DATA.tokyo.start,kansai:'',hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''},budgets:{tokyo:85000,kansai:90000,hongkong:70000,danang:50000,yunnan:52000,chongqing:60000,harbin:75000},done:{tokyo:{},kansai:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}},expenses:[],wallet:[],notes:[],api:{},lastTab:'today'};}
 function load(){try{return Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return defaults()}}
-let state=load();state.dates=Object.assign({tokyo:DATA.tokyo.start,hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''},state.dates||{});state.budgets=Object.assign({tokyo:65000,hongkong:55000,danang:45000,yunnan:48000,chongqing:50000,harbin:58000},state.budgets||{});state.done=Object.assign({tokyo:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}},state.done||{});state.expenses=state.expenses||[];state.wallet=state.wallet||[];state.notes=state.notes||[];state.api=state.api||{};
+let state=load();state.dates=Object.assign({tokyo:DATA.tokyo.start,kansai:'',hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''},state.dates||{});state.budgets=Object.assign({tokyo:85000,kansai:90000,hongkong:70000,danang:50000,yunnan:52000,chongqing:60000,harbin:75000},state.budgets||{});state.done=Object.assign({tokyo:{},kansai:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}},state.done||{});state.expenses=state.expenses||[];state.wallet=state.wallet||[];state.notes=state.notes||[];state.api=state.api||{};
+const REAL_BUDGETS_V79={tokyo:85000,kansai:90000,hongkong:70000,danang:50000,yunnan:52000,chongqing:60000,harbin:75000},LEGACY_BUDGETS_V79={tokyo:65000,hongkong:55000,danang:45000,yunnan:48000,chongqing:50000,harbin:58000};
+for(const [k,v] of Object.entries(REAL_BUDGETS_V79)){const cur=Number(state.budgets?.[k]);if(!cur||LEGACY_BUDGETS_V79[k]===cur)state.budgets[k]=v}try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast('พื้นที่บันทึกในเครื่องเต็ม • ลบรูปเก่าบางรูปก่อน')}}
 function currentTrip(){return DATA[state.selected]||DATA.tokyo}
 function maps(q){if(['yunnan','chongqing','harbin'].includes(state.selected))return'https://uri.amap.com/search?keyword='+encodeURIComponent(q)+'&view=map&src=ourjourney&callnative=1';return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
