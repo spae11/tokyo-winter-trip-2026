@@ -1,0 +1,191 @@
+name: Kansai Real Budget v79
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/kansai-real-budget-v79.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Integrate Kansai and realistic budgets
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def read(p): return Path(p).read_text(encoding='utf-8')
+          def write(p,s): Path(p).write_text(s,encoding='utf-8')
+          def replace(p, old, new, required=True):
+              s=read(p)
+              if old not in s:
+                  if required: raise SystemExit(f'pattern missing in {p}: {old[:90]!r}')
+                  return False
+              write(p,s.replace(old,new))
+              return True
+          def insert_before(p, anchor, text):
+              s=read(p)
+              if text.strip() in s: return
+              if anchor not in s: raise SystemExit(f'anchor missing in {p}: {anchor!r}')
+              write(p,s.replace(anchor,text+anchor,1))
+
+          # ---------- Trip Tools: add Kansai + migrate only untouched legacy budget defaults ----------
+          p='trip-tools-v1.js'
+          kansai_data="""DATA.kansai={name:'Osaka + Kyoto + Nara + Kobe 6D5N',emoji:'🇯🇵',city:'Osaka / Kyoto / Nara / Kobe',country:'Japan',tz:'Asia/Tokyo',currency:'JPY',budget:90000,start:'',center:[34.6937,135.5023],zoom:8,
+           days:[
+            {title:'Arrival • Namba • Dotonbori',items:[['หลังถึง KIX','Kansai International Airport','Kansai International Airport'],['15:30','Namba / Hotel','Namba Osaka'],['17:00','Shinsaibashi','Shinsaibashi Osaka'],['19:00','Dotonbori','Dotonbori Osaka']]},
+            {title:'Kyoto East • Fushimi Inari • Kiyomizu • Gion',items:[['07:00','Osaka → Kyoto','Kyoto Station'],['08:00','Fushimi Inari Taisha','Fushimi Inari Taisha Kyoto'],['11:30','Kiyomizu-dera / Sannenzaka','Kiyomizu-dera Kyoto'],['16:00','Gion / Yasaka','Gion Kyoto']]},
+            {title:'Kyoto West • Arashiyama • Kinkaku-ji',items:[['07:30','Osaka → Arashiyama','Arashiyama Kyoto'],['09:00','Arashiyama Bamboo Grove','Arashiyama Bamboo Grove Kyoto'],['10:30','Togetsukyo Bridge','Togetsukyo Bridge Kyoto'],['14:00','Kinkaku-ji','Kinkaku-ji Kyoto']]},
+            {title:'Nara • Deer Park • Todai-ji',items:[['08:00','Osaka → Nara','Kintetsu Nara Station'],['09:30','Nara Park','Nara Park'],['11:00','Todai-ji','Todai-ji Nara'],['14:00','Kasuga Taisha / Naramachi','Kasuga Taisha Nara']]},
+            {title:'Kobe • Harborland • Kitano',items:[['09:00','Osaka → Kobe','Sannomiya Station Kobe'],['10:30','Kitano / Nunobiki','Kitano Ijinkan Kobe'],['14:00','Kobe Harborland','Kobe Harborland'],['17:30','Meriken Park','Meriken Park Kobe']]},
+            {title:'Osaka Castle • Kuromon • Airport',items:[['08:30','Check-out / ฝากกระเป๋า','Namba Osaka'],['09:30','Osaka Castle','Osaka Castle'],['12:00','Kuromon / Namba','Kuromon Ichiba Market'],['ก่อนบิน 4 ชม.','Kansai International Airport','Kansai International Airport']]}
+           ],
+           places:[['🏯','Osaka Castle',34.6873,135.5262,'sight'],['🌃','Dotonbori',34.6687,135.5013,'sight'],['⛩️','Fushimi Inari Taisha',34.9671,135.7727,'sight'],['🎋','Arashiyama',35.0094,135.6668,'sight'],['🦌','Nara Park',34.6850,135.8430,'sight'],['🌊','Kobe Harborland',34.6796,135.1850,'sight'],['✈️','Kansai International Airport',34.4347,135.2440,'station']],
+           muslim:[['🍽️ Halal Osaka','halal restaurant Namba Osaka','ค้นร้านฮาลาลใกล้ Namba / Shinsaibashi'],['🕌 Osaka mosque search','mosque Osaka Japan','เซฟจุดละหมาดตาม Route'],['🍜 Halal Kyoto','halal restaurant Kyoto','ค้นร้านฮาลาลใกล้ Kyoto Station / Gion'],['🥪 Nara / Kobe backup','halal restaurant Nara Kobe Japan','เช็กเวลาเปิดและพก snack สำรอง']]
+          };
+          """
+          insert_before(p,"DATA.yunnan={",kansai_data)
+          replace(p,"currency:'JPY',budget:65000","currency:'JPY',budget:85000")
+          replace(p,"currency:'HKD',budget:55000","currency:'HKD',budget:70000")
+          replace(p,"currency:'VND',budget:45000","currency:'VND',budget:50000")
+          replace(p,"currency:'CNY',budget:48000","currency:'CNY',budget:52000")
+          replace(p,"currency:'CNY',budget:50000","currency:'CNY',budget:60000")
+          replace(p,"currency:'CNY',budget:58000","currency:'CNY',budget:75000")
+          replace(p,"const TT_TRIP_COUNTRY={tokyo:'japan',hongkong:'hongkong',danang:'vietnam',yunnan:'china',chongqing:'china',harbin:'china'};","const TT_TRIP_COUNTRY={tokyo:'japan',kansai:'japan',hongkong:'hongkong',danang:'vietnam',yunnan:'china',chongqing:'china',harbin:'china'};")
+          replace(p,"const ttTripLabel=k=>k==='tokyo'?'Tokyo':k==='hongkong'?'Hong Kong':k==='danang'?'Da Nang':k==='yunnan'?'Yunnan':k==='chongqing'?'Chongqing':'Harbin';","const ttTripLabel=k=>k==='tokyo'?'Tokyo':k==='kansai'?'Kansai':k==='hongkong'?'Hong Kong':k==='danang'?'Da Nang':k==='yunnan'?'Yunnan':k==='chongqing'?'Chongqing':'Harbin';")
+          replace(p,"return{selected:location.pathname.includes('/hongkong/')?'hongkong':","return{selected:location.pathname.includes('/kansai/')?'kansai':location.pathname.includes('/hongkong/')?'hongkong':")
+          old_dates="dates:{tokyo:DATA.tokyo.start,hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''}"
+          new_dates="dates:{tokyo:DATA.tokyo.start,kansai:'',hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''}"
+          replace(p,old_dates,new_dates)
+          old_b="budgets:{tokyo:65000,hongkong:55000,danang:45000,yunnan:48000,chongqing:50000,harbin:58000}"
+          new_b="budgets:{tokyo:85000,kansai:90000,hongkong:70000,danang:50000,yunnan:52000,chongqing:60000,harbin:75000}"
+          replace(p,old_b,new_b)
+          old_done="done:{tokyo:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}}"
+          new_done="done:{tokyo:{},kansai:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}}"
+          replace(p,old_done,new_done)
+          replace(p,"state.dates=Object.assign({tokyo:DATA.tokyo.start,hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''},state.dates||{});","state.dates=Object.assign({tokyo:DATA.tokyo.start,kansai:'',hongkong:'',danang:'',yunnan:'',chongqing:'',harbin:''},state.dates||{});")
+          replace(p,"state.budgets=Object.assign({tokyo:65000,hongkong:55000,danang:45000,yunnan:48000,chongqing:50000,harbin:58000},state.budgets||{});","state.budgets=Object.assign({tokyo:85000,kansai:90000,hongkong:70000,danang:50000,yunnan:52000,chongqing:60000,harbin:75000},state.budgets||{});")
+          replace(p,"state.done=Object.assign({tokyo:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}},state.done||{});","state.done=Object.assign({tokyo:{},kansai:{},hongkong:{},danang:{},yunnan:{},chongqing:{},harbin:{}},state.done||{});")
+          marker="state.expenses=state.expenses||[];state.wallet=state.wallet||[];state.notes=state.notes||[];state.api=state.api||{};"
+          migration="""state.expenses=state.expenses||[];state.wallet=state.wallet||[];state.notes=state.notes||[];state.api=state.api||{};
+          const REAL_BUDGETS_V79={tokyo:85000,kansai:90000,hongkong:70000,danang:50000,yunnan:52000,chongqing:60000,harbin:75000},LEGACY_BUDGETS_V79={tokyo:65000,hongkong:55000,danang:45000,yunnan:48000,chongqing:50000,harbin:58000};
+          for(const [k,v] of Object.entries(REAL_BUDGETS_V79)){const cur=Number(state.budgets?.[k]);if(!cur||LEGACY_BUDGETS_V79[k]===cur)state.budgets[k]=v}try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){};"""
+          replace(p,marker,migration)
+
+          # ---------- Plan First ----------
+          p='plan-first-v1.js'
+          replace(p,"const isTokyo=path.startsWith(BASE+'tokyo/'),isHK=", "const isTokyo=path.startsWith(BASE+'tokyo/'),isKansai=path.startsWith(BASE+'kansai/'),isHK=")
+          replace(p,"isPlan=isTokyo||isHK||isDaNang||isYunnan||isChongqing||isHarbin", "isPlan=isTokyo||isKansai||isHK||isDaNang||isYunnan||isChongqing||isHarbin")
+          replace(p,"const tripKey=isTokyo?'tokyo':isHK?", "const tripKey=isTokyo?'tokyo':isKansai?'kansai':isHK?")
+          replace(p,"accent:'Tokyo'},hongkong:", "accent:'Tokyo'},kansai:{key:'kansai',country:'japan',name:'Osaka + Kyoto + Nara + Kobe 6D5N',flag:'🇯🇵',href:'./kansai/',planHref:'../kansai/',fallbackStart:'',days:6,accent:'Kansai'},hongkong:")
+          import re
+          s=read(p)
+          s=re.sub(r"const who=a\.trip==='tokyo'\?'Tokyo':a\.trip==='hongkong'\?'Hong Kong':a\.trip==='danang'\?'Da Nang':a\.trip==='yunnan'\?'Yunnan':a\.trip==='chongqing'\?'Chongqing':a\.trip==='harbin'\?'Harbin':'Trip';", "const who=TRIPS[a.trip]?.accent||'Trip';", s)
+          s=s.replace("x.trip==='tokyo'?'🇯🇵 Tokyo':x.trip==='hongkong'", "x.trip==='tokyo'?'🇯🇵 Tokyo':x.trip==='kansai'?'🇯🇵 Kansai':x.trip==='hongkong'")
+          write(p,s)
+
+          p='plan-first-v2.js'
+          replace(p,"isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'hongkong/')", "isPlan=path.startsWith(BASE+'tokyo/')||path.startsWith(BASE+'kansai/')||path.startsWith(BASE+'hongkong/')")
+
+          p='plan-first-v2.css'
+          css="body.pfx-root.pfx-v2 #pfxTripDashboard[data-pfx-trip=\"kansai\"] .pfx-trip-main:before{background-image:linear-gradient(180deg,transparent 55%,#0000003d),url('https://commons.wikimedia.org/wiki/Special:FilePath/Dotonbori%20at%20night%20time.jpg?width=1400')}\n"
+          insert_before(p,'body.pfx-root.pfx-v2 #pfxTripDashboard[data-pfx-trip="hongkong"]',css)
+
+          # ---------- Memory Journal ----------
+          p='memory-journal-v3.js'
+          kansai_plan="""PLAN.kansai={country:'japan',name:'Osaka + Kyoto + Nara + Kobe 6D5N',flag:'🇯🇵',fallbackStart:'',days:[{day:1,title:'Arrival • Namba • Dotonbori',places:['Kansai International Airport','Namba Osaka','Shinsaibashi Osaka','Dotonbori Osaka']},{day:2,title:'Kyoto East • Fushimi Inari • Kiyomizu • Gion',places:['Kyoto Station','Fushimi Inari Taisha Kyoto','Kiyomizu-dera Kyoto','Gion Kyoto']},{day:3,title:'Kyoto West • Arashiyama • Kinkaku-ji',places:['Arashiyama Kyoto','Arashiyama Bamboo Grove Kyoto','Togetsukyo Bridge Kyoto','Kinkaku-ji Kyoto']},{day:4,title:'Nara • Deer Park • Todai-ji',places:['Kintetsu Nara Station','Nara Park','Todai-ji Nara','Kasuga Taisha Nara']},{day:5,title:'Kobe • Harborland • Kitano',places:['Sannomiya Station Kobe','Kitano Ijinkan Kobe','Kobe Harborland','Meriken Park Kobe']},{day:6,title:'Osaka Castle • Kuromon • Airport',places:['Namba Osaka','Osaka Castle','Kuromon Ichiba Market','Kansai International Airport']}]};
+          """
+          insert_before(p,'PLAN.danang=',kansai_plan)
+          replace(p,"if(m.country==='japan')return'tokyo';", "if(m.country==='japan'){const q=norm((m.region||'')+' '+(m.name||''));if(/osaka|kyoto|nara|kobe|hyogo|kansai|大阪|京都|奈良|神戸|兵庫|関西/.test(q))return'kansai';return'tokyo';}")
+
+          # ---------- Plan Extras ----------
+          p='plan-extras-v1.js'
+          replace(p,"const trip=path.includes('/tokyo/')?'tokyo':path.includes('/hongkong/')", "const trip=path.includes('/tokyo/')?'tokyo':path.includes('/kansai/')?'kansai':path.includes('/hongkong/')")
+          kansai_extra="""
+          DATA.kansai={emoji:'🇯🇵',seasonTitle:'ช่วงที่เหมาะกับทริปนี้',seasonBadge:'แนะนำ • มี.ค.–พ.ค. / ต.ค.–พ.ย.',seasonLead:'Osaka + Kyoto + Nara + Kobe เดินทางง่ายและ Mood ต่างจาก Tokyo',seasonText:'Kansai เที่ยวได้ทั้งปี แต่ฤดูใบไม้ผลิและใบไม้ร่วงเหมาะกับการเดิน Kyoto/Nara มากที่สุด ส่วนหน้าหนาวคนบางจุดน้อยลงแต่กลางคืนเย็น ควรเลือกตามสไตล์ที่อยากได้มากกว่าบีบราคาตั๋ว',seasonChips:['🏯 Osaka','⛩️ Kyoto','🦌 Nara','🌃 Kobe'],seasonNote:'ช่วงซากุระ ใบไม้แดง Golden Week และวันหยุดญี่ปุ่น ราคาโรงแรมสูงขึ้นชัดเจน ควรตั้ง Budget ตามวันจริง',groups:[{title:'เอกสาร & Booking',icon:'🪪',items:[['passport','พาสปอร์ต + สำเนาในมือถือ'],['flight','ตั๋ว BKK ↔ KIX + โหลดกระเป๋า'],['insurance','ประกันเดินทาง'],['hotel','โรงแรม Osaka 5 คืน'],['kyoto','บันทึก Route Kyoto 2 วันแยกโซน'],['entry','เช็กเงื่อนไขเข้าญี่ปุ่นล่าสุดก่อนบิน']]},{title:'เงิน เน็ต & การเดินทาง',icon:'📱',items:[['esim','eSIM / SIM ญี่ปุ่น'],['ic','ICOCA / IC Card หรือวิธีจ่าย Transit'],['maps','Google Maps + NAVITIME'],['cash','เงินเยนสด + บัตร'],['power','Power bank + สายชาร์จ'],['airport','เช็กรอบรถ KIX ↔ Osaka วันจริง']]},{title:'เดินเที่ยว Kansai',icon:'👟',items:[['shoes','รองเท้าเดินสบาย'],['weather','เสื้อผ้าตามฤดูกาล'],['umbrella','ร่มพับ'],['bag','กระเป๋า Day bag'],['bottle','ขวดน้ำ'],['early','วัน Kyoto ออกเช้าเพื่อลดคน']]},{title:'Muslim-friendly',icon:'🕌',items:[['prayer','แอปเวลาละหมาด + Qibla'],['mat','ผ้าปูละหมาดพกพา'],['osaka-halal','เซฟร้านฮาลาล Namba/Osaka'],['kyoto-halal','เซฟร้านฮาลาล Kyoto'],['nara-kobe','เช็กร้าน Nara/Kobe ก่อนออก Day Trip'],['snack','พก snack halal สำรอง']]}]};
+          """
+          insert_before(p,'DATA.danang=',kansai_extra)
+          replace(p,"APP_DATA.chongqing=APP_DATA.yunnan;", "APP_DATA.kansai=APP_DATA.tokyo;\n  APP_DATA.chongqing=APP_DATA.yunnan;")
+          replace(p,"RULE_DATA.chongqing=RULE_DATA.yunnan;", "RULE_DATA.kansai=RULE_DATA.tokyo;\n  RULE_DATA.chongqing=RULE_DATA.yunnan;")
+          replace(p,"    hongkong:{main:'Police / Fire / Ambulance 999'", "    kansai:{main:'ตำรวจ 110 • ดับเพลิง/รถพยาบาล 119',help:'JNTO Visitor Hotline +81-50-3816-2787',hotel:'Osaka Namba / Shinsaibashi • เลือกโรงแรมจริงภายหลัง'},\n    hongkong:{main:'Police / Fire / Ambulance 999'")
+
+          # ---------- Root map: Japan now has two trips ----------
+          p='index.html'
+          old="japan:{name:'Japan',flag:'🇯🇵',sub:'ญี่ปุ่น',center:[36.1,138.2],zoom:5,note:'Tokyo Winter Trip + Fuji + Disney',href:'./tokyo/',regions:[{name:'Tokyo',center:[35.6762,139.6503],zoom:10,trip:'tokyo'},{name:'Chiba',center:[35.6073,140.1063],zoom:9,trip:'tokyo',sub:'Tokyo Disneyland'},{name:'Yamanashi',center:[35.6642,138.5685],zoom:9,trip:'tokyo',sub:'Mt. Fuji / Kawaguchiko'}]},"
+          new="japan:{name:'Japan',flag:'🇯🇵',sub:'ญี่ปุ่น',center:[36.1,138.2],zoom:5,note:'Tokyo • Fuji • Osaka • Kyoto • Nara • Kobe',href:'',regions:[{name:'Tokyo',center:[35.6762,139.6503],zoom:10,trip:'tokyo'},{name:'Chiba',center:[35.6073,140.1063],zoom:9,trip:'tokyo',sub:'Tokyo Disneyland'},{name:'Yamanashi',center:[35.6642,138.5685],zoom:9,trip:'tokyo',sub:'Mt. Fuji / Kawaguchiko'},{name:'Osaka',center:[34.6937,135.5023],zoom:10,trip:'kansai'},{name:'Kyoto',center:[35.0116,135.7681],zoom:10,trip:'kansai'},{name:'Nara',center:[34.6851,135.8048],zoom:10,trip:'kansai'},{name:'Kobe',center:[34.6901,135.1955],zoom:10,trip:'kansai'}]},"
+          replace(p,old,new)
+          replace(p,'manifest.webmanifest?v=78','manifest.webmanifest?v=79')
+          replace(p,"ourJourneySWReloadV78","ourJourneySWReloadV79")
+          replace(p,"./sw.js?v=78","./sw.js?v=79")
+
+          # ---------- Static budget labels / breakdowns ----------
+          replace('tokyo/index.html','💰 60–70K ฿','💰 Planning ~85K ฿')
+          replace('tokyo/index.html','เป้างบ 8,000–10,000 บาท / 5 คืน / 2 คน','เป้างบประมาณ 16,000–20,000 บาท / 5 คืน / 2 คน • ค่อยล็อกราคาตามวันจริง')
+          replace('hongkong/index.html','💰 50–55K ฿','💰 Planning ~70K ฿')
+          replace('danang/index.html','💰 Target 45–50K ฿','💰 Planning ~50K ฿')
+          replace('danang/index.html','<b>~9,000 ฿</b><span class="small">2 คน ไป–กลับ</span>','<b>~14,000 ฿</b><span class="small">2 คน ไป–กลับ • ไม่ยึดโปรต่ำสุด</span>')
+          replace('danang/index.html','<b>~11,000 ฿</b><span class="small">5 คืน</span>','<b>~14,000 ฿</b><span class="small">5 คืน • HAIAN + Hoi An ระดับกลาง</span>')
+          replace('danang/index.html','<b>~13,000 ฿</b><span class="small">รวมเป้า ~45K • เพดาน 50K</span>','<b>~10,000 ฿</b><span class="small">รวมวางแผนประมาณ 50K</span>')
+          replace('yunnan/index.html','💰 Target 45–50K ฿','💰 Planning ~52K ฿')
+          replace('yunnan/index.html','<b>~12,000 ฿</b><span class="small">BKK ↔ Kunming</span>','<b>~16,000 ฿</b><span class="small">BKK ↔ Kunming • 2 คน</span>')
+          replace('yunnan/index.html','<b>~9,000 ฿</b><span class="small">5 คืน</span>','<b>~10,000 ฿</b><span class="small">5 คืน</span>')
+          replace('yunnan/index.html','<b>~11,000 ฿</b><span class="small">Train / DiDi / Stone Forest</span>','<b>~12,000 ฿</b><span class="small">Train / DiDi / Stone Forest</span>')
+          replace('yunnan/index.html','<b>~16,000 ฿</b><span class="small">รวมตั้งต้น ~48K</span>','<b>~14,000 ฿</b><span class="small">รวมวางแผนประมาณ 52K</span>')
+          replace('chongqing/index.html','💰 Target ~50K','💰 Planning ~60K')
+          replace('chongqing/index.html','<b>~12–15K ฿</b><span class="small">BKK ↔ CKG</span>','<b>~24K ฿</b><span class="small">BKK ↔ CKG • เผื่อราคาปกติ 2 คน</span>')
+          replace('chongqing/index.html','<b>~8–10K ฿</b><span class="small">5 คืน</span>','<b>~9K ฿</b><span class="small">5 คืน</span>')
+          replace('chongqing/index.html','<b>~12K ฿</b><span class="small">Metro / DiDi / Wulong / Dazu</span>','<b>~13K ฿</b><span class="small">Metro / DiDi / Wulong / Dazu</span>')
+          replace('chongqing/index.html','<b>~13–16K ฿</b><span class="small">ตั้งเป้ารวมราว 50K</span>','<b>~14K ฿</b><span class="small">รวมวางแผนประมาณ 60K</span>')
+          replace('harbin/index.html','💰 Target 55–60K ฿','💰 Planning ~75K ฿')
+          replace('harbin/index.html','<b>~16,000 ฿</b><span class="small">BKK ↔ Harbin / ต่อเครื่องตามเที่ยวบินจริง</span>','<b>~20,000 ฿</b><span class="small">BKK ↔ Harbin • เผื่อช่วงฤดูหนาว</span>')
+          replace('harbin/index.html','<b>~11,000 ฿</b><span class="small">5 คืน • 3 เมือง/จุดพัก</span>','<b>~14,000 ฿</b><span class="small">5 คืน • Harbin / Yabuli / Snow Town</span>')
+          replace('harbin/index.html','<b>~16,000 ฿</b><span class="small">Ice World / Ski / Shuttle</span>','<b>~26,000 ฿</b><span class="small">Ice World / Ski / Snow Town / Shuttle</span>')
+          replace('harbin/index.html','<b>~15,000 ฿</b><span class="small">รวมตั้งต้น ~58K</span>','<b>~15,000 ฿</b><span class="small">รวมวางแผนประมาณ 75K</span>')
+
+          # ---------- Service worker / PWA ----------
+          p='sw.js'
+          replace(p,"const CACHE='our-journey-v78';","const CACHE='our-journey-v79';")
+          replace(p,"BASE+'tokyo/index.html',BASE+'hongkong/index.html'", "BASE+'tokyo/index.html',BASE+'kansai/index.html',BASE+'hongkong/index.html'")
+          replace(p,"url.pathname.startsWith(BASE+'tokyo/')||url.pathname.startsWith(BASE+'hongkong/')", "url.pathname.startsWith(BASE+'tokyo/')||url.pathname.startsWith(BASE+'kansai/')||url.pathname.startsWith(BASE+'hongkong/')")
+          replace(p,'a[href="./tokyo/"],a[href="./hongkong/"]','a[href="./tokyo/"],a[href="./kansai/"],a[href="./hongkong/"]')
+          s=read(p).replace('?v=76','?v=79').replace('?v=78','?v=79')
+          write(p,s)
+
+          # Manifest version + shortcut
+          p='manifest.webmanifest'
+          s=read(p).replace('?pwa=26&app=76','?pwa=27&app=79')
+          if '"Kansai Plan"' not in s:
+              s=s.replace('{"name":"Hong Kong Plan","short_name":"Hong Kong","url":"/tokyo-winter-trip-2026/hongkong/"}', '{"name":"Hong Kong Plan","short_name":"Hong Kong","url":"/tokyo-winter-trip-2026/hongkong/"},{"name":"Kansai Plan","short_name":"Kansai","url":"/tokyo-winter-trip-2026/kansai/"}')
+          write(p,s)
+
+          # Basic assertions
+          checks={
+            'trip-tools-v1.js':['DATA.kansai','budget:90000','kansai:\'japan\'','REAL_BUDGETS_V79'],
+            'plan-first-v1.js':["BASE+'kansai/'","key:'kansai'"],
+            'plan-first-v2.js':["BASE+'kansai/'"],
+            'memory-journal-v3.js':['PLAN.kansai',"return'kansai'"],
+            'plan-extras-v1.js':['DATA.kansai','APP_DATA.kansai','RULE_DATA.kansai'],
+            'index.html':["trip:'kansai'",'sw.js?v=79'],
+            'sw.js':['our-journey-v79',"BASE+'kansai/index.html'"],
+            'kansai/index.html':['Planning ~90K','DAY ${i+1}']
+          }
+          for fp, needles in checks.items():
+              txt=read(fp)
+              for n in needles:
+                  if n not in txt: raise SystemExit(f'validation failed {fp}: {n}')
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name "spae11"
+          git config user.email "69748318+spae11@users.noreply.github.com"
+          git add index.html manifest.webmanifest sw.js trip-tools-v1.js plan-first-v1.js plan-first-v2.js plan-first-v2.css memory-journal-v3.js plan-extras-v1.js tokyo/index.html hongkong/index.html danang/index.html yunnan/index.html chongqing/index.html harbin/index.html kansai/index.html
+          git diff --cached --quiet || git commit -m "Add Kansai trip and recalibrate trip budgets"
+          git push
