@@ -3,7 +3,7 @@
 if(window.__tripCloudSyncV3)return;window.__tripCloudSyncV3=true;
 const API='https://travel-hub-api.mlrkdee44.workers.dev';
 const CFG_KEY='travelToolsCloudV3',OLD_CFG='travelToolsCloudV2',TT_KEY='travelToolsV1',MEM_KEY='travelHubMemoriesV1',MEM_DEL_KEY='travelHubDeletedMemoriesV1',TOOL_DEL_KEY='travelHubDeletedToolMediaV1';
-const EXCLUDED=/^(?:travelToolsCloudV\d+|ourJourneyUnlockedV1)$/;const $=(s,r=document)=>r.querySelector(s);let busy=false,pollTimer=null,reloadTimer=null;
+const EXCLUDED=/^(?:travelToolsCloudV\d+|ourJourneyUnlockedV1|ourJourneyPinVerifiedAtV1)$/;const $=(s,r=document)=>r.querySelector(s);let busy=false,pollTimer=null,reloadTimer=null;
 function baseCfg(){return{roomId:'',token:'',auto:true,version:0,lastHash:'',lastSync:0,lastError:'',pairCode:'',pairUntil:0,recoveryCode:''}}
 function loadCfg(){try{const v=JSON.parse(localStorage.getItem(CFG_KEY)||'null');if(v)return Object.assign(baseCfg(),v);const old=JSON.parse(localStorage.getItem(OLD_CFG)||'null');if(old?.token){const n=Object.assign(baseCfg(),{roomId:old.roomId||'',token:old.token,auto:old.auto!==false,version:Number(old.version)||0,lastSync:old.lastSync||0});localStorage.setItem(CFG_KEY,JSON.stringify(n));return n}}catch{}return baseCfg()}
 let cfg=loadCfg();function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch{}}function clone(v){return JSON.parse(JSON.stringify(v??{}))}function textHash(v){const s=typeof v==='string'?v:JSON.stringify(v);let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}function auth(){return cfg.token?{'Authorization':'Bearer '+cfg.token}:{}}
