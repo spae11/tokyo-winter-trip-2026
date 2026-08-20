@@ -218,9 +218,9 @@ DATA.harbin={emoji:'🇨🇳',seasonTitle:'ช่วงที่เหมาะ�
       ['🍽️','อาหาร','14,000','6 วัน • 2 คน'],
       ['📱','eSIM / ประกัน / เงินเผื่อ','6,000','เน็ต + ประกัน + Buffer']
     ]},
-    hongkong:{total:70000,note:'Hong Kong + Disneyland + Ngong Ping • 2 คน',items:[
+    hongkong:{total:96000,note:'Hong Kong + Disneyland + Ngong Ping • 2 คน • ใช้ Holiday Inn Golden Mile',items:[
       ['✈️','ตั๋วเครื่องบิน','22,000','BKK ↔ HKG • 2 คน + โหลดกระเป๋า'],
-      ['🏨','โรงแรม','17,000','5 คืน • Tsim Sha Tsui / Kowloon'],
+      ['🏨','โรงแรม','43,000','5 คืน • Holiday Inn Golden Mile • เผื่อภาษี/ค่าธรรมเนียมตามเรทตลาดจริง'],
       ['🚇','เดินทาง','5,000','Airport + MTR + Ferry + Octopus'],
       ['🎟️','ตั๋ว & กิจกรรม','10,000','Disneyland + Ngong Ping + Peak Tram'],
       ['🍽️','อาหาร','11,000','6 วัน • 2 คน • Halal/Muslim-friendly'],
