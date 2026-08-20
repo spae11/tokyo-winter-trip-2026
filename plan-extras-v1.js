@@ -218,13 +218,13 @@ DATA.harbin={emoji:'🇨🇳',seasonTitle:'ช่วงที่เหมาะ�
       ['🍽️','อาหาร','14,000','6 วัน • 2 คน'],
       ['📱','eSIM / ประกัน / เงินเผื่อ','6,000','เน็ต + ประกัน + Buffer']
     ]},
-    hongkong:{total:96000,note:'Hong Kong + Disneyland + Ngong Ping • 2 คน • ใช้ Holiday Inn Golden Mile',items:[
-      ['✈️','ตั๋วเครื่องบิน','22,000','BKK ↔ HKG • 2 คน + โหลดกระเป๋า'],
-      ['🏨','โรงแรม','43,000','5 คืน • Holiday Inn Golden Mile • เผื่อภาษี/ค่าธรรมเนียมตามเรทตลาดจริง'],
-      ['🚇','เดินทาง','5,000','Airport + MTR + Ferry + Octopus'],
-      ['🎟️','ตั๋ว & กิจกรรม','10,000','Disneyland + Ngong Ping + Peak Tram'],
-      ['🍽️','อาหาร','11,000','6 วัน • 2 คน • Halal/Muslim-friendly'],
-      ['📱','eSIM / ประกัน / เงินเผื่อ','5,000','เน็ต + ประกัน + Buffer']
+    hongkong:{total:70000,note:'Hong Kong + Disneyland + Ngong Ping • 2 คน • พัก Travelodge Kowloon (Jordan)',items:[
+      ['✈️','ตั๋วเครื่องบิน','22,000','BKK ↔ HKG • 2 คน + โหลดกระเป๋า • ตั้งงบเผื่อจากเรทปกติ ไม่ยึดโปรต่ำสุด'],
+      ['🏨','โรงแรม','15,000','5 คืน • Travelodge Kowloon • เรทสาธารณะปัจจุบันมีตัวอย่างราว 2K/คืนรวม fee; เผื่อขึ้นตามวันจริง'],
+      ['🚇','เดินทาง','4,000','A21 Airport Bus + MTR + Star Ferry + Octopus • 2 คน / 6 วัน'],
+      ['🎟️','ตั๋ว & กิจกรรม','9,000','Disneyland + Ngong Ping 360 + Peak Tram/จุดชมวิว'],
+      ['🍽️','อาหาร','12,000','6 วัน • 2 คน • เผื่อร้าน Halal/Muslim-friendly ที่ราคาสูงกว่าฟู้ดคอร์ท'],
+      ['📱','eSIM / ประกัน / เงินเผื่อ','8,000','eSIM + ประกัน + ค่าจุกจิก/ราคาแกว่ง • ไม่รวมช้อปหนัก']
     ]},
     danang:{total:50000,note:'Da Nang + Hoi An + Ba Na Hills • 2 คน',items:[
       ['✈️','ตั๋วเครื่องบิน','15,000','Bangkok ↔ Da Nang • 2 คน + กระเป๋า'],
