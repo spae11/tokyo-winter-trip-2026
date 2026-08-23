@@ -3,7 +3,7 @@
 Travel planning PWA for all trips in **Our Journey**.
 
 > **IMPORTANT — READ THIS README BEFORE ADDING OR MODIFYING A TRIP.**
-> A new trip must not be created as an isolated page. It must inherit the same standard features used by the existing trips and be registered everywhere required by the shared app.
+> A new trip must inherit the same shared functions as the existing trips. Do not finish a new trip after only creating `<trip>/index.html`.
 
 ## Current trip registry
 
@@ -19,216 +19,258 @@ Travel planning PWA for all trips in **Our Journey**.
 
 # Mandatory rule: New Trip = Full Feature Parity
 
-Whenever a new trip is added, **first read this README**, inspect the current shared implementation, and give the new trip every applicable feature that existing trips already have.
+Before adding a new trip:
 
-Do not finish a new trip after only creating `<trip>/index.html`.
-
-A new trip is complete only after it passes the checklist below.
+1. Read this README.
+2. Inspect the current shared implementation.
+3. Register the trip everywhere required.
+4. Give it every applicable shared feature below.
+5. Update this README / Change Log when architecture or coverage changes.
 
 ## Standard features every trip must inherit
 
-### 1. Our Journey home integration
-- Add the trip to the home/trip list.
-- Add its country/region map relationship.
-- Support trip start/end dates in `travelHubStateV2`.
-- Opening and returning from the trip must use the same navigation/transition behavior as existing trips.
+### Our Journey integration
+- Home/trip card.
+- Country/region map relationship.
+- Start/end dates in `travelHubStateV2`.
+- Same home ↔ trip navigation behavior.
 
-### 2. Trip page standard
+### Trip page
 - Mobile-friendly header/navigation.
 - Daily itinerary.
 - Maps / location links.
-- Budget section.
-- Stay/hotel section when applicable.
+- Budget.
+- Hotel/stay section.
 - Transport notes.
-- Muslim / halal / prayer information when relevant to the destination.
-- Same shared UI behavior and mobile fixes as other trips.
+- Muslim / halal / prayer information when relevant.
+- Same shared UI/mobile fixes.
 
-### 3. Trip Tools
-The new trip must be registered in the shared Trip Tools data/selector and must receive the existing Trip Tools features, including applicable:
-- Today / itinerary tools
+### Trip Tools
+The trip must be selectable in Trip Tools and inherit applicable:
+- Today / itinerary
 - Expense tracking
 - Map
 - Wallet
-- Muslim / halal tools
+- Muslim / halal
 - Search
 - Notes
 - Sync
 - Settings
 
-Do not create a new trip that cannot be selected or used inside Trip Tools.
-
-### 4. Memories and cloud features
-The new trip must continue to work with the shared systems already injected into trip pages, including:
+### Memories / cloud
+Keep compatibility with:
 - Memories / locations
 - Photos / media
 - Cloud sync
-- Google Photos / Drive integration where enabled
+- Google Photos / Drive where enabled
 - Notes / wallet sync
-- Delete-everywhere / media management behavior
+- Delete-everywhere and media management
 
-### 5. Live Price Refresh
-Every new trip must be registered in the live-price system.
+---
 
-Required behavior:
-- The main `↻` Refresh action checks current prices instead of only reloading the page.
-- Use the trip's real travel dates.
-- Hotel request default: **2 travelers / 1 room**, unless the trip explicitly says otherwise.
-- Current FX conversion to THB.
-- Current hotel pricing when a real hotel has been selected.
-- Current attraction/ticket pricing when a reliable official/current source is available.
-- Show `Live checked` / `Last checked` time.
-- If live verification fails, clearly say it failed. **Never display an old price as if it were live.**
-- If travel dates are missing, show that dates are required instead of inventing a hotel price.
+# Live Price Refresh — mandatory for every trip
 
-Files/components that may need registration when adding a trip:
-- `live-price-refresh-v1.js`
+Shared client: `live-price-refresh-v2.js`
+
+Behavior:
+- Main `↻` checks current prices; it is not a plain page reload.
+- Every trip page also gets its own `↻` current-price button automatically.
+- Default hotel request: **2 travelers / 1 room**.
+- Uses saved trip dates.
+- Multi-city plans can use hotel date offsets for the relevant stay segment.
+- Checks current hotel pricing via Google Hotels current listing.
+- Checks current FX → THB.
+- Checks attraction/ticket prices from Official or current booking sources.
+- Shows `Live checked` / `Last checked` truthfully.
+- If verification fails, show unavailable/check failed. **Never show an old value as LIVE.**
+- If dates are missing, ask for dates instead of inventing a hotel price.
+
+Backend:
 - `cloudflare/live-prices.js`
-- shared trip registry / route lists
+- routed by `cloudflare/worker.js`
 
-### 6. Booking / source links
-Any price shown from a live refresh should be easy to open.
+## Hotel catalog currently registered
+
+### Tokyo
+- APA Hotel Asakusa Tawaramachi-Ekimae
+
+### Kansai
+- Holiday Inn Osaka Namba
+
+### Hong Kong
+- Silka Far East Hotel
+- Ramada Grand Tsim Sha Tsui
+- Silka Tsuen Wan, Hong Kong
+- Dorsett Mongkok, Hong Kong
+
+### Da Nang + Hoi An
+- HAIAN Beach Hotel & Spa
+- Little Riverside Hoi An
+
+### Yunnan
+- Atour X Hotel Kunming Old Street Wuyi Road
+- Hilton Garden Inn Dali Ancient City
+
+### Chongqing
+- Four Points by Sheraton Chongqing
+
+### Harbin / Yabuli / Snow Town
+- Home2 Suites by Hilton Harbin Central Street
+- Club Med Yabuli Resort
+- Xuexiang Zhanglicheng Homestay
+
+The named options above are shared live-price candidates. A plan can still change hotels later; update the shared catalog when a final hotel is selected.
+
+---
+
+# Booking / price-source links — mandatory
+
+Shared client: `live-price-booking-links-v1.js`
 
 Required behavior:
-- Hotel name should be clickable when a valid price source URL exists.
-- Show a clear `จอง / ดูราคาที่เจอ ↗` action for hotel results where possible.
-- Attraction/ticket name should link to the Official/current source used for the price check.
-- The link should follow the actual `sourceUrl` returned by the latest refresh, not a permanently hard-coded booking website when a better/current source was used.
+- Hotel name is clickable.
+- Show `ดูราคา / จอง ↗` even before a successful live refresh when a real hotel name exists.
+- Before a live result exists, hotel link opens a Google Hotels search using the saved dates when available.
+- After live refresh, use the latest returned `sourceUrl` when available.
+- Live hotel result shows `จอง / ดูราคาที่เจอ ↗`.
+- Attraction/ticket names link to the source used for current price checking.
+- Never hard-code a fake price source if the current source is unavailable.
 
-Shared implementation:
-- `live-price-booking-links-v1.js`
+---
 
-### 7. Service Worker / PWA registration
-A new trip must be added everywhere needed by the PWA/shared injector.
+# Attraction / ticket source coverage
+
+Current price-source catalog is registered for **all seven trip routes**.
+
+### Tokyo
+- Tokyo Disneyland 1-Day Passport — Official
+
+### Kansai
+- Osaka Castle Museum — Official
+- Umeda Sky Building Kuchu Teien Observatory — Official
+- Kinkaku-ji — Official
+
+### Hong Kong
+- Hong Kong Disneyland — Official
+- Ngong Ping 360 — Official
+- Peak Tram / Sky Terrace — Official
+
+### Da Nang
+- Sun World Ba Na Hills — Official
+
+### Yunnan
+- Stone Forest Scenic Area — current booking source
+- Chongsheng Temple & Three Pagodas — current booking source
+
+### Chongqing
+- Yangtze River Cableway — current booking source
+- Wulong Three Natural Bridges — current booking source
+- Dazu Rock Carvings — current booking source
+
+### Harbin
+- Harbin Ice and Snow World — current booking source
+- Club Med Yabuli / Ski Resort — Club Med Official
+- China Snow Town (Xuexiang) — current booking source
+
+Important: **registered source ≠ guaranteed LIVE result.** Websites can block automated reads or change markup. Only a successfully parsed value during the current refresh may be labeled LIVE. The source link must still remain useful when price parsing is unavailable.
+
+---
+
+# PWA / shared registration
+
+A new trip must be checked in all relevant shared route lists and PWA behavior.
 
 Check at minimum:
-- `sw.js` `CORE` list if the page should be pre-cached.
-- `isPlan` / plan-path detection.
-- Home → trip transition route list.
-- Shared plan scripts/styles are injected into the new trip.
-- Cache version is bumped when necessary so users do not remain on stale UI/code.
-
-### 8. Shared mobile/UI fixes
-Check shared plan-path lists and make sure the new trip receives the same fixes as the existing trips.
-
-Examples:
+- `sw.js` plan path detection / CORE where applicable
+- Home → trip transition route list
+- `trip-tools-v1.js`
 - `plan-ui-fixes-v1.js`
 - shared bottom navigation / plan-first UI
-- Trip Tools mobile tab fixes
-- collapse/expand behavior
-- motion/UI scripts
+- collapse/expand and motion scripts
+- `live-price-refresh-v2.js`
+- `live-price-booking-links-v1.js`
+- `cloudflare/live-prices.js`
 
-### 9. China-specific trips
-For China trips, prefer destination-appropriate navigation behavior used by the existing China plans:
-- Amap as primary where appropriate.
-- Google Maps as backup when useful.
-- Keep China-specific transport/payment notes where relevant.
+China trips should prefer Amap where appropriate, with Google Maps as backup when useful.
 
-### 10. Test before calling it complete
-At minimum test:
+---
+
+# Price truth rules
+
+1. `LIVE` = successfully verified in the current/recent refresh.
+2. Planning budgets remain estimates.
+3. Previous observed prices must never silently become current prices.
+4. Failed verification must show unavailable/check failed.
+5. Use real saved trip dates whenever possible.
+6. Only claim taxes/fees when the source provides enough information.
+7. Preserve the source URL so the user can open the same/current source.
+8. Prefer Official sources for attractions when available; use a current booking source when an accessible Official price source is unavailable.
+
+---
+
+# Test checklist before calling a trip complete
+
 - Home → trip opens.
-- Trip → home returns correctly.
-- Mobile layout.
-- Trip Tools opens and tabs are not clipped.
+- Trip → home returns.
+- Mobile layout works.
+- Trip Tools opens; tabs are not clipped.
 - Trip appears in Trip Tools.
 - Dates save correctly.
-- `↻` live price refresh does not behave as a plain page reload.
+- `↻` exists on home and trip page.
+- `↻` checks prices instead of just reloading.
 - Live/Last Checked label is truthful.
-- Hotel live price appears when a real hotel + dates are available.
-- Hotel booking/source link opens.
-- Attraction Official/source link opens when supported.
-- Offline/PWA behavior does not break.
+- Named hotel appears and can be price-checked.
+- Hotel name / `ดูราคา / จอง ↗` opens.
+- Attraction source link opens.
+- Offline/PWA behavior is not broken.
 - Existing trips are not regressed.
-
----
-
-# Price data truth rules
-
-These rules are mandatory.
-
-1. `LIVE` means the price was successfully verified during the current/recent refresh.
-2. Static planning budgets are estimates and must stay labeled as estimates.
-3. A previous observed price must not be silently presented as the current price.
-4. If a source cannot be verified, show `CHECK FAILED`, `Unavailable`, or equivalent.
-5. Hotel totals should use the actual trip dates when possible.
-6. Show taxes/fees status only when the source actually provides enough information.
-7. Preserve the source URL so the user can open the same/current price source.
-8. For attractions, prefer Official sources when available.
-
----
-
-# Current live-price coverage status
-
-## Shared framework
-The shared refresh/booking-link framework is registered for:
-
-- Tokyo ✅
-- Kansai ✅
-- Hong Kong ✅
-- Da Nang ✅
-- Yunnan ✅
-- Chongqing ✅
-- Harbin ✅
-
-This means all seven routes are part of the shared live-price/booking-link architecture.
-
-## Hotel data coverage
-Current hotel price checking is only useful when the plan contains a **real named hotel** and valid trip dates.
-
-- Tokyo: named hotel available ✅
-- Hong Kong: named hotel options available ✅
-- Da Nang / Hoi An: named hotel options available ✅
-- Kansai: current page still uses `Hotel TBD` ⚠️
-- Yunnan: current page still uses `Hotel TBD` ⚠️
-- Chongqing: current page still uses `Hotel TBD` ⚠️
-- Harbin: verify/select real hotel names before claiming complete hotel live-price coverage ⚠️
-
-Therefore: **the framework is on every trip, but hotel live-price data coverage is not yet 100% for every trip.**
-
-## Attraction/ticket live-price catalog
-Current explicit live ticket sources include major items for:
-
-- Tokyo ✅
-- Hong Kong ✅
-- Da Nang ✅
-- Kansai: needs official ticket catalog entries where useful ⚠️
-- Yunnan: needs official/current attraction source entries where useful ⚠️
-- Chongqing: needs official/current attraction source entries where useful ⚠️
-- Harbin: needs official/current attraction source entries where useful ⚠️
-
-Do not describe attraction live-pricing as complete for all trips until these sources have been added and tested.
 
 ---
 
 # Key shared files
 
-- `index.html` — Our Journey home / trip dates / map / trip cards
-- `sw.js` — PWA cache + shared page injection
+- `index.html` — home / dates / maps / trip cards
+- `sw.js` — PWA + shared page injection
 - `trip-tools-v1.js` / `trip-tools-v1.css` — Trip Tools
-- `trip-cloud-sync-v3.js` — shared cloud state sync
-- `plan-ui-fixes-v1.js` — shared trip/mobile fixes
-- `ui-motion-v1.js` — shared UI behavior and shared module loading
-- `live-price-refresh-v1.js` — current-price refresh UI/client
-- `live-price-booking-links-v1.js` — click-through booking/source links
-- `cloudflare/worker.js` — Cloudflare Worker API router
-- `cloudflare/live-prices.js` — hotel / FX / attraction live-price backend
+- `trip-cloud-sync-v3.js` — cloud state sync
+- `plan-ui-fixes-v1.js` — shared mobile fixes
+- `ui-motion-v1.js` — shared UI + module loader
+- `live-price-refresh-v2.js` — all-trip current price refresh + per-trip refresh button + shared hotel options
+- `live-price-booking-links-v1.js` — hotel/ticket click-through links
+- `cloudflare/worker.js` — API router
+- `cloudflare/live-prices.js` — hotel / FX / ticket current-price backend
 - `.github/workflows/pages.yml` — GitHub Pages deployment
 - `.github/workflows/cloudflare-control.yml` — Cloudflare Worker deployment
 
 ---
 
-# Change log rule
+# Current coverage status
 
-**Every meaningful feature update must also update this README when it changes architecture, setup, behavior, trip-parity requirements, or known coverage.**
+As of **2026-08-23**:
 
-When adding a new trip, the commit/change summary should explicitly confirm:
+- Tokyo — shared live-price framework ✅ named hotel ✅ ticket source ✅ booking links ✅ per-trip refresh ✅
+- Kansai — shared live-price framework ✅ named hotel ✅ ticket sources ✅ booking links ✅ per-trip refresh ✅
+- Hong Kong — shared live-price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ per-trip refresh ✅
+- Da Nang — shared live-price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ per-trip refresh ✅
+- Yunnan — shared live-price framework ✅ named Kunming/Dali hotels ✅ ticket sources ✅ booking links ✅ per-trip refresh ✅
+- Chongqing — shared live-price framework ✅ named hotel ✅ ticket sources ✅ booking links ✅ per-trip refresh ✅
+- Harbin — shared live-price framework ✅ named Harbin/Yabuli/Snow Town stays ✅ ticket sources ✅ booking links ✅ per-trip refresh ✅
 
-- New trip registered on home.
-- New trip registered in Trip Tools.
-- New trip registered in PWA/shared injector.
-- New trip registered in Live Price Refresh.
-- Hotel source/booking link behavior checked.
-- Attraction source links checked where applicable.
-- Mobile behavior checked.
-- README coverage list updated.
+**Functional coverage is now registered across all seven trips.** Live price success still depends on the external source responding and exposing a verifiable price at refresh time.
 
-This prevents future trips from being created with fewer functions than the existing ones.
+---
+
+# Change Log
+
+## 2026-08-23 — Full price/booking parity across all trips
+- Added `live-price-refresh-v2.js`.
+- Added a `↻` current-price control to every trip page via shared code.
+- Added named hotel candidates for Kansai, Yunnan, Chongqing and Harbin segments.
+- Preserved existing Tokyo, Hong Kong and Da Nang hotel candidates.
+- Expanded current attraction/ticket source catalog to all seven trips.
+- Expanded booking-link detection for Atour, Hilton/Home2, Four Points, Club Med and homestay-type stays.
+- Hotel and attraction names can open price/booking sources.
+- Updated truth rules so unavailable sources cannot be shown as LIVE.
+
+## Rule for every future meaningful update
+Update this README / Change Log whenever architecture, setup, behavior, trip parity, price coverage or known limitations change.
