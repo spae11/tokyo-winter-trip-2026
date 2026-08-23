@@ -56,4 +56,16 @@ if(!window.__livePriceBookingLinksV1&&!document.querySelector('script[data-live-
   s.dataset.livePriceBookingLinks='1';
   document.head.appendChild(s);
 }
+
+/* Visible price UX: one clear refresh bar, reliable booking links, compact hotel cards and full trip parity. */
+if(!document.getElementById('pui-hide-old-refresh')){
+  const st=document.createElement('style');st.id='pui-hide-old-refresh';st.textContent='.lpr-refresh-trip{display:none!important}';document.head.appendChild(st);
+}
+if(!window.__priceUiV2&&!document.querySelector('script[data-price-ui-v2]')){
+  const s=document.createElement('script');
+  s.src='/tokyo-winter-trip-2026/price-ui-v2.js?v=2';
+  s.async=false;
+  s.dataset.priceUiV2='1';
+  document.head.appendChild(s);
+}
 })();
