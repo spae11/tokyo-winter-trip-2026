@@ -13,7 +13,6 @@ function play(el,dir='in',duration){
   return a.finished.catch(()=>{}).finally(()=>{try{a.cancel()}catch{}})
 }
 
-/* Trip Tools uses display:none panels, so delay the actual switch just long enough to fade the old one out. */
 document.addEventListener('click',e=>{
   const tab=e.target.closest?.('.tt-tab');
   if(!tab||tab.dataset.motionBypass==='1')return;
@@ -28,17 +27,24 @@ document.addEventListener('click',e=>{
   });
 },true);
 
-/* Active-trip repaint gets a subtle re-entry instead of a hard content swap. */
 document.addEventListener('click',e=>{
   if(!e.target.closest?.('[data-pfx-focus]'))return;
   requestAnimationFrame(()=>requestAnimationFrame(()=>play($('#pfxTripDashboard .pfx-trip-main'),'in',230)));
 });
 
-/* Native details/summary controls also receive a soft reveal. */
 document.addEventListener('toggle',e=>{
   const d=e.target;
   if(!(d instanceof HTMLDetailsElement)||!d.open)return;
   const body=[...d.children].filter(x=>x.tagName!=='SUMMARY');
   body.forEach(x=>play(x,'in',200));
 },true);
+
+/* Live price refresh is shared by the home screen and every trip page. */
+if(!window.__livePriceRefreshV1&&!document.querySelector('script[data-live-price-refresh]')){
+  const s=document.createElement('script');
+  s.src='/tokyo-winter-trip-2026/live-price-refresh-v1.js?v=1';
+  s.async=false;
+  s.dataset.livePriceRefresh='1';
+  document.head.appendChild(s);
+}
 })();
