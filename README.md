@@ -35,12 +35,12 @@ A new trip is not complete until it follows the same functional rules as the act
 - README/Change Log updated in the same round
 
 # PWA deployment / cache rules
-- Current forced app generation: **v91**.
+- Current forced app generation: **v92**.
 - Installed PWA clients must be able to self-update without reinstalling the app.
-- `ui-motion-v1.js` self-registers `/sw.js?v=91`, requests an update, and reloads once when the new service worker takes control.
-- GitHub Pages deployment prepares and persists the v91 source before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.
+- `ui-motion-v1.js` self-registers `/sw.js?v=92`, requests an update, and reloads once when the new service worker takes control.
+- GitHub Pages deployment prepares and persists the v92 source before upload: cache generation v92, Shanghai route in CORE, shared Shanghai modules in CORE, Plan First v81 and direct Home loading of `ui-motion-v1.js?v=10`.
 - Home must not depend only on an already-installed service worker to discover newly added trips.
-- Shanghai must be available after the v91 controller switch even for users upgrading from an older installed PWA.
+- Shanghai must be available after the v92 controller switch even for users upgrading from an older installed PWA.
 
 # Shanghai + Disneyland 5D4N
 
@@ -61,6 +61,8 @@ Rules:
 - Shanghai hotel/ticket Refresh uses the dedicated Cloudflare handler before the generic price handler.
 - Ticket/booking source: Shanghai Disney Resort Official channel.
 - Shanghai page uses Amap links for China navigation.
+- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
+- Every Shanghai itinerary day has a destination image with source credit.
 - Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China. In Plan First, selecting Shanghai changes the Active Trip card first; navigation happens only after the user taps Open Plan.
 
 ## Shanghai approved hotels
@@ -186,6 +188,15 @@ Before calling a trip complete:
 - README / Change Log updated in same round
 
 # Change Log
+
+## 2026-08-23 — PWA v92 Shanghai full trip parity
+- Rebuilt `shanghai/index.html` to match the shared trip-page structure used by the other trips instead of using a one-off Shanghai layout.
+- Added destination imagery to every Shanghai itinerary day with source credits.
+- Added native `#daysbox`, `.day`, `.daybtn`, `.timeline`, hotel, ticket, Muslim/Halal, budget and checklist sections for shared tooling compatibility.
+- Removed the one-off Shanghai bottom navigation; Shanghai now uses the same Plan First / Map / Memories / More navigation and Trip Tools behavior as other trips.
+- Added Shanghai as a native plan route in both `plan-first-v1.js` and `plan-first-v2.js`.
+- Kept Shanghai-only verified hotel + Disney Refresh and truthful LIVE/unavailable behavior.
+- Bumped installed PWA clients to v92, shared Plan First assets to v81 and `ui-motion-v1.js` to v10.
 
 ## 2026-08-23 — PWA v91 native Plan First selection
 - Fixed Shanghai selection skipping the Active Trip card and navigating immediately.
