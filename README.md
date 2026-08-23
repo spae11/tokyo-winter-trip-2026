@@ -73,7 +73,7 @@ Keep compatibility with:
 
 ---
 
-# Unified Live Price v3 — mandatory for every trip
+# Unified Live Price v4 — mandatory for every trip
 
 Shared price UI/client:
 - `live-price-v2.js`
@@ -88,13 +88,16 @@ Loader:
 ## Required behavior
 
 - **Every trip page must show a clear `↻ เช็กราคา` button** near the Plan / Quick Edit controls.
-- Home Refresh also checks prices; it must not be only a page reload.
-- One refresh checks registered hotel options, attraction/ticket sources and current FX → THB.
+- **Trip-page Refresh is scoped to the current trip only.** Example: Hong Kong checks only Hong Kong hotels, Hong Kong tickets/attractions and the relevant FX rate.
+- **Home Refresh checks all registered trips.**
 - Default hotel request: **2 travelers / 1 room**.
 - Uses saved trip dates.
 - Shows visible progress immediately so the user knows Refresh started.
-- Shows a current-price sheet when the check completes.
-- Shows `LIVE` / `LAST CHECKED` truthfully.
+- The result sheet on a trip page shows **only that trip**, never unrelated trips.
+- After a successful trip refresh, the latest hotel/ticket results are merged into the stored data for **that trip only**; other trips keep their previous snapshots.
+- Current trip snapshots are stored in `travelHubTripPricesV1` and the merged shared store remains in `travelHubLivePricesV2`.
+- Hotel cards and ticket summary on the current trip page update immediately after a successful refresh.
+- Shows `LIVE` / `LAST CHECKED` truthfully using per-trip/per-result timestamps.
 - If verification fails, show unavailable/check failed. **Never show an old value as LIVE.**
 - If dates are missing, ask for dates instead of inventing an exact hotel total.
 
@@ -231,6 +234,7 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 7. Only claim taxes/fees when the source provides enough information.
 8. Preserve/open the current source URL or a safe booking search URL.
 9. Prefer Official sources for attractions when available; otherwise label the current booking source honestly.
+10. Refreshing one trip must never refresh, overwrite or relabel another trip as LIVE.
 
 ---
 
@@ -244,7 +248,11 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 - Dates save correctly.
 - **Visible `↻ เช็กราคา` appears on the trip page.**
 - Tapping Refresh immediately shows loading/progress.
-- Live/Last Checked label is truthful.
+- Trip-page result sheet contains only the current trip.
+- Refresh request contains only the current trip ID when used inside a trip page.
+- Successful refresh updates that trip's stored snapshot and visible hotel/ticket data.
+- Other trip snapshots remain unchanged.
+- Live/Last Checked label is truthful per trip.
 - Named hotel appears and can be price-checked.
 - Hotel name / `ดูราคา / จอง ↗` opens an external booking/price page, not Our Journey Home.
 - Attraction source link opens.
@@ -262,7 +270,7 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 - `plan-ui-fixes-v1.js` — shared mobile fixes
 - `plan-first-v1.js` / `plan-first-v2.js` — Plan First UI
 - `ui-motion-v1.js` — shared UI + unified price module loader
-- `live-price-v2.js` — current price refresh, result sheet, hotel/ticket links and mobile hotel-card overrides
+- `live-price-v2.js` — trip-scoped current-price refresh, per-trip snapshots, result sheet, hotel/ticket links and mobile hotel-card overrides
 - `cloudflare/worker.js` — API router
 - `cloudflare/live-prices.js` — hotel / FX / ticket current-price backend
 - `.github/workflows/pages.yml` — GitHub Pages deployment
@@ -274,19 +282,29 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 
 As of **2026-08-23**:
 
-- Tokyo — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅
-- Kansai — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅
-- Hong Kong — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ compact mobile hotel cards ✅
-- Da Nang — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅
-- Yunnan — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅
-- Chongqing — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅
-- Harbin — price framework ✅ named hotel options ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅
+- Tokyo — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
+- Kansai — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
+- Hong Kong — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ compact mobile hotel cards ✅ trip-scoped refresh ✅
+- Da Nang — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
+- Yunnan — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
+- Chongqing — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
+- Harbin — price framework ✅ named hotel options ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
 
 **Functional registration is complete across all seven trips.** A LIVE result still depends on the external source responding and exposing a verifiable price at refresh time.
 
 ---
 
 # Change Log
+
+## 2026-08-23 — Trip-scoped Refresh + per-trip price data
+- Changed Trip-page `↻ เช็กราคา` to request only the current trip instead of all seven trips.
+- Trip result sheet now displays only the current trip.
+- Home Refresh remains the all-trip refresh action.
+- Added merge behavior so refreshing one trip replaces only that trip's hotel/ticket results and preserves other trip snapshots.
+- Added `travelHubTripPricesV1` for explicit per-trip price snapshots.
+- Added per-result/per-trip timestamps so refreshing another trip cannot make old prices look LIVE.
+- Current hotel cards and ticket summaries update immediately after the current trip refresh.
+- Bumped unified price loader to `live-price-v2.js?v=4`.
 
 ## 2026-08-23 — Unified Live Price v3
 - Consolidated overlapping price UI and booking click handlers into one shared `live-price-v2.js` module.
