@@ -53,6 +53,7 @@ Rules:
 - Shanghai hotel/ticket Refresh uses the dedicated Cloudflare handler before the generic price handler.
 - Ticket/booking source: Shanghai Disney Resort Official channel.
 - Shanghai page uses Amap links for China navigation.
+- Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China; choosing it opens the Shanghai trip page.
 
 ## Shanghai approved hotels
 Review-first shortlist:
@@ -122,6 +123,7 @@ Rules:
 - Every trip gets a start-date field and Budget (THB) field.
 - Save writes to `travelToolsV1` and synchronizes price/booking dates into `travelHubStateV2`.
 - Shanghai = 4 nights.
+- Shared Trip Tools picker must expose Shanghai under China and route to `/shanghai/`.
 - Tokyo 5D4N backup uses next-day hotel check-in.
 - Hong Kong derives nights from selected 5D4N/6D5N mode.
 
@@ -144,7 +146,7 @@ Tokyo keeps 6D5N as the main plan plus a saved 5D4N backup flight option.
 
 # Shared modules
 - `ui-motion-v1.js` — shared loader
-- `shanghai-register-v1.js` — registers Shanghai on the Home trip list / China card
+- `shanghai-register-v1.js` — registers Shanghai on Home / China card and shared Trip Tools picker
 - `trip-settings-all-v1.js` — all-trip date + budget settings
 - `price-sanity-v1.js` — bad-price guard
 - `hotel-quality-v1.js` — generic approved-hotel policy
@@ -162,6 +164,7 @@ Before calling a trip complete:
 - Mobile layout is proportionate
 - Date/budget saves and survives reopening
 - Settings lists every registered trip
+- Trip Tools picker exposes Shanghai under China
 - Refresh checks only intended trip
 - Booking opens intended hotel externally
 - Official ticket link opens intended source
@@ -183,7 +186,7 @@ Before calling a trip complete:
 - Added Shanghai Disney Resort Official ticket link.
 - Added `cloudflare/shanghai-prices.js` with verified-pair hotel parsing and Shanghai Disney official ticket price extraction.
 - Updated Cloudflare Worker to route Shanghai-only refresh before generic live prices.
-- Added `shanghai-register-v1.js` to register Shanghai on Our Journey Home / China card.
+- Added `shanghai-register-v1.js` to register Shanghai on Our Journey Home / China card and shared Trip Tools picker.
 - Added Shanghai to `trip-settings-all-v1.js` under China with 4 nights and 55K default budget.
 - Updated `ui-motion-v1.js` to load the Shanghai registration module.
 
