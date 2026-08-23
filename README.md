@@ -23,11 +23,11 @@ Before adding a new trip:
 
 1. Read this README.
 2. Inspect the newest shared implementation.
-3. Register the new route in Home, Trip Tools, PWA/shared injection, price refresh and booking/source-link systems.
+3. Register the new route in Home, Trip Tools, PWA/shared injection, price refresh, live-budget sync and booking/source-link systems.
 4. Give it every applicable function the existing trips already have.
 5. Update this README / Change Log whenever architecture or trip coverage changes.
 
-A trip is not complete until mobile layout, Trip Tools, Memories/Sync, live-price refresh and external booking/source links are checked.
+A trip is not complete until mobile layout, Trip Tools, Memories/Sync, live-price refresh, live-budget sync and external booking/source links are checked.
 
 ---
 
@@ -43,7 +43,8 @@ A trip is not complete until mobile layout, Trip Tools, Memories/Sync, live-pric
 - Mobile-friendly header/navigation.
 - Daily itinerary.
 - Maps / location links.
-- Budget.
+- Budget breakdown.
+- Budget must react to the newest price snapshot: verified categories may replace estimates; unavailable categories must remain clearly labeled `ESTIMATE`.
 - Hotel/stay section or shared named hotel options.
 - Transport notes.
 - Muslim / halal / prayer information when relevant.
@@ -78,6 +79,9 @@ Keep compatibility with:
 Shared price UI/client:
 - `live-price-v2.js`
 
+Live budget / compact ticket UI:
+- `trip-live-budget-sync-v1.js`
+
 Backend:
 - `cloudflare/live-prices.js`
 - routed by `cloudflare/worker.js`
@@ -96,10 +100,17 @@ Loader:
 - The result sheet on a trip page shows **only that trip**, never unrelated trips.
 - After a successful trip refresh, the latest hotel/ticket results are merged into the stored data for **that trip only**; other trips keep their previous snapshots.
 - Current trip snapshots are stored in `travelHubTripPricesV1` and the merged shared store remains in `travelHubLivePricesV2`.
-- Hotel cards and ticket summary on the current trip page update immediately after a successful refresh.
+- Hotel cards, ticket summary and live-aware budget on the current trip page update from the newest stored snapshot.
 - Shows `LIVE` / `LAST CHECKED` truthfully using per-trip/per-result timestamps.
 - If verification fails, show unavailable/check failed. **Never show an old value as LIVE.**
 - If dates are missing, ask for dates instead of inventing an exact hotel total.
+
+## Ticket / attraction link UI
+
+- The **`🎟️ ราคา / ลิงก์ตั๋ว` section is collapsed by default** on every trip page.
+- The user taps the section title to expand or collapse it.
+- The collapsed state keeps the plan compact on mobile but source links remain available when expanded.
+- Attraction/ticket names open the Official/current source used by the backend.
 
 ## Booking / price-source links
 
@@ -108,8 +119,26 @@ Loader:
 - A hotel click must open an external hotel pricing/booking page, never Our Journey Home.
 - When a live result returns a `sourceUrl`, that current source is used.
 - Without a live source, fallback hotel search uses the hotel name + saved trip dates when available.
-- Attraction/ticket names open the Official/current source used by the backend.
 - External booking clicks must stop app navigation handlers so they are not intercepted by Home navigation.
+
+---
+
+# Live-aware trip budget — mandatory for every trip
+
+The visible `TRIP BUDGET • 2 PEOPLE` section is a hybrid of verified current prices and planning estimates.
+
+Rules:
+
+1. After `↻ เช็กราคา`, a hotel category with a verified current total may replace the old hotel estimate.
+2. Ticket/activity budget may replace the planning estimate only when all registered required ticket sources for that trip are successfully verified in the current snapshot.
+3. Flight, food, transport, eSIM, insurance or other categories that do not have a reliable live source remain `ESTIMATE`.
+4. The total budget is recalculated from the values currently shown in the category cards.
+5. The budget shows the latest checked timestamp and how many categories currently use `LIVE` data.
+6. Never silently present an estimate as a current/live price.
+7. A trip without confirmed dates keeps hotel cost as `ESTIMATE` and asks the user to set dates before exact refresh.
+8. Hong Kong mode must respect the selected trip length. `5D4N` uses 4 hotel nights and 5 food days; `6D5N` uses 5 hotel nights and 6 food days.
+9. Stale hotel names in the planning budget must not be treated as the current selected option. The shared sync layer uses the current hotel catalog / current trip choice when describing the estimate.
+10. These rules apply to **all registered trips**, not only Hong Kong.
 
 ---
 
@@ -217,6 +246,7 @@ Check at minimum:
 - shared bottom navigation / plan-first UI
 - `ui-motion-v1.js`
 - `live-price-v2.js`
+- `trip-live-budget-sync-v1.js`
 - `cloudflare/live-prices.js`
 
 China trips should prefer Amap where appropriate, with Google Maps as backup when useful.
@@ -227,7 +257,7 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 
 1. `LIVE` = successfully verified in the current/recent refresh.
 2. `LAST CHECKED` = previously verified with a timestamp.
-3. Planning budgets remain estimates.
+3. Planning budgets remain estimates where no reliable current source exists.
 4. Previous observed prices must never silently become current prices.
 5. Failed verification must show unavailable/check failed.
 6. Use real saved trip dates whenever possible.
@@ -235,6 +265,7 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 8. Preserve/open the current source URL or a safe booking search URL.
 9. Prefer Official sources for attractions when available; otherwise label the current booking source honestly.
 10. Refreshing one trip must never refresh, overwrite or relabel another trip as LIVE.
+11. Budget totals may mix `LIVE` and `ESTIMATE`, but every category must make that distinction visible.
 
 ---
 
@@ -252,6 +283,11 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 - Refresh request contains only the current trip ID when used inside a trip page.
 - Successful refresh updates that trip's stored snapshot and visible hotel/ticket data.
 - Other trip snapshots remain unchanged.
+- `🎟️ ราคา / ลิงก์ตั๋ว` is collapsed by default and can be expanded manually.
+- Trip Budget replaces only verified categories with live values.
+- Non-live budget categories remain visibly marked `ESTIMATE`.
+- Budget total recalculates after a live category changes.
+- Hong Kong 5D4N budget uses 4 hotel nights / 5 food days.
 - Live/Last Checked label is truthful per trip.
 - Named hotel appears and can be price-checked.
 - Hotel name / `ดูราคา / จอง ↗` opens an external booking/price page, not Our Journey Home.
@@ -267,10 +303,12 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 - `sw.js` — PWA + shared page injection
 - `trip-tools-v1.js` / `trip-tools-v1.css` — Trip Tools
 - `trip-cloud-sync-v3.js` — cloud state sync
+- `plan-extras-v1.js` — planning extras + base budget breakdown
 - `plan-ui-fixes-v1.js` — shared mobile fixes
 - `plan-first-v1.js` / `plan-first-v2.js` — Plan First UI
-- `ui-motion-v1.js` — shared UI + unified price module loader
+- `ui-motion-v1.js` — shared UI + unified price/budget module loader
 - `live-price-v2.js` — trip-scoped current-price refresh, per-trip snapshots, result sheet, hotel/ticket links and mobile hotel-card overrides
+- `trip-live-budget-sync-v1.js` — collapsed ticket-link section + LIVE/ESTIMATE budget synchronization for every trip
 - `cloudflare/worker.js` — API router
 - `cloudflare/live-prices.js` — hotel / FX / ticket current-price backend
 - `.github/workflows/pages.yml` — GitHub Pages deployment
@@ -282,19 +320,31 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 
 As of **2026-08-23**:
 
-- Tokyo — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
-- Kansai — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
-- Hong Kong — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ compact mobile hotel cards ✅ trip-scoped refresh ✅
-- Da Nang — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
-- Yunnan — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
-- Chongqing — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
-- Harbin — price framework ✅ named hotel options ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅
+- Tokyo — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅
+- Kansai — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅
+- Hong Kong — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ compact mobile hotel cards ✅ trip-scoped refresh ✅ mode-aware live budget ✅ collapsed ticket links ✅
+- Da Nang — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅
+- Yunnan — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅
+- Chongqing — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅
+- Harbin — price framework ✅ named hotel options ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅
 
 **Functional registration is complete across all seven trips.** A LIVE result still depends on the external source responding and exposing a verifiable price at refresh time.
 
 ---
 
 # Change Log
+
+## 2026-08-23 — Collapsed ticket links + live-aware budget sync
+- Added `trip-live-budget-sync-v1.js` and loaded it globally from `ui-motion-v1.js`.
+- `🎟️ ราคา / ลิงก์ตั๋ว` now starts collapsed on every trip and expands when the user taps the heading.
+- Connected the visible `TRIP BUDGET • 2 PEOPLE` cards to the latest per-trip price snapshot.
+- Verified hotel totals replace the hotel planning estimate when available.
+- Ticket/activity budget replaces the estimate only when all registered required ticket sources are verified; partial verification stays clearly marked as an estimate.
+- Recalculates the visible total from the currently displayed category values.
+- Marks non-live categories as `ESTIMATE` rather than implying that flights, food, transport or other unsupported costs are live.
+- Hong Kong `5D4N` now uses 4 hotel nights and 5 food days in the planning budget when no verified live value is available.
+- Removed stale Travelodge wording from the runtime Hong Kong budget description by using the current hotel choice/catalog instead.
+- Applied the same live-aware budget rules to all registered trips.
 
 ## 2026-08-23 — Trip-scoped Refresh + per-trip price data
 - Changed Trip-page `↻ เช็กราคา` to request only the current trip instead of all seven trips.
