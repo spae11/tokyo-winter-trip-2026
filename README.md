@@ -34,6 +34,14 @@ A new trip is not complete until it follows the same functional rules as the act
 - **Trip Tools → Settings must include every registered trip**
 - README/Change Log updated in the same round
 
+# PWA deployment / cache rules
+- Current forced app generation: **v88**.
+- Installed PWA clients must be able to self-update without reinstalling the app.
+- `ui-motion-v1.js` self-registers `/sw.js?v=88`, requests an update, and reloads once when the new service worker takes control.
+- GitHub Pages deployment prepares the v88 artifact before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.
+- Home must not depend only on an already-installed service worker to discover newly added trips.
+- Shanghai must be available after the v88 controller switch even for users upgrading from an older installed PWA.
+
 # Shanghai + Disneyland 5D4N
 
 Route: `shanghai/`
@@ -145,7 +153,7 @@ Tokyo keeps 6D5N as the main plan plus a saved 5D4N backup flight option.
 - Keep spacing, mobile typography, card radius, card padding, and bottom-nav clearance consistent.
 
 # Shared modules
-- `ui-motion-v1.js` — shared loader
+- `ui-motion-v1.js` — shared loader + PWA v88 self-heal
 - `shanghai-register-v1.js` — registers Shanghai on Home / China card and shared Trip Tools picker
 - `trip-settings-all-v1.js` — all-trip date + budget settings
 - `price-sanity-v1.js` — bad-price guard
@@ -174,9 +182,19 @@ Before calling a trip complete:
 - Secondary sections collapse correctly
 - Quick Jump destinations work
 - Bottom navigation does not cover final content
+- PWA upgrades from the previous cache generation without reinstall
 - README / Change Log updated in same round
 
 # Change Log
+
+## 2026-08-23 — PWA v88 forced refresh
+- Fixed installed-app clients remaining on an older cached Home experience after Shanghai and other shared updates were pushed.
+- `ui-motion-v1.js` now self-registers `sw.js?v=88`, requests an update, and reloads once after controller change.
+- Fixed the generic dynamic-script duplicate marker so loader detection matches the attribute it creates.
+- GitHub Pages build now prepares a v88 deployment artifact before upload.
+- Deployment artifact adds `shanghai/index.html`, `shanghai-register-v1.js`, `price-sanity-v1.js`, `hotel-quality-v1.js`, `trip-settings-all-v1.js`, and `tokyo-flight-option-v1.js` to the core cache.
+- Shanghai is included in plan-page injection and Home trip-transition routing.
+- Home gets a direct `ui-motion-v1.js?v=6` load so new trips do not depend only on an already-active service worker.
 
 ## 2026-08-23 — Shanghai + Disneyland 5D4N
 - Added `shanghai/index.html` as a new Shanghai + Shanghai Disneyland trip.
