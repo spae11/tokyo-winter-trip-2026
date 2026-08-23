@@ -22,8 +22,8 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('click',e=>{if(e.target.closest?.('[data-pfx-focus]'))requestAnimationFrame(()=>requestAnimationFrame(()=>play($('#pfxTripDashboard .pfx-trip-main'),'in',230))) });
 document.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement)||!d.open)return;[...d.children].filter(x=>x.tagName!=='SUMMARY').forEach(x=>play(x,'in',200))},true);
-/* Single source of truth for price refresh, hotel/ticket links and trip price UI. */
+/* Single source of truth for price refresh, booking links and per-trip price data. */
 if(!window.__livePriceV2&&!document.querySelector('script[data-live-price-v2]')){
-  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/live-price-v2.js?v=3';s.async=false;s.dataset.livePriceV2='1';document.head.appendChild(s);
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/live-price-v2.js?v=4';s.async=false;s.dataset.livePriceV2='1';document.head.appendChild(s);
 }
 })();
