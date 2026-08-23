@@ -28,10 +28,10 @@ if(!window.__livePriceV2&&!document.querySelector('script[data-live-price-v2]'))
 }
 /* Compact ticket links by default and sync visible trip budgets with latest verified prices. */
 if(!window.__tripLiveBudgetSyncV1&&!document.querySelector('script[data-trip-live-budget-sync-v1]')){
-  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-live-budget-sync-v1.js?v=2';s.async=false;s.dataset.tripLiveBudgetSyncV1='1';document.head.appendChild(s);
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-live-budget-sync-v1.js?v=3';s.async=false;s.dataset.tripLiveBudgetSyncV1='1';document.head.appendChild(s);
 }
 /* All-trip long-page UX: quick section jump, sensible hide/unhide and reliable hotel booking destinations. */
 if(!window.__tripPageUxV1&&!document.querySelector('script[data-trip-page-ux-v1]')){
-  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-page-ux-v1.js?v=1';s.async=false;s.dataset.tripPageUxV1='1';document.head.appendChild(s);
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-page-ux-v1.js?v=2';s.async=false;s.dataset.tripPageUxV1='1';document.head.appendChild(s);
 }
 })();
