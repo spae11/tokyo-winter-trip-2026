@@ -10,11 +10,12 @@ document.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDe
 function load(src,key){if(!window[key]&&!document.querySelector(`script[data-${src}]`)){const s=document.createElement('script');s.src=`/tokyo-winter-trip-2026/${src}.js?v=1`;s.async=false;s.dataset[src.replaceAll('-','')]='1';document.head.appendChild(s)}}
 load('price-sanity-v1','__priceSanityV1');
 load('hotel-quality-v1','__hotelQualityV1');
+load('shanghai-register-v1','__shanghaiRegisterV1');
 if(!window.__livePriceV2&&!document.querySelector('script[data-live-price-v2]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/live-price-v2.js?v=5';s.async=false;s.dataset.livePriceV2='1';document.head.appendChild(s)}
 if(!window.__tripLiveBudgetSyncV2&&!document.querySelector('script[data-trip-live-budget-sync-v2]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-live-budget-sync-v2.js?v=3';s.async=false;s.dataset.tripLiveBudgetSyncV2='1';document.head.appendChild(s)}
 if(!window.__tripPageUxV2&&!document.querySelector('script[data-trip-page-ux-v2]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-page-ux-v2.js?v=2';s.async=false;s.dataset.tripPageUxV2='1';document.head.appendChild(s)}
 if(!window.__tripJumpFixV1&&!document.querySelector('script[data-trip-jump-fix-v1]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-jump-fix-v1.js?v=1';s.async=false;s.dataset.tripJumpFixV1='1';document.head.appendChild(s)}
 if(!window.__appLayoutPolishV1&&!document.querySelector('script[data-app-layout-polish-v1]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/app-layout-polish-v1.js?v=1';s.async=false;s.dataset.appLayoutPolishV1='1';document.head.appendChild(s)}
 if(location.pathname.includes('/tokyo/')&&!window.__tokyoFlightOptionV1&&!document.querySelector('script[data-tokyo-flight-option-v1]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/tokyo-flight-option-v1.js?v=1';s.async=false;s.dataset.tokyoFlightOptionV1='1';document.head.appendChild(s)}
-if(!window.__tripSettingsAllV1&&!document.querySelector('script[data-trip-settings-all-v1]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-settings-all-v1.js?v=2';s.async=false;s.dataset.tripSettingsAllV1='1';document.head.appendChild(s)}
+if(!window.__tripSettingsAllV1&&!document.querySelector('script[data-trip-settings-all-v1]')){const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-settings-all-v1.js?v=3';s.async=false;s.dataset.tripSettingsAllV1='1';document.head.appendChild(s)}
 })();
