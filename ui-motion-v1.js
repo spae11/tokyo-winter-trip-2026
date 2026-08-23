@@ -42,4 +42,8 @@ if(!window.__tripJumpFixV1&&!document.querySelector('script[data-trip-jump-fix-v
 if(!window.__appLayoutPolishV1&&!document.querySelector('script[data-app-layout-polish-v1]')){
   const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/app-layout-polish-v1.js?v=1';s.async=false;s.dataset.appLayoutPolishV1='1';document.head.appendChild(s);
 }
+/* Trip Tools settings: edit start date + budget for every registered trip. */
+if(!window.__tripSettingsAllV1&&!document.querySelector('script[data-trip-settings-all-v1]')){
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-settings-all-v1.js?v=1';s.async=false;s.dataset.tripSettingsAllV1='1';document.head.appendChild(s);
+}
 })();
