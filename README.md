@@ -31,8 +31,10 @@ A new trip is not complete until it has feature parity with the routes above.
 - Trip Tools + Memories/Sync compatibility
 - **Trip Tools → Settings must include the trip's start date and budget**
 - **Hotel shortlist must pass the shared review + budget policy below**
+- **Hotel LIVE prices must pass the consistency checks below; otherwise show unavailable, never guess**
 
 ## Current shared modules
+- `price-sanity-v1.js` — rejects inconsistent/implausible hotel price results before UI/storage
 - `hotel-quality-v1.js` — approved hotel catalog, review threshold, 10K/15K ranking, old-hotel filtering
 - `live-price-v2.js` — current-price refresh + per-trip snapshots
 - `trip-live-budget-sync-v2.js` — LIVE/ESTIMATE budget sync with hotel budget ceiling
@@ -42,6 +44,34 @@ A new trip is not complete until it has feature parity with the routes above.
 - `trip-settings-all-v1.js` — all-trip start-date + budget settings and shared date sync
 - `ui-motion-v1.js` — shared loader
 - `cloudflare/live-prices.js` / `cloudflare/worker.js` — current-price backend
+
+# Hotel price truth / consistency rules
+
+The old Google Hotels parser could accidentally combine unrelated THB numbers from the page, producing impossible combinations such as a stay total that did not equal the displayed nightly rate × nights. That behavior is prohibited.
+
+## Backend rule
+`cloudflare/live-prices.js` now marks a hotel `LIVE` only when:
+- check-in/check-out produce a valid night count
+- a nightly/total pair can be found close enough together in the source page
+- the pair is internally consistent for the requested number of nights
+- the implied nightly value is above a conservative per-destination sanity floor
+
+When a valid pair is found:
+- **stay total is the source of truth**
+- displayed `nightlyTHB = totalTHB ÷ nights`
+- the backend does not independently display two unrelated price values
+
+If a reliable pair cannot be verified, return `status: unavailable` instead of estimating/guessing a LIVE price.
+
+## Front-end guard
+`price-sanity-v1.js` loads before the hotel policy and live-price client. It rejects a hotel result if:
+- `totalTHB ÷ nights` and `nightlyTHB` differ materially
+- the implied nightly value is implausibly low for the destination
+- total/night count is invalid
+
+Rejected legacy/cache results are converted to `unavailable` and their bad price fields are removed from `travelHubLivePricesV2` / `travelHubTripPricesV1`.
+
+**Permanent rule:** showing no LIVE hotel price is better than showing a wrong LIVE hotel price.
 
 # Hotel quality + budget policy
 
@@ -55,7 +85,7 @@ This is the default rule for **every current and future trip**.
 - `Hotel TBD` is never an approved hotel.
 
 ## Stay-price target
-The live full-stay total controls ranking:
+The verified full-stay total controls ranking:
 
 1. **≤ 10,000 THB** — preferred / green
 2. **10,001–15,000 THB** — acceptable fallback
@@ -68,13 +98,13 @@ Rules:
 - For split-city trips, the shortlist may contain hotels for different stay segments; exact segment-night totals should be refined when segment dates are available.
 
 ## Price request enforcement
-`hotel-quality-v1.js` loads **before** `live-price-v2.js` and enforces the approved shortlist on `/api/prices/refresh` requests. This prevents old catalog hotels from reappearing through the existing price client.
+`hotel-quality-v1.js` loads before `live-price-v2.js` and enforces the approved shortlist on `/api/prices/refresh` requests. This prevents old catalog hotels from reappearing through the existing price client.
 
 It also:
 - removes old/unapproved hotel snapshots from `travelHubLivePricesV2` and `travelHubTripPricesV1`
 - hides old static hotel cards that are no longer approved
 - shows the approved shortlist with review score and current budget band
-- ranks current results by `≤10K` → `≤15K` → over budget
+- ranks verified current results by `≤10K` → `≤15K` → over budget
 - updates visible legacy hotel wording in Trip Tools where applicable
 - keeps Booking.com links date-aware
 
@@ -93,7 +123,7 @@ It also:
 - **The Cityview - Chinese YMCA of Hong Kong** — review 4.0/5; Booking 8.5/10
 - **Dorsett Mongkok, Hong Kong** — review 4.1/5; Booking 8.0/10
 
-Dorsett remains because it was already a preferred saved option, but live total still must respect the 15K ceiling to become the main recommendation.
+Dorsett remains because it was already a preferred saved option, but its verified live total must still respect the 15K ceiling to become the main recommendation.
 
 ## Da Nang + Hoi An
 - **Monarque Hotel Danang** — review 5.0/5; Booking 9.5/10
@@ -136,7 +166,7 @@ Rules:
 - Hotel request default: 2 adults / 1 room.
 - Use saved trip dates whenever available.
 - Hotel requests use only the approved quality catalog.
-- `LIVE` means verified during the current/recent refresh.
+- `LIVE` means verified during the current/recent refresh and passed price sanity validation.
 - Old values must never silently become LIVE.
 - Missing dates must not create a fabricated exact hotel total.
 - Unsupported categories remain `ESTIMATE`.
@@ -199,7 +229,7 @@ Prefer fixing shared layout rules instead of adding one-off large margins/paddin
 # PWA / offline
 Current cache generation: **`our-journey-v87`**.
 
-Offline core includes the main shared loader/price/UX/layout files. `hotel-quality-v1.js` and `trip-settings-all-v1.js` are loaded by `ui-motion-v1.js` and are cached by the service worker script strategy after their first online load.
+Offline core includes the main shared loader/price/UX/layout files. Additional shared scripts are cached by the service worker script strategy after their first online load.
 
 # Test checklist before calling a trip complete
 - Home ↔ trip navigation works
@@ -209,6 +239,8 @@ Offline core includes the main shared loader/price/UX/layout files. `hotel-quali
 - Every trip date/budget saves and propagates to Refresh/Booking
 - Approved hotel shortlist uses review ≥4/5 or OTA ≥8/10 fallback
 - Old/unapproved hotel cards do not return after Refresh
+- **For every LIVE hotel: `totalTHB ÷ nights` approximately equals displayed nightly price**
+- Implausibly low/inconsistent hotel prices are rejected, not displayed
 - Hotel price ranking prefers ≤10K, accepts ≤15K, and does not auto-select >15K
 - Refresh shows progress and checks only the intended trip
 - Ticket section stays collapsed after Refresh
@@ -223,6 +255,15 @@ Offline core includes the main shared loader/price/UX/layout files. `hotel-quali
 
 # Change Log
 
+## 2026-08-23 — Hotel price consistency fix
+- Fixed the Google Hotels parser that previously treated the lowest THB number on a page as nightly price and could pair it with an unrelated total.
+- Backend now searches for a nearby nightly/total pair consistent with the requested number of nights.
+- Stay total is now the source of truth; displayed nightly is derived from `total ÷ nights`.
+- Added conservative destination nightly sanity floors to reject obviously impossible values.
+- If price evidence is inconsistent, backend returns `unavailable` instead of a guessed LIVE price.
+- Added `price-sanity-v1.js` as a client-side second guard and legacy cache cleaner.
+- Updated `ui-motion-v1.js` so price sanity loads before hotel-quality and live-price modules.
+
 ## 2026-08-23 — Review-first hotel policy across all trips
 - Added `hotel-quality-v1.js` as the shared approved-hotel catalog.
 - Replaced the effective hotel shortlist for Tokyo, Kansai, Hong Kong, Da Nang/Hoi An, Yunnan, Chongqing and Harbin/Yabuli.
@@ -230,10 +271,7 @@ Offline core includes the main shared loader/price/UX/layout files. `hotel-quali
 - Added live stay-budget bands: preferred ≤10K THB, acceptable ≤15K THB, over 15K not selected as the main recommendation.
 - Hotel quality policy now loads before `live-price-v2.js` and rewrites hotel price requests to approved candidates only.
 - Old/unapproved stored hotel snapshots are removed from active price data.
-- Added a review + budget shortlist UI to trip pages and hide obsolete hotel cards.
 - Updated `trip-live-budget-sync-v2.js` so the hotel budget only uses approved LIVE hotels at or below 15K.
-- Updated legacy visible hotel wording in Trip Tools where possible.
-- Updated `ui-motion-v1.js` to load the hotel policy before price refresh.
 
 ## 2026-08-23 — All-trip date + budget Settings
 - Added `trip-settings-all-v1.js`.
