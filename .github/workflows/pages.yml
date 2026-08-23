@@ -26,19 +26,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Prepare and persist PWA v89
+      - name: Prepare and persist PWA v90
         run: |
           python - <<'PY'
           from pathlib import Path
 
           sw = Path('sw.js')
           s = sw.read_text(encoding='utf-8')
-          s = s.replace("our-journey-v87", "our-journey-v89").replace("our-journey-v88", "our-journey-v89")
+          for old in ['our-journey-v87','our-journey-v88','our-journey-v89']:
+              s = s.replace(old, 'our-journey-v90')
           if "BASE+'shanghai/index.html'" not in s:
               s = s.replace("BASE+'harbin/index.html',BASE+'manifest.webmanifest'", "BASE+'harbin/index.html',BASE+'shanghai/index.html',BASE+'manifest.webmanifest'")
           if "BASE+'shanghai-register-v1.js'" not in s:
               s = s.replace("BASE+'app-layout-polish-v1.js'];", "BASE+'app-layout-polish-v1.js',BASE+'price-sanity-v1.js',BASE+'hotel-quality-v1.js',BASE+'trip-settings-all-v1.js',BASE+'tokyo-flight-option-v1.js',BASE+'shanghai-register-v1.js'];")
-          s = s.replace("ui-motion-v1.js?v=5", "ui-motion-v1.js?v=7").replace("ui-motion-v1.js?v=6", "ui-motion-v1.js?v=7")
+          for old in ['ui-motion-v1.js?v=5','ui-motion-v1.js?v=6','ui-motion-v1.js?v=7']:
+              s = s.replace(old, 'ui-motion-v1.js?v=8')
           if "url.pathname.startsWith(BASE+'shanghai/')" not in s:
               s = s.replace("url.pathname.startsWith(BASE+'harbin/');", "url.pathname.startsWith(BASE+'harbin/')||url.pathname.startsWith(BASE+'shanghai/');")
           if 'a[href=\\"./shanghai/\\"]' not in s:
@@ -47,32 +49,37 @@ jobs:
 
           root = Path('index.html')
           h = root.read_text(encoding='utf-8')
-          for old in ['manifest.webmanifest?v=84','manifest.webmanifest?v=88']:
-              h = h.replace(old, 'manifest.webmanifest?v=89')
-          h = h.replace('ourJourneySWReloadV84', 'ourJourneySWReloadV89').replace('ourJourneySWReloadV88', 'ourJourneySWReloadV89')
-          h = h.replace('sw.js?v=84', 'sw.js?v=89').replace('sw.js?v=88', 'sw.js?v=89')
-          h = h.replace('/ui-motion-v1.js?v=6', '/ui-motion-v1.js?v=7')
-          direct = '<script src="/tokyo-winter-trip-2026/ui-motion-v1.js?v=7"></script>'
+          for old in ['manifest.webmanifest?v=84','manifest.webmanifest?v=88','manifest.webmanifest?v=89']:
+              h = h.replace(old, 'manifest.webmanifest?v=90')
+          for old in ['ourJourneySWReloadV84','ourJourneySWReloadV88','ourJourneySWReloadV89']:
+              h = h.replace(old, 'ourJourneySWReloadV90')
+          for old in ['sw.js?v=84','sw.js?v=88','sw.js?v=89']:
+              h = h.replace(old, 'sw.js?v=90')
+          for old in ['/ui-motion-v1.js?v=6','/ui-motion-v1.js?v=7']:
+              h = h.replace(old, '/ui-motion-v1.js?v=8')
+          direct = '<script src="/tokyo-winter-trip-2026/ui-motion-v1.js?v=8"></script>'
           if direct not in h:
               h = h.replace('</body></html>', direct+'\n</body></html>')
           root.write_text(h, encoding='utf-8')
 
           ui = Path('ui-motion-v1.js')
           u = ui.read_text(encoding='utf-8')
-          u = u.replace("OUR_JOURNEY_APP_VERSION='v88'", "OUR_JOURNEY_APP_VERSION='v89'")
-          u = u.replace("ourJourneyAppUpgradeV88", "ourJourneyAppUpgradeV89")
-          u = u.replace("sw.js?v=88", "sw.js?v=89")
+          u = u.replace("OUR_JOURNEY_APP_VERSION='v88'", "OUR_JOURNEY_APP_VERSION='v90'").replace("OUR_JOURNEY_APP_VERSION='v89'", "OUR_JOURNEY_APP_VERSION='v90'")
+          u = u.replace("ourJourneyAppUpgradeV88", "ourJourneyAppUpgradeV90").replace("ourJourneyAppUpgradeV89", "ourJourneyAppUpgradeV90")
+          u = u.replace("sw.js?v=88", "sw.js?v=90").replace("sw.js?v=89", "sw.js?v=90")
+          u = u.replace("load('shanghai-register-v1','__shanghaiRegisterV1','2')", "load('shanghai-register-v1','__shanghaiRegisterV1','3')")
           ui.write_text(u, encoding='utf-8')
 
           readme = Path('README.md')
           r = readme.read_text(encoding='utf-8')
-          r = r.replace('Current forced app generation: **v88**', 'Current forced app generation: **v89**')
-          r = r.replace('`ui-motion-v1.js` self-registers `/sw.js?v=88`', '`ui-motion-v1.js` self-registers `/sw.js?v=89`')
-          r = r.replace('prepares the v88 artifact', 'prepares and persists the v89 source')
-          r = r.replace('after the v88 controller switch', 'after the v89 controller switch')
-          if '## 2026-08-23 — PWA v89 source-sync fix' not in r:
+          r = r.replace('Current forced app generation: **v89**', 'Current forced app generation: **v90**')
+          r = r.replace('`ui-motion-v1.js` self-registers `/sw.js?v=89`', '`ui-motion-v1.js` self-registers `/sw.js?v=90`')
+          r = r.replace('prepares and persists the v89 source', 'prepares and persists the v90 source')
+          r = r.replace('after the v89 controller switch', 'after the v90 controller switch')
+          r = r.replace('`ui-motion-v1.js` — shared loader + PWA v88 self-heal', '`ui-motion-v1.js` — shared loader + PWA self-heal')
+          if '## 2026-08-23 — PWA v90 Plan First Shanghai parity' not in r:
               marker = '# Change Log\n'
-              note = '''# Change Log\n\n## 2026-08-23 — PWA v89 source-sync fix\n- Fixed the deployment architecture: PWA cache/version changes are now persisted back into `main`, not only modified inside a temporary Pages artifact.\n- Source `sw.js`, `index.html`, and `ui-motion-v1.js` are upgraded to v89 before deploy.\n- Shanghai route and shared Shanghai modules are present in the persisted service-worker cache list.\n- Installed clients receive `sw.js?v=89` and reload once after the new controller takes over.\n- Workflow concurrency no longer cancels the active Pages deployment during the source-sync commit.\n'''
+              note = '''# Change Log\n\n## 2026-08-23 — PWA v90 Plan First Shanghai parity\n- Fixed Shanghai appearing in Settings but missing from the Plan First China trip dropdown.\n- Shanghai registration now supports the Plan First selectors as well as Trip Tools selectors.\n- Selecting Shanghai from Plan First routes directly to `/shanghai/` and preserves the selected trip state.\n- Bumped installed PWA clients to v90 and Shanghai registration loader to v3.\n'''
               r = r.replace(marker, note, 1)
           readme.write_text(r, encoding='utf-8')
           PY
@@ -81,7 +88,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sw.js index.html ui-motion-v1.js README.md
           if ! git diff --cached --quiet; then
-            git commit -m "[skip ci] Persist PWA v89 source"
+            git commit -m "[skip ci] Persist PWA v90 source"
             git push origin HEAD:main
           fi
 
