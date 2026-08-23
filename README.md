@@ -29,6 +29,7 @@ A new trip is not complete until it has feature parity with the routes above.
 - Hide/Unhide for long secondary sections
 - Shared layout/spacing/card proportions
 - Trip Tools + Memories/Sync compatibility
+- **Trip Tools → Settings must include the trip's start date and budget**
 
 ## Current shared modules
 - `live-price-v2.js` — current-price refresh + per-trip snapshots
@@ -36,8 +37,28 @@ A new trip is not complete until it has feature parity with the routes above.
 - `trip-page-ux-v2.js` — CSS hide/unhide + booking routing
 - `trip-jump-fix-v1.js` — reliable Quick Jump targets
 - `app-layout-polish-v1.js` — shared Home/trip/Trip Tools layout normalization
+- `trip-settings-all-v1.js` — all-trip start-date + budget settings and shared date sync
 - `ui-motion-v1.js` — shared loader
 - `cloudflare/live-prices.js` / `cloudflare/worker.js` — current-price backend
+
+## Trip Tools settings parity
+`⚙️ ตั้งค่า → วันที่ + งบ` must never be hardcoded to only a subset of trips.
+
+Current Settings groups:
+- Japan: Tokyo, Kansai
+- Hong Kong: Hong Kong
+- Vietnam: Da Nang + Hoi An
+- China: Yunnan, Chongqing, Harbin
+
+Rules:
+- Every registered trip gets a **start date** field.
+- Every registered trip gets a **Budget (THB)** field.
+- Save writes all values to `travelToolsV1`.
+- Dates also synchronize to `travelHubStateV2` so hotel Refresh and Booking links use the same dates.
+- `travelHubStateV2` stores both start/end for price requests.
+- Current 6D5N trips derive end date from start + 5 nights.
+- Hong Kong derives end date from the currently selected `5D4N` or `6D5N` mode.
+- Adding a new trip requires adding it to this all-trip Settings system in the same round.
 
 ## Refresh / price rules
 - Trip-page Refresh checks only that trip; Home Refresh checks all trips.
@@ -125,12 +146,15 @@ Offline core includes:
 - `trip-jump-fix-v1.js`
 - `app-layout-polish-v1.js`
 
-`sw.js` injects `ui-motion-v1.js?v=5` into Home and trip pages.
+`trip-settings-all-v1.js` is loaded by `ui-motion-v1.js` and is cached after its first online load by the service worker's script strategy.
 
 ## Test checklist before calling a trip complete
 - Home ↔ trip navigation works
 - Mobile layout is proportionate
 - Trip Tools tabs/cards/items are visually consistent
+- **Settings lists every registered trip, not only Tokyo/Hong Kong**
+- Every trip date/budget saves and survives reopening Settings
+- Saved trip dates propagate to Refresh/Booking date state
 - Refresh shows progress and checks only the intended trip
 - Ticket section stays collapsed after Refresh
 - Secondary sections collapse without leaving huge empty frames
@@ -146,6 +170,16 @@ Offline core includes:
 
 # Change Log
 
+## 2026-08-23 — All-trip date + budget Settings
+- Added `trip-settings-all-v1.js`.
+- Replaced the visible two-trip Settings card with grouped controls for all seven trips.
+- Added start-date and THB budget fields for Tokyo, Kansai, Hong Kong, Da Nang/Hoi An, Yunnan, Chongqing, and Harbin.
+- Saving now updates `travelToolsV1` for all trips.
+- Saving dates also updates `travelHubStateV2` start/end values used by hotel Refresh and Booking links.
+- Hong Kong end date respects the selected 5D4N/6D5N mode.
+- Updated `ui-motion-v1.js` to load the all-trip Settings module.
+- Added permanent parity rule so future trips must also appear in Settings.
+
 ## 2026-08-23 — Quick Jump target fix + app-wide layout pass + PWA v87
 - Added `trip-jump-fix-v1.js` to filter Quick Jump to real top-level sections and use reliable offset scrolling.
 - Removed nested/dead/duplicate destinations from the Quick Jump menu.
@@ -153,7 +187,6 @@ Offline core includes:
 - Normalized section spacing, card proportions, padding, mobile hotel layout, supporting-card gaps, and bottom-nav clearance.
 - Updated `ui-motion-v1.js` to load the new shared modules.
 - Bumped PWA cache to `our-journey-v87` and added the active price/UX/layout modules to offline core.
-- `sw.js` now injects `ui-motion-v1.js?v=5`.
 
 ## 2026-08-23 — Stable Collapse v2
 - Replaced DOM-moving collapse logic with CSS-class state.
