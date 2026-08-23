@@ -23,6 +23,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Prepare PWA v88
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          sw = Path('sw.js')
+          s = sw.read_text(encoding='utf-8')
+          s = s.replace("our-journey-v87", "our-journey-v88")
+          s = s.replace("BASE+'harbin/index.html',BASE+'manifest.webmanifest'", "BASE+'harbin/index.html',BASE+'shanghai/index.html',BASE+'manifest.webmanifest'")
+          s = s.replace("BASE+'app-layout-polish-v1.js'];", "BASE+'app-layout-polish-v1.js',BASE+'price-sanity-v1.js',BASE+'hotel-quality-v1.js',BASE+'trip-settings-all-v1.js',BASE+'tokyo-flight-option-v1.js',BASE+'shanghai-register-v1.js'];")
+          s = s.replace("ui-motion-v1.js?v=5", "ui-motion-v1.js?v=6")
+          s = s.replace("url.pathname.startsWith(BASE+'harbin/');", "url.pathname.startsWith(BASE+'harbin/')||url.pathname.startsWith(BASE+'shanghai/');")
+          s = s.replace("a[href=\"./harbin/\"]", "a[href=\"./harbin/\"],a[href=\"./shanghai/\"]")
+          sw.write_text(s, encoding='utf-8')
+
+          root = Path('index.html')
+          h = root.read_text(encoding='utf-8')
+          h = h.replace('manifest.webmanifest?v=84', 'manifest.webmanifest?v=88')
+          h = h.replace('ourJourneySWReloadV84', 'ourJourneySWReloadV88')
+          h = h.replace('sw.js?v=84', 'sw.js?v=88')
+          direct = '<script src="/tokyo-winter-trip-2026/ui-motion-v1.js?v=6"></script>'
+          if direct not in h:
+              h = h.replace('</body></html>', direct+'\n</body></html>')
+          root.write_text(h, encoding='utf-8')
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload site
