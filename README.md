@@ -2,11 +2,13 @@
 
 Travel planning PWA for all trips in **Our Journey**.
 
-> **IMPORTANT — READ THIS README BEFORE ADDING OR MODIFYING A TRIP.**
-> A new trip must inherit the same shared functions as the existing trips. Do not finish a new trip after only creating `<trip>/index.html`.
+> **READ THIS README BEFORE ADDING OR MODIFYING A TRIP.**
+> A new trip is not complete after only creating `<trip>/index.html`. It must inherit the shared functions listed below.
 
-> **README UPDATE RULE — MANDATORY.**
-> Whenever any trip function, shared UI behavior, price behavior, booking behavior, navigation, hide/unhide rule or architecture is changed, update this README / Change Log in the same improvement round. Do not leave README behind the code.
+> **README / CHANGE LOG RULE — MANDATORY**
+> Whenever any trip function, shared UI, price logic, booking behavior, navigation, hide/unhide behavior, storage key, route coverage or architecture is changed, update this README in the **same improvement round**. README must never lag behind the code.
+
+---
 
 ## Current trip registry
 
@@ -18,46 +20,54 @@ Travel planning PWA for all trips in **Our Journey**.
 - `chongqing`
 - `harbin`
 
+All shared trip features must cover every route above and every future route.
+
 ---
 
-# Mandatory rule: New Trip = Full Feature Parity
+# New Trip = Full Feature Parity
 
 Before adding a new trip:
 
 1. Read this README.
-2. Inspect the newest shared implementation.
-3. Register the new route in Home, Trip Tools, PWA/shared injection, price refresh, live-budget sync, quick-section navigation, collapse/hide-unhide and booking/source-link systems.
-4. Give it every applicable function the existing trips already have.
-5. Update this README / Change Log whenever architecture or trip coverage changes.
+2. Inspect the newest shared implementation, not only another trip's HTML.
+3. Register the new route in Home, Trip Tools, PWA/shared injection, price refresh, live-budget sync, quick-section navigation, hide/unhide, booking/source links and Memories/Sync where applicable.
+4. Give the new trip every applicable function the existing trips already have.
+5. Test mobile layout and navigation.
+6. Update this README / Change Log in the same round.
 
-A trip is not complete until mobile layout, Trip Tools, Memories/Sync, live-price refresh, live-budget sync, quick section navigation, sensible collapsed sections and external booking/source links are checked.
+A trip is not complete until the checklist at the bottom passes.
 
 ---
 
 # Standard functions every trip must inherit
 
 ## Our Journey integration
-- Home/trip card.
-- Country/region map relationship.
-- Start/end dates in `travelHubStateV2`.
+
+- Home trip card.
+- Country/region relationship and map behavior.
+- Start/end dates in shared state.
 - Same Home ↔ Trip navigation behavior.
+- PWA/shared script injection.
 
 ## Trip page
+
 - Mobile-friendly header/navigation.
-- Daily itinerary.
+- Daily itinerary and day chips.
+- Quick Edit.
 - Maps / location links.
+- Hotel/stay section or registered named hotel options.
 - Budget breakdown.
-- Budget must react to the newest price snapshot: verified categories may replace estimates; unavailable categories must remain clearly labeled `ESTIMATE`.
-- Hotel/stay section or shared named hotel options.
 - Transport notes.
 - Muslim / halal / prayer information when relevant.
-- Quick Edit / day chips.
-- A persistent **`☰ หัวข้อ` quick-jump button** for long pages.
-- Suitable secondary sections must support **hide/unhide** and start collapsed when appropriate.
-- Same shared UI/mobile fixes.
+- Visible `↻ เช็กราคา` action.
+- Persistent `☰ หัวข้อ` quick-jump action.
+- Sensible hide/unhide for long secondary sections.
+- Same shared booking/source-link rules.
 
 ## Trip Tools
-The trip must be selectable in Trip Tools and inherit applicable:
+
+The trip must be selectable and support the applicable tools:
+
 - Today / itinerary
 - Expense tracking
 - Map
@@ -69,7 +79,9 @@ The trip must be selectable in Trip Tools and inherit applicable:
 - Settings
 
 ## Memories / cloud
+
 Keep compatibility with:
+
 - Memories / locations
 - Photos / media / documents
 - Cloud sync
@@ -79,203 +91,269 @@ Keep compatibility with:
 
 ---
 
-# Unified Live Price v4 — mandatory for every trip
+# Current Price System
 
-Shared price UI/client:
+Shared client:
+
 - `live-price-v2.js`
 
-Live budget / compact ticket UI:
+Budget/ticket sync:
+
 - `trip-live-budget-sync-v1.js`
 
-Long-page navigation / booking UX:
+Long-page / booking UX:
+
 - `trip-page-ux-v1.js`
 
 Backend:
+
 - `cloudflare/live-prices.js`
-- routed by `cloudflare/worker.js`
+- `cloudflare/worker.js`
 
 Loader:
+
 - `ui-motion-v1.js`
 
-## Required behavior
+## Refresh rules
 
-- **Every trip page must show a clear `↻ เช็กราคา` button** near the Plan / Quick Edit controls.
-- **Trip-page Refresh is scoped to the current trip only.** Example: Hong Kong checks only Hong Kong hotels, Hong Kong tickets/attractions and the relevant FX rate.
+- Every trip page has a clear `↻ เช็กราคา` button.
+- **Trip-page Refresh checks only the current trip.**
 - **Home Refresh checks all registered trips.**
 - Default hotel request: **2 travelers / 1 room**.
-- Uses saved trip dates.
-- Trip Tools start dates are synchronized into the shared price-date state before a trip refresh when available.
-- Shows visible progress immediately so the user knows Refresh started.
-- The result sheet on a trip page shows **only that trip**, never unrelated trips.
-- After a successful trip refresh, the latest hotel/ticket results are merged into the stored data for **that trip only**; other trips keep their previous snapshots.
-- Current trip snapshots are stored in `travelHubTripPricesV1` and the merged shared store remains in `travelHubLivePricesV2`.
-- Hotel cards, ticket summary and live-aware budget on the current trip page update from the newest stored snapshot.
-- Shows `LIVE` / `LAST CHECKED` truthfully using per-trip/per-result timestamps.
-- If verification fails, show unavailable/check failed. **Never show an old value as LIVE.**
-- If dates are missing, ask for dates instead of inventing an exact hotel total.
+- Use saved trip dates whenever available.
+- Trip Tools start date is synchronized into the shared price-date state before checking when needed.
+- A trip result sheet must show only that trip.
+- Refreshing one trip must not overwrite, refresh or relabel another trip as LIVE.
+- Latest per-trip snapshots are stored in `travelHubTripPricesV1`.
+- Merged shared snapshots remain in `travelHubLivePricesV2`.
+- Hotel cards, ticket summary and live-aware budget update from the newest stored snapshot.
 
-## Ticket / attraction link UI
+## Price truth rules
 
-- The **`🎟️ ราคา / ลิงก์ตั๋ว` section is collapsed by default** on every trip page.
-- The user taps the section title to expand or collapse it.
-- The collapsed state keeps the plan compact on mobile but source links remain available when expanded.
-- Attraction/ticket names open the Official/current source used by the backend.
+1. `LIVE` = successfully verified during the current/recent refresh.
+2. `LAST CHECKED` = previously verified and timestamped.
+3. If verification fails, show unavailable/check failed.
+4. Never silently show an old value as LIVE.
+5. If dates are missing, keep hotel total as an estimate and ask for dates rather than inventing a precise stay total.
+6. Only claim taxes/fees when the source provides enough information.
+7. Planning budgets can mix `LIVE` and `ESTIMATE`, but the distinction must be visible.
 
-## Booking / price-source links
+---
 
-Hotel booking and price-source links have different jobs and must not be mixed:
+# Hotel Booking vs Price Source
+
+These are **two separate links** and must not be mixed.
+
+## Main hotel booking action
 
 - Hotel name is clickable.
-- The main hotel action is **`จองโรงแรม ↗`**.
-- Hotel name / booking button opens a Booking.com search constrained by **hotel name + saved check-in/check-out + 2 adults + 1 room** when dates are available.
-- The booking action must never open Our Journey Home and must not use a broad Google Hotels landing page as the main booking destination.
-- If the current price was verified from Google Hotels or another source, show a separate smaller **`ดูแหล่งราคาที่เช็ก ↗`** link.
-- The price-source link preserves the source used for the current price result.
-- External booking clicks must stop app navigation handlers so they are not intercepted by Home navigation.
-- Attraction/ticket names continue to open their Official/current booking source.
+- Main button text: **`จองโรงแรม ↗`**.
+- Hotel name and booking button open a Booking.com hotel search constrained by:
+  - exact hotel name
+  - saved check-in/check-out when available
+  - 2 adults
+  - 1 room
+  - THB display preference
+- Booking clicks must not be intercepted by Our Journey navigation.
+- Booking clicks must never return the user to Our Journey Home.
+- The same rule applies inside the current-price result sheet, not only on the hotel card.
+
+## Current price-source link
+
+- If the latest verified hotel price came from Google Hotels or another source, show a separate smaller link:
+  - **`ดูแหล่งราคาที่เช็ก ↗`**
+- This link preserves the source used for that price result.
+- Do not use the broad Google Hotels landing page as the main hotel booking action.
+
+## Attraction / ticket links
+
+- Attraction/ticket names open their Official/current source.
+- Registered source does not guarantee LIVE parsing; the source link can still remain available when parsing fails.
 
 ---
 
-# Long-page UX / Quick Jump / Hide-Unhide — mandatory for every trip
+# Ticket Link UI
 
-Long trip pages must stay easy to navigate on mobile.
+- `🎟️ ราคา / ลิงก์ตั๋ว` is **collapsed by default** on every trip page.
+- Tap the heading to expand/collapse.
+- This keeps mobile pages compact while keeping the official/current links accessible.
+
+---
+
+# Live-aware Trip Budget
+
+The visible `TRIP BUDGET • 2 PEOPLE` area is a hybrid of verified current prices and planning estimates.
 
 Rules:
 
-1. Every trip page shows a persistent **`☰ หัวข้อ`** button above the bottom navigation.
-2. Tapping it opens a compact section list generated from the headings currently present on that trip page.
-3. The list includes a **back-to-top** action and jumps smoothly to the selected heading.
-4. If the selected heading belongs to a collapsed section, the section opens before scrolling to it.
-5. Primary content should stay readily visible: hotel/stay and daily itinerary are not collapsed by the generic rule.
-6. Secondary/long content should start collapsed when appropriate, including budget details, season/best-time info, checklists/preparation, souvenir guides, travel-app guides and similar supporting sections.
-7. Every collapsed section has a visible **`ดูรายละเอียด / ซ่อน`** control.
-8. The user's open/closed preference may be preserved per trip in `tripSectionOpenV1`.
-9. `🎟️ ราคา / ลิงก์ตั๋ว` retains its dedicated collapsed-by-default behavior.
-10. These rules apply to **all seven registered trips and every future trip**.
+1. A verified current hotel total may replace the hotel estimate.
+2. Ticket/activity budget may replace its estimate only when the required registered ticket sources for that trip are successfully verified.
+3. Flight, food, transport, eSIM, insurance and other categories without reliable live sources stay visibly marked `ESTIMATE`.
+4. The visible total is recalculated from the category values currently shown.
+5. Show the last checked timestamp and how many categories currently use LIVE data.
+6. Never silently present an estimate as a current price.
+7. The budget heading must use the **current hotel choice/catalog**, not an old hardcoded hotel name.
+8. If a verified hotel exists, the budget heading may show that hotel.
+9. Hong Kong mode must respect trip length:
+   - `5D4N` → 4 hotel nights / 5 food days
+   - `6D5N` → 5 hotel nights / 6 food days
+10. The old Travelodge wording must not be used as the current Hong Kong stay when the plan uses Ramada/other current choices.
+11. These rules apply to all registered trips.
 
 ---
 
-# Live-aware trip budget — mandatory for every trip
+# Long-page UX: Quick Jump + Hide/Unhide
 
-The visible `TRIP BUDGET • 2 PEOPLE` section is a hybrid of verified current prices and planning estimates.
+Long trip pages must remain easy to use on a phone.
 
-Rules:
+## Quick Jump
 
-1. After `↻ เช็กราคา`, a hotel category with a verified current total may replace the old hotel estimate.
-2. Ticket/activity budget may replace the planning estimate only when all registered required ticket sources for that trip are successfully verified in the current snapshot.
-3. Flight, food, transport, eSIM, insurance or other categories that do not have a reliable live source remain `ESTIMATE`.
-4. The total budget is recalculated from the values currently shown in the category cards.
-5. The budget shows the latest checked timestamp and how many categories currently use `LIVE` data.
-6. Never silently present an estimate as a current/live price.
-7. A trip without confirmed dates keeps hotel cost as `ESTIMATE` and asks the user to set dates before exact refresh.
-8. Hong Kong mode must respect the selected trip length. `5D4N` uses 4 hotel nights and 5 food days; `6D5N` uses 5 hotel nights and 6 food days.
-9. Stale hotel names in the planning budget must not be treated as the current selected option. The shared sync layer uses the current hotel catalog / current trip choice when describing the estimate.
-10. These rules apply to **all registered trips**, not only Hong Kong.
+- Every trip page shows a persistent **`☰ หัวข้อ`** button.
+- The button is positioned above the bottom navigation so it does not cover Trips / Map / Memories / More.
+- Tapping it opens a compact list generated from the headings currently present on that page.
+- Includes `บนสุด` / Back to Top.
+- Selecting a heading smoothly scrolls to that section.
+- If the destination is collapsed, it opens before scrolling.
+- Quick Jump is scoped to **trip pages only** and must not appear on Home.
+
+## Hide / Unhide
+
+Primary content should remain easy to reach:
+
+- Hotel/stay: normally open
+- Daily itinerary: normally open / controlled by the existing day UI
+
+Secondary or long supporting content may start collapsed when appropriate, including:
+
+- Budget details
+- Best season / suitable travel period
+- Preparation / checklist
+- Souvenir guide
+- Travel apps / supporting guides
+- Muslim / halal supporting sections when long
+- Similar secondary information added later
+
+Every generic collapsed section must have a clear:
+
+- `ดูรายละเอียด ⌄`
+- `ซ่อน ⌃`
+
+Open/closed preference can be stored per trip in `tripSectionOpenV1`.
 
 ---
 
-# Current all-trip hotel coverage
+# Hotel-card Mobile Standard
+
+Hotel cards must stay readable and compact across all trips.
+
+- Long hotel names wrap naturally.
+- Mobile hotel-name typography must not be oversized.
+- Do not show a dashed underline across a multi-line hotel name.
+- Badges must wrap cleanly.
+- Booking button stays compact.
+- `จองโรงแรม ↗` and `ดูแหล่งราคาที่เช็ก ↗` are visually separate.
+- If a verified current hotel result exists, the visible price box can update to the current nightly/stay total and timestamp.
+- If no current result exists, old hardcoded card prices must be treated as a **sample/snapshot**, not implied to be LIVE.
+
+---
+
+# Current Hotel Coverage
 
 ### Tokyo
+
 - APA Hotel Asakusa Tawaramachi-Ekimae
 - Richmond Hotel Premier Asakusa International
 
 ### Kansai
+
 - Sotetsu Fresa Inn Osaka-Namba
 - Hotel Keihan Namba Grande
 
 ### Hong Kong
+
 - Silka Far East Hotel
 - Ramada Grand Tsim Sha Tsui
 - Silka Tsuen Wan, Hong Kong
 - Dorsett Mongkok, Hong Kong
 
 ### Da Nang + Hoi An
+
 - HAIAN Beach Hotel & Spa
 - Little Riverside Hoi An
 
 ### Yunnan
+
 - Holiday Inn Express Kunming Panlong, an IHG Hotel
 - Dali Old Courtyard Boutique Inn
 
 ### Chongqing
+
 - Glenview ITC Plaza Chongqing
 - Ascott Raffles City Chongqing
 
 ### Harbin / Yabuli
+
 - Holiday Inn Express Harbin Central Avenue
 - Fairfield by Marriott Harbin Downtown
 - Yabuli Sun Mountain Resort
 
-The shared UI also scans real named hotel cards already present on each trip page. `Hotel TBD` is never treated as a real hotel.
+The shared UI may also scan real named hotel cards already present on a trip page. `Hotel TBD` is never treated as a real hotel.
 
 ---
 
-# Attraction / ticket source coverage
-
-Current price-source catalog is registered for **all seven trip routes**.
+# Current Attraction / Ticket Coverage
 
 ### Tokyo
+
 - Tokyo Disneyland 1-Day Passport
 
 ### Kansai
+
 - Osaka Castle Museum
 - Umeda Sky Building Kuchu Teien Observatory
 - Kinkaku-ji
 
 ### Hong Kong
+
 - Hong Kong Disneyland
 - Ngong Ping 360
 - Peak Tram / Sky Terrace
 
 ### Da Nang
+
 - Sun World Ba Na Hills
 
 ### Yunnan
+
 - Stone Forest Scenic Area
 - Chongsheng Temple & Three Pagodas
 
 ### Chongqing
+
 - Yangtze River Cableway
 - Wulong Three Natural Bridges
 - Dazu Rock Carvings
 
 ### Harbin
+
 - Harbin Ice and Snow World
 - Yabuli / Ski Resort
 - China Snow Town (Xuexiang)
 
-Important: **registered source ≠ guaranteed LIVE result.** Websites can block automated reads or change markup. Only a successfully parsed value during the current refresh may be labeled LIVE. The source link should still remain useful when parsing fails.
+Only successfully parsed current values may be marked LIVE.
 
 ---
 
-# Hotel-card mobile standard
+# PWA / Shared Registration Checklist
 
-Hotel cards must stay compact and readable on a phone across all trips:
+A new trip must be checked in the relevant shared route lists/files, including at minimum:
 
-- Controlled responsive hotel-name size and line height.
-- Long hotel names must wrap naturally without oversized typography or dashed underlines across multiple lines.
-- Badges wrap cleanly.
-- Price box uses tighter spacing.
-- Main booking action remains compact.
-- `จองโรงแรม ↗` and `ดูแหล่งราคาที่เช็ก ↗` stay visually separate.
-- A verified current hotel result may replace the static sample price box with the newest current value and timestamp.
-- If no current result exists, static observed prices must be treated as a sample/snapshot, not silently presented as LIVE.
-
----
-
-# PWA / shared registration
-
-A new trip must be checked in all relevant shared route lists and PWA behavior.
-
-Check at minimum:
-- `sw.js` plan path detection / CORE where applicable
-- Home → trip transition route list
+- `sw.js`
+- Home route transitions
 - `trip-tools-v1.js`
 - `plan-first-v1.js`
 - `plan-first-v2.js`
 - `plan-ui-fixes-v1.js`
-- shared bottom navigation / plan-first UI
 - `ui-motion-v1.js`
 - `live-price-v2.js`
 - `trip-live-budget-sync-v1.js`
@@ -286,57 +364,7 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 
 ---
 
-# Price truth rules
-
-1. `LIVE` = successfully verified in the current/recent refresh.
-2. `LAST CHECKED` = previously verified with a timestamp.
-3. Planning budgets remain estimates where no reliable current source exists.
-4. Previous observed prices must never silently become current prices.
-5. Failed verification must show unavailable/check failed.
-6. Use real saved trip dates whenever possible.
-7. Only claim taxes/fees when the source provides enough information.
-8. Preserve/open the current source URL separately from the main hotel booking destination.
-9. Prefer Official sources for attractions when available; otherwise label the current booking source honestly.
-10. Refreshing one trip must never refresh, overwrite or relabel another trip as LIVE.
-11. Budget totals may mix `LIVE` and `ESTIMATE`, but every category must make that distinction visible.
-
----
-
-# Test checklist before calling a trip complete
-
-- Home → trip opens.
-- Trip → home returns.
-- Mobile layout works.
-- Trip Tools opens; tabs are not clipped.
-- Trip appears in Trip Tools.
-- Dates save correctly.
-- **Visible `↻ เช็กราคา` appears on the trip page.**
-- Tapping Refresh immediately shows loading/progress.
-- Trip-page result sheet contains only the current trip.
-- Refresh request contains only the current trip ID when used inside a trip page.
-- Successful refresh updates that trip's stored snapshot and visible hotel/ticket data.
-- Other trip snapshots remain unchanged.
-- `🎟️ ราคา / ลิงก์ตั๋ว` is collapsed by default and can be expanded manually.
-- `☰ หัวข้อ` appears and can jump to every meaningful current section.
-- Secondary sections can hide/unhide without breaking their content.
-- Jumping to a collapsed section opens it before scrolling.
-- Trip Budget replaces only verified categories with live values.
-- Non-live budget categories remain visibly marked `ESTIMATE`.
-- Budget total recalculates after a live category changes.
-- Hong Kong 5D4N budget uses 4 hotel nights / 5 food days.
-- Live/Last Checked label is truthful per trip.
-- Hotel names remain readable on mobile without oversized wrapping.
-- Hotel name / `จองโรงแรม ↗` opens Booking.com for that named hotel with trip dates when available.
-- `ดูแหล่งราคาที่เช็ก ↗` opens the source used for the current hotel price when available.
-- Hotel booking must not return to Our Journey Home.
-- Attraction source link opens.
-- Offline/PWA behavior is not broken.
-- Existing trips are not regressed.
-- README / Change Log is updated for the same function change.
-
----
-
-# Key shared files
+# Key Shared Files
 
 - `index.html` — Home / dates / maps / trip cards
 - `sw.js` — PWA + shared page injection
@@ -345,10 +373,10 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 - `plan-extras-v1.js` — planning extras + base budget breakdown
 - `plan-ui-fixes-v1.js` — shared mobile fixes
 - `plan-first-v1.js` / `plan-first-v2.js` — Plan First UI
-- `ui-motion-v1.js` — shared UI + price/budget/long-page UX module loader
-- `live-price-v2.js` — trip-scoped current-price refresh, per-trip snapshots, result sheet and price-source data
-- `trip-live-budget-sync-v1.js` — collapsed ticket-link section + LIVE/ESTIMATE budget synchronization for every trip
-- `trip-page-ux-v1.js` — quick section navigation, generic sensible hide/unhide, mobile hotel typography, Booking.com hotel destination and separate price-source links
+- `ui-motion-v1.js` — shared loader for price/budget/long-page modules
+- `live-price-v2.js` — trip-scoped current-price refresh + per-trip snapshots
+- `trip-live-budget-sync-v1.js` — collapsed ticket section + LIVE/ESTIMATE budget synchronization
+- `trip-page-ux-v1.js` — quick section navigation, sensible hide/unhide, mobile hotel typography, Booking.com booking destination and separate checked-price source link
 - `cloudflare/worker.js` — API router
 - `cloudflare/live-prices.js` — hotel / FX / ticket current-price backend
 - `.github/workflows/pages.yml` — GitHub Pages deployment
@@ -356,70 +384,101 @@ China trips should prefer Amap where appropriate, with Google Maps as backup whe
 
 ---
 
-# Current coverage status
+# Current Coverage Status — 2026-08-23
 
-As of **2026-08-23**:
+- Tokyo — price framework ✅ hotel options ✅ ticket source ✅ booking destination ✅ trip refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
+- Kansai — price framework ✅ hotel options ✅ ticket sources ✅ booking destination ✅ trip refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
+- Hong Kong — price framework ✅ hotel options ✅ ticket sources ✅ Booking.com main booking ✅ separate checked-price source ✅ compact mobile hotel card ✅ mode-aware budget ✅ stale Travelodge runtime header removed ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
+- Da Nang — price framework ✅ hotel options ✅ ticket source ✅ booking destination ✅ trip refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
+- Yunnan — price framework ✅ hotel options ✅ ticket sources ✅ booking destination ✅ trip refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
+- Chongqing — price framework ✅ hotel options ✅ ticket sources ✅ booking destination ✅ trip refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
+- Harbin — price framework ✅ hotel options ✅ ticket sources ✅ booking destination ✅ trip refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ hide/unhide ✅
 
-- Tokyo — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
-- Kansai — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
-- Hong Kong — price framework ✅ named hotels ✅ ticket sources ✅ reliable Booking.com hotel destination ✅ separate checked-price source ✅ visible trip refresh ✅ compact mobile hotel cards ✅ trip-scoped refresh ✅ mode-aware live budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
-- Da Nang — price framework ✅ named hotels ✅ ticket source ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
-- Yunnan — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
-- Chongqing — price framework ✅ named hotels ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
-- Harbin — price framework ✅ named hotel options ✅ ticket sources ✅ booking links ✅ visible trip refresh ✅ trip-scoped refresh ✅ live-aware budget ✅ collapsed ticket links ✅ quick jump ✅ section hide/unhide ✅
+Functional registration is complete across all seven routes. A LIVE price still depends on the external source responding with a value the backend can verify.
 
-**Functional registration is complete across all seven trips.** A LIVE result still depends on the external source responding and exposing a verifiable price at refresh time.
+---
+
+# Test Checklist Before Calling a Trip Complete
+
+- Home → trip opens.
+- Trip → Home returns.
+- Mobile layout works.
+- Trip Tools opens; tabs are not clipped.
+- Trip appears in Trip Tools.
+- Dates save correctly.
+- `↻ เช็กราคา` is visible.
+- Refresh immediately shows progress.
+- Trip refresh sends only the current trip ID.
+- Result sheet shows only the current trip.
+- Successful refresh updates only that trip's snapshot and visible hotel/ticket/budget data.
+- Other trips remain unchanged.
+- `🎟️ ราคา / ลิงก์ตั๋ว` starts collapsed and can expand.
+- `☰ หัวข้อ` is visible above the bottom navigation.
+- Quick Jump lists the current page headings and Back to Top.
+- Jumping to a collapsed section opens it and scrolls correctly.
+- Secondary sections hide/unhide without breaking layout or dynamic content.
+- Hotel names remain readable on mobile.
+- Hotel name / `จองโรงแรม ↗` opens Booking.com for that named hotel with dates when available.
+- The same booking rule works inside the price result sheet.
+- `ดูแหล่งราคาที่เช็ก ↗` opens the actual current price source when available.
+- Booking does not return to Our Journey Home.
+- Attraction source link opens.
+- Budget uses current hotel choice/mode rather than stale hardcoded wording.
+- `5D4N` / `6D5N` night/day counts are correct where applicable.
+- LIVE / ESTIMATE / LAST CHECKED labels are truthful.
+- Offline/PWA behavior is not broken.
+- Existing trips are not regressed.
+- README / Change Log is updated in the same improvement round.
 
 ---
 
 # Change Log
 
-## 2026-08-23 — Long-page Quick Jump + all-trip hide/unhide + booking destination fix
-- Added `trip-page-ux-v1.js` and loaded it from the shared `ui-motion-v1.js` loader.
-- Added persistent `☰ หัวข้อ` quick navigation on every trip page.
-- Quick navigation builds its menu from the actual headings present on the current trip page, includes Back to Top, opens a collapsed destination when needed and scrolls to it smoothly.
-- Added generic sensible collapse behavior for supporting long sections such as budget detail, season/best time, preparation/checklists, souvenirs, travel apps and similar secondary content.
-- Preserved hotel/stay and daily itinerary as primary open content.
-- Added per-trip open/closed preference storage in `tripSectionOpenV1`.
-- Changed the hotel title / main booking button to a Booking.com search constrained by hotel name, saved dates, 2 adults and 1 room.
-- Separated the main booking destination from the current price-check source; a verified result may show `ดูแหล่งราคาที่เช็ก ↗` independently.
-- Added a capture-level booking click handler so older app navigation or price handlers cannot redirect the booking click back to Our Journey Home.
-- Added smaller mobile hotel-name typography and removed the dashed multi-line link treatment from hotel names.
-- Verified current hotel results can refresh the visible hotel price box; static old card prices are relabeled as sample/snapshot when no current live result exists.
-- Added Trip Tools date fallback/synchronization for booking links and current-price requests.
-- Reaffirmed the mandatory rule that README / Change Log must be updated whenever trip functionality changes.
+## 2026-08-23 — Final long-page UX + booking destination pass
+
+- Added `trip-page-ux-v1.js` across all seven trip routes.
+- Added persistent `☰ หัวข้อ` quick navigation generated from the actual current page headings.
+- Quick Jump now opens a collapsed destination before scrolling.
+- Quick Jump is trip-page-only and does not appear on Home.
+- Positioned Quick Jump dynamically above the bottom navigation.
+- Added generic sensible hide/unhide for long supporting sections while preserving hotel/stay and itinerary as primary content.
+- Added per-trip section open-state storage in `tripSectionOpenV1`.
+- Changed hotel title and main booking action to Booking.com search using hotel name + saved dates + 2 adults + 1 room.
+- Added capture-level booking handling so older navigation handlers cannot redirect the click back to Our Journey Home.
+- Applied the same corrected hotel booking destination inside the current-price result sheet.
+- Kept `ดูแหล่งราคาที่เช็ก ↗` separate from the main booking destination.
+- Reduced mobile hotel-name size and removed dashed multi-line link styling.
+- Current verified hotel results can refresh the visible hotel price box; static old prices are treated as snapshots when no current result exists.
+- Added Trip Tools date fallback/synchronization before current-price use.
+- Updated live-aware budget heading to use the current trip mode and current/verified hotel instead of stale Travelodge wording.
+- Reaffirmed mandatory README updates for every future trip-function improvement.
 
 ## 2026-08-23 — Collapsed ticket links + live-aware budget sync
-- Added `trip-live-budget-sync-v1.js` and loaded it globally from `ui-motion-v1.js`.
-- `🎟️ ราคา / ลิงก์ตั๋ว` now starts collapsed on every trip and expands when the user taps the heading.
-- Connected the visible `TRIP BUDGET • 2 PEOPLE` cards to the latest per-trip price snapshot.
-- Verified hotel totals replace the hotel planning estimate when available.
-- Ticket/activity budget replaces the estimate only when all registered required ticket sources are verified; partial verification stays clearly marked as an estimate.
-- Recalculates the visible total from the currently displayed category values.
-- Marks non-live categories as `ESTIMATE` rather than implying that flights, food, transport or other unsupported costs are live.
-- Hong Kong `5D4N` now uses 4 hotel nights and 5 food days in the planning budget when no verified live value is available.
-- Removed stale Travelodge wording from the runtime Hong Kong budget description by using the current hotel choice/catalog instead.
-- Applied the same live-aware budget rules to all registered trips.
 
-## 2026-08-23 — Trip-scoped Refresh + per-trip price data
-- Changed Trip-page `↻ เช็กราคา` to request only the current trip instead of all seven trips.
-- Trip result sheet now displays only the current trip.
-- Home Refresh remains the all-trip refresh action.
-- Added merge behavior so refreshing one trip replaces only that trip's hotel/ticket results and preserves other trip snapshots.
-- Added `travelHubTripPricesV1` for explicit per-trip price snapshots.
-- Added per-result/per-trip timestamps so refreshing another trip cannot make old prices look LIVE.
-- Current hotel cards and ticket summaries update immediately after the current trip refresh.
-- Bumped unified price loader to `live-price-v2.js?v=4`.
+- Added `trip-live-budget-sync-v1.js`.
+- `🎟️ ราคา / ลิงก์ตั๋ว` starts collapsed on every trip.
+- Connected visible budget cards to the newest per-trip snapshot.
+- Verified hotel totals can replace hotel estimate.
+- Ticket budget changes to LIVE only when the required registered ticket sources are verified.
+- Non-live categories remain visibly `ESTIMATE`.
+- Hong Kong `5D4N` uses 4 hotel nights and 5 food days.
 
-## 2026-08-23 — Unified Live Price v3
-- Consolidated overlapping price UI and booking click handlers into one shared `live-price-v2.js` module.
-- Added visible `↻ เช็กราคา` on every trip page.
-- Added current hotel options across all seven trips.
-- Kept attraction/ticket price-source catalog across all seven trip groups.
-- Fixed hotel booking clicks so app navigation does not intercept them and return to Home.
-- Added tighter Hong Kong mobile hotel-card typography, image height, badges and price spacing.
-- Added current result sheet with external hotel/ticket links.
-- Forced GitHub Pages and Cloudflare Worker deploy after the unified update.
+## 2026-08-23 — Trip-scoped Refresh
+
+- Trip-page Refresh changed from all trips to the current trip only.
+- Home Refresh remains all-trip.
+- Added per-trip price snapshots in `travelHubTripPricesV1`.
+- Refreshing one trip preserves other trip snapshots and timestamps.
+
+## 2026-08-23 — Unified Live Price
+
+- Consolidated overlapping price UI into the shared live-price module.
+- Added visible trip Refresh.
+- Added hotel options and attraction/ticket price-source coverage across all seven trip groups.
+- Added hotel/ticket links and mobile price UI.
+
+---
 
 ## Rule for every future meaningful update
-Update this README / Change Log whenever architecture, setup, behavior, trip parity, price coverage or known limitations change.
+
+**Update this README / Change Log whenever architecture, setup, behavior, trip parity, navigation, booking, price coverage, hide/unhide behavior or known limitations change.**
