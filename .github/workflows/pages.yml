@@ -26,21 +26,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Prepare and persist PWA v90
+      - name: Prepare and persist PWA v91
         run: |
           python - <<'PY'
           from pathlib import Path
 
           sw = Path('sw.js')
           s = sw.read_text(encoding='utf-8')
-          for old in ['our-journey-v87','our-journey-v88','our-journey-v89']:
-              s = s.replace(old, 'our-journey-v90')
+          for old in ['our-journey-v87','our-journey-v88','our-journey-v89','our-journey-v90']:
+              s = s.replace(old, 'our-journey-v91')
           if "BASE+'shanghai/index.html'" not in s:
               s = s.replace("BASE+'harbin/index.html',BASE+'manifest.webmanifest'", "BASE+'harbin/index.html',BASE+'shanghai/index.html',BASE+'manifest.webmanifest'")
           if "BASE+'shanghai-register-v1.js'" not in s:
               s = s.replace("BASE+'app-layout-polish-v1.js'];", "BASE+'app-layout-polish-v1.js',BASE+'price-sanity-v1.js',BASE+'hotel-quality-v1.js',BASE+'trip-settings-all-v1.js',BASE+'tokyo-flight-option-v1.js',BASE+'shanghai-register-v1.js'];")
-          for old in ['ui-motion-v1.js?v=5','ui-motion-v1.js?v=6','ui-motion-v1.js?v=7']:
-              s = s.replace(old, 'ui-motion-v1.js?v=8')
+          for old in ['ui-motion-v1.js?v=5','ui-motion-v1.js?v=6','ui-motion-v1.js?v=7','ui-motion-v1.js?v=8']:
+              s = s.replace(old, 'ui-motion-v1.js?v=9')
+          s = s.replace('plan-first-v1.js?v=79', 'plan-first-v1.js?v=80')
           if "url.pathname.startsWith(BASE+'shanghai/')" not in s:
               s = s.replace("url.pathname.startsWith(BASE+'harbin/');", "url.pathname.startsWith(BASE+'harbin/')||url.pathname.startsWith(BASE+'shanghai/');")
           if 'a[href=\\"./shanghai/\\"]' not in s:
@@ -49,46 +50,70 @@ jobs:
 
           root = Path('index.html')
           h = root.read_text(encoding='utf-8')
-          for old in ['manifest.webmanifest?v=84','manifest.webmanifest?v=88','manifest.webmanifest?v=89']:
-              h = h.replace(old, 'manifest.webmanifest?v=90')
-          for old in ['ourJourneySWReloadV84','ourJourneySWReloadV88','ourJourneySWReloadV89']:
-              h = h.replace(old, 'ourJourneySWReloadV90')
-          for old in ['sw.js?v=84','sw.js?v=88','sw.js?v=89']:
-              h = h.replace(old, 'sw.js?v=90')
-          for old in ['/ui-motion-v1.js?v=6','/ui-motion-v1.js?v=7']:
-              h = h.replace(old, '/ui-motion-v1.js?v=8')
-          direct = '<script src="/tokyo-winter-trip-2026/ui-motion-v1.js?v=8"></script>'
+          for old in ['manifest.webmanifest?v=84','manifest.webmanifest?v=88','manifest.webmanifest?v=89','manifest.webmanifest?v=90']:
+              h = h.replace(old, 'manifest.webmanifest?v=91')
+          for old in ['ourJourneySWReloadV84','ourJourneySWReloadV88','ourJourneySWReloadV89','ourJourneySWReloadV90']:
+              h = h.replace(old, 'ourJourneySWReloadV91')
+          for old in ['sw.js?v=84','sw.js?v=88','sw.js?v=89','sw.js?v=90']:
+              h = h.replace(old, 'sw.js?v=91')
+          for old in ['/ui-motion-v1.js?v=6','/ui-motion-v1.js?v=7','/ui-motion-v1.js?v=8']:
+              h = h.replace(old, '/ui-motion-v1.js?v=9')
+          direct = '<script src="/tokyo-winter-trip-2026/ui-motion-v1.js?v=9"></script>'
           if direct not in h:
               h = h.replace('</body></html>', direct+'\n</body></html>')
           root.write_text(h, encoding='utf-8')
 
           ui = Path('ui-motion-v1.js')
           u = ui.read_text(encoding='utf-8')
-          u = u.replace("OUR_JOURNEY_APP_VERSION='v88'", "OUR_JOURNEY_APP_VERSION='v90'").replace("OUR_JOURNEY_APP_VERSION='v89'", "OUR_JOURNEY_APP_VERSION='v90'")
-          u = u.replace("ourJourneyAppUpgradeV88", "ourJourneyAppUpgradeV90").replace("ourJourneyAppUpgradeV89", "ourJourneyAppUpgradeV90")
-          u = u.replace("sw.js?v=88", "sw.js?v=90").replace("sw.js?v=89", "sw.js?v=90")
-          u = u.replace("load('shanghai-register-v1','__shanghaiRegisterV1','2')", "load('shanghai-register-v1','__shanghaiRegisterV1','3')")
+          for old in ["OUR_JOURNEY_APP_VERSION='v88'","OUR_JOURNEY_APP_VERSION='v89'","OUR_JOURNEY_APP_VERSION='v90'"]:
+              u = u.replace(old, "OUR_JOURNEY_APP_VERSION='v91'")
+          for old in ['ourJourneyAppUpgradeV88','ourJourneyAppUpgradeV89','ourJourneyAppUpgradeV90']:
+              u = u.replace(old, 'ourJourneyAppUpgradeV91')
+          for old in ['sw.js?v=88','sw.js?v=89','sw.js?v=90']:
+              u = u.replace(old, 'sw.js?v=91')
+          u = u.replace("load('shanghai-register-v1','__shanghaiRegisterV1','3')", "load('shanghai-register-v1','__shanghaiRegisterV1','4')")
           ui.write_text(u, encoding='utf-8')
+
+          # Make Shanghai a native Plan First trip so the normal paint() path is used.
+          pf = Path('plan-first-v1.js')
+          p = pf.read_text(encoding='utf-8')
+          if "key:'shanghai'" not in p:
+              old = "harbin:{key:'harbin',country:'china',name:'Harbin + Yabuli + Snow Town 6D5N',flag:'🇨🇳',href:'./harbin/',planHref:'../harbin/',fallbackStart:'',days:6,accent:'Harbin'}};"
+              new = "harbin:{key:'harbin',country:'china',name:'Harbin + Yabuli + Snow Town 6D5N',flag:'🇨🇳',href:'./harbin/',planHref:'../harbin/',fallbackStart:'',days:6,accent:'Harbin'},shanghai:{key:'shanghai',country:'china',name:'Shanghai + Disneyland 5D4N',flag:'🇨🇳',href:'./shanghai/',planHref:'../shanghai/',fallbackStart:'',days:5,accent:'Shanghai'}};"
+              p = p.replace(old, new)
+          if '__planFirstShanghaiNativeV1' not in p:
+              p = p.replace("const COUNTRY_ORDER=['japan','hongkong','vietnam','china'];", "window.__planFirstShanghaiNativeV1=true;\nconst COUNTRY_ORDER=['japan','hongkong','vietnam','china'];")
+          p = p.replace("x.trip==='chongqing'?'🇨🇳 Chongqing':'🇨🇳 Harbin'", "x.trip==='chongqing'?'🇨🇳 Chongqing':x.trip==='harbin'?'🇨🇳 Harbin':'🇨🇳 Shanghai'")
+          pf.write_text(p, encoding='utf-8')
+
+          # Keep the compatibility module for old clients, but never hijack the native Plan First selector.
+          reg = Path('shanghai-register-v1.js')
+          q = reg.read_text(encoding='utf-8')
+          old = "if(pfxSel&&pfxSel.value==='shanghai'){e.preventDefault();e.stopImmediatePropagation();openShanghai();return}"
+          new = "if(pfxSel&&pfxSel.value==='shanghai'&&window.__planFirstShanghaiNativeV1)return;if(pfxSel&&pfxSel.value==='shanghai'){e.preventDefault();e.stopImmediatePropagation();openShanghai();return}"
+          q = q.replace(old, new)
+          reg.write_text(q, encoding='utf-8')
 
           readme = Path('README.md')
           r = readme.read_text(encoding='utf-8')
-          r = r.replace('Current forced app generation: **v89**', 'Current forced app generation: **v90**')
-          r = r.replace('`ui-motion-v1.js` self-registers `/sw.js?v=89`', '`ui-motion-v1.js` self-registers `/sw.js?v=90`')
-          r = r.replace('prepares and persists the v89 source', 'prepares and persists the v90 source')
-          r = r.replace('after the v89 controller switch', 'after the v90 controller switch')
-          r = r.replace('`ui-motion-v1.js` — shared loader + PWA v88 self-heal', '`ui-motion-v1.js` — shared loader + PWA self-heal')
-          if '## 2026-08-23 — PWA v90 Plan First Shanghai parity' not in r:
+          for old in ['Current forced app generation: **v89**','Current forced app generation: **v90**']:
+              r = r.replace(old, 'Current forced app generation: **v91**')
+          r = r.replace('`ui-motion-v1.js` self-registers `/sw.js?v=90`', '`ui-motion-v1.js` self-registers `/sw.js?v=91`')
+          r = r.replace('prepares and persists the v90 source', 'prepares and persists the v91 source')
+          r = r.replace('after the v90 controller switch', 'after the v91 controller switch')
+          r = r.replace('Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China; choosing it opens the Shanghai trip page.', 'Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China. In Plan First, selecting Shanghai changes the Active Trip card first; navigation happens only after the user taps Open Plan.')
+          if '## 2026-08-23 — PWA v91 native Plan First selection' not in r:
               marker = '# Change Log\n'
-              note = '''# Change Log\n\n## 2026-08-23 — PWA v90 Plan First Shanghai parity\n- Fixed Shanghai appearing in Settings but missing from the Plan First China trip dropdown.\n- Shanghai registration now supports the Plan First selectors as well as Trip Tools selectors.\n- Selecting Shanghai from Plan First routes directly to `/shanghai/` and preserves the selected trip state.\n- Bumped installed PWA clients to v90 and Shanghai registration loader to v3.\n'''
+              note = '''# Change Log\n\n## 2026-08-23 — PWA v91 native Plan First selection\n- Fixed Shanghai selection skipping the Active Trip card and navigating immediately.\n- Added Shanghai directly to the native `TRIPS` registry in `plan-first-v1.js`, using the same `paint()` flow as Yunnan, Chongqing and Harbin.\n- Plan First now behaves: select Shanghai → show Shanghai Active Trip card → user taps Open Plan / Edit Plan to navigate.\n- The Shanghai compatibility module no longer intercepts Plan First when native Shanghai support is loaded.\n- Bumped installed PWA clients to v91, `ui-motion-v1.js` to v9 and the Shanghai registration loader to v4.\n'''
               r = r.replace(marker, note, 1)
           readme.write_text(r, encoding='utf-8')
           PY
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sw.js index.html ui-motion-v1.js README.md
+          git add sw.js index.html ui-motion-v1.js plan-first-v1.js shanghai-register-v1.js README.md
           if ! git diff --cached --quiet; then
-            git commit -m "[skip ci] Persist PWA v90 source"
+            git commit -m "[skip ci] Persist PWA v91 native Shanghai selection"
             git push origin HEAD:main
           fi
 
