@@ -34,4 +34,12 @@ if(!window.__tripLiveBudgetSyncV2&&!document.querySelector('script[data-trip-liv
 if(!window.__tripPageUxV2&&!document.querySelector('script[data-trip-page-ux-v2]')){
   const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-page-ux-v2.js?v=2';s.async=false;s.dataset.tripPageUxV2='1';document.head.appendChild(s);
 }
+/* Quick-jump target filter/fix: only real top-level sections are listed and scrolled to. */
+if(!window.__tripJumpFixV1&&!document.querySelector('script[data-trip-jump-fix-v1]')){
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/trip-jump-fix-v1.js?v=1';s.async=false;s.dataset.tripJumpFixV1='1';document.head.appendChild(s);
+}
+/* Shared spacing/card proportions for Home and all trip pages. */
+if(!window.__appLayoutPolishV1&&!document.querySelector('script[data-app-layout-polish-v1]')){
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/app-layout-polish-v1.js?v=1';s.async=false;s.dataset.appLayoutPolishV1='1';document.head.appendChild(s);
+}
 })();
