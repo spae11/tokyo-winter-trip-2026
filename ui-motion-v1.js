@@ -39,19 +39,19 @@ document.addEventListener('toggle',e=>{
   body.forEach(x=>play(x,'in',200));
 },true);
 
-/* Live price refresh is shared by the home screen and every trip page. */
-if(!window.__livePriceRefreshV1&&!document.querySelector('script[data-live-price-refresh]')){
+/* Shared current-price engine for home + every registered trip. */
+if(!window.__livePriceRefreshV2&&!document.querySelector('script[data-live-price-refresh-v2]')){
   const s=document.createElement('script');
-  s.src='/tokyo-winter-trip-2026/live-price-refresh-v1.js?v=1';
+  s.src='/tokyo-winter-trip-2026/live-price-refresh-v2.js?v=2';
   s.async=false;
-  s.dataset.livePriceRefresh='1';
+  s.dataset.livePriceRefreshV2='1';
   document.head.appendChild(s);
 }
 
-/* Make the price source itself the booking/details link. */
+/* Make hotel / ticket price sources clickable. */
 if(!window.__livePriceBookingLinksV1&&!document.querySelector('script[data-live-price-booking-links]')){
   const s=document.createElement('script');
-  s.src='/tokyo-winter-trip-2026/live-price-booking-links-v1.js?v=1';
+  s.src='/tokyo-winter-trip-2026/live-price-booking-links-v1.js?v=2';
   s.async=false;
   s.dataset.livePriceBookingLinks='1';
   document.head.appendChild(s);
