@@ -35,12 +35,12 @@ A new trip is not complete until it follows the same functional rules as the act
 - README/Change Log updated in the same round
 
 # PWA deployment / cache rules
-- Current forced app generation: **v89**.
+- Current forced app generation: **v90**.
 - Installed PWA clients must be able to self-update without reinstalling the app.
-- `ui-motion-v1.js` self-registers `/sw.js?v=89`, requests an update, and reloads once when the new service worker takes control.
-- GitHub Pages deployment prepares and persists the v89 source before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.
+- `ui-motion-v1.js` self-registers `/sw.js?v=90`, requests an update, and reloads once when the new service worker takes control.
+- GitHub Pages deployment prepares and persists the v90 source before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.
 - Home must not depend only on an already-installed service worker to discover newly added trips.
-- Shanghai must be available after the v89 controller switch even for users upgrading from an older installed PWA.
+- Shanghai must be available after the v90 controller switch even for users upgrading from an older installed PWA.
 
 # Shanghai + Disneyland 5D4N
 
@@ -153,7 +153,7 @@ Tokyo keeps 6D5N as the main plan plus a saved 5D4N backup flight option.
 - Keep spacing, mobile typography, card radius, card padding, and bottom-nav clearance consistent.
 
 # Shared modules
-- `ui-motion-v1.js` — shared loader + PWA v88 self-heal
+- `ui-motion-v1.js` — shared loader + PWA self-heal
 - `shanghai-register-v1.js` — registers Shanghai on Home / China card and shared Trip Tools picker
 - `trip-settings-all-v1.js` — all-trip date + budget settings
 - `price-sanity-v1.js` — bad-price guard
@@ -186,6 +186,12 @@ Before calling a trip complete:
 - README / Change Log updated in same round
 
 # Change Log
+
+## 2026-08-23 — PWA v90 Plan First Shanghai parity
+- Fixed Shanghai appearing in Settings but missing from the Plan First China trip dropdown.
+- Shanghai registration now supports the Plan First selectors as well as Trip Tools selectors.
+- Selecting Shanghai from Plan First routes directly to `/shanghai/` and preserves the selected trip state.
+- Bumped installed PWA clients to v90 and Shanghai registration loader to v3.
 
 ## 2026-08-23 — PWA v89 source-sync fix
 - Fixed the deployment architecture: PWA cache/version changes are now persisted back into `main`, not only modified inside a temporary Pages artifact.

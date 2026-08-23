@@ -1,19 +1,19 @@
 (()=>{
 'use strict';
 if(window.__journeyUiMotionV1)return;window.__journeyUiMotionV1=true;
-window.OUR_JOURNEY_APP_VERSION='v89';
+window.OUR_JOURNEY_APP_VERSION='v90';
 const $=(s,r=document)=>r.querySelector(s);
 const reduce=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 // Self-heal installed PWA clients that are still controlled by an older service worker.
 if('serviceWorker' in navigator){
- const reloadKey='ourJourneyAppUpgradeV89';
+ const reloadKey='ourJourneyAppUpgradeV90';
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
   if(sessionStorage.getItem(reloadKey))return;
   sessionStorage.setItem(reloadKey,'1');
   location.reload();
  });
- navigator.serviceWorker.register('/tokyo-winter-trip-2026/sw.js?v=89',{updateViaCache:'none'}).then(async r=>{
+ navigator.serviceWorker.register('/tokyo-winter-trip-2026/sw.js?v=90',{updateViaCache:'none'}).then(async r=>{
   try{await r.update()}catch{}
   if(r.waiting)r.waiting.postMessage('SKIP_WAITING');
  }).catch(()=>{});
@@ -30,7 +30,7 @@ function load(src,key,version='1'){
 }
 load('price-sanity-v1','__priceSanityV1','2');
 load('hotel-quality-v1','__hotelQualityV1','2');
-load('shanghai-register-v1','__shanghaiRegisterV1','2');
+load('shanghai-register-v1','__shanghaiRegisterV1','3');
 load('live-price-v2','__livePriceV2','5');
 load('trip-live-budget-sync-v2','__tripLiveBudgetSyncV2','3');
 load('trip-page-ux-v2','__tripPageUxV2','2');
