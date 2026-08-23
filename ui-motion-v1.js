@@ -1,19 +1,19 @@
 (()=>{
 'use strict';
 if(window.__journeyUiMotionV1)return;window.__journeyUiMotionV1=true;
-window.OUR_JOURNEY_APP_VERSION='v88';
+window.OUR_JOURNEY_APP_VERSION='v89';
 const $=(s,r=document)=>r.querySelector(s);
 const reduce=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 // Self-heal installed PWA clients that are still controlled by an older service worker.
 if('serviceWorker' in navigator){
- const reloadKey='ourJourneyAppUpgradeV88';
+ const reloadKey='ourJourneyAppUpgradeV89';
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
   if(sessionStorage.getItem(reloadKey))return;
   sessionStorage.setItem(reloadKey,'1');
   location.reload();
  });
- navigator.serviceWorker.register('/tokyo-winter-trip-2026/sw.js?v=88',{updateViaCache:'none'}).then(async r=>{
+ navigator.serviceWorker.register('/tokyo-winter-trip-2026/sw.js?v=89',{updateViaCache:'none'}).then(async r=>{
   try{await r.update()}catch{}
   if(r.waiting)r.waiting.postMessage('SKIP_WAITING');
  }).catch(()=>{});

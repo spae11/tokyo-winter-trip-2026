@@ -35,12 +35,12 @@ A new trip is not complete until it follows the same functional rules as the act
 - README/Change Log updated in the same round
 
 # PWA deployment / cache rules
-- Current forced app generation: **v88**.
+- Current forced app generation: **v89**.
 - Installed PWA clients must be able to self-update without reinstalling the app.
-- `ui-motion-v1.js` self-registers `/sw.js?v=88`, requests an update, and reloads once when the new service worker takes control.
-- GitHub Pages deployment prepares the v88 artifact before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.
+- `ui-motion-v1.js` self-registers `/sw.js?v=89`, requests an update, and reloads once when the new service worker takes control.
+- GitHub Pages deployment prepares and persists the v89 source before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.
 - Home must not depend only on an already-installed service worker to discover newly added trips.
-- Shanghai must be available after the v88 controller switch even for users upgrading from an older installed PWA.
+- Shanghai must be available after the v89 controller switch even for users upgrading from an older installed PWA.
 
 # Shanghai + Disneyland 5D4N
 
@@ -186,6 +186,13 @@ Before calling a trip complete:
 - README / Change Log updated in same round
 
 # Change Log
+
+## 2026-08-23 — PWA v89 source-sync fix
+- Fixed the deployment architecture: PWA cache/version changes are now persisted back into `main`, not only modified inside a temporary Pages artifact.
+- Source `sw.js`, `index.html`, and `ui-motion-v1.js` are upgraded to v89 before deploy.
+- Shanghai route and shared Shanghai modules are present in the persisted service-worker cache list.
+- Installed clients receive `sw.js?v=89` and reload once after the new controller takes over.
+- Workflow concurrency no longer cancels the active Pages deployment during the source-sync commit.
 
 ## 2026-08-23 — PWA v88 forced refresh
 - Fixed installed-app clients remaining on an older cached Home experience after Shanghai and other shared updates were pushed.
