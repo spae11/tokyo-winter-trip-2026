@@ -47,4 +47,13 @@ if(!window.__livePriceRefreshV1&&!document.querySelector('script[data-live-price
   s.dataset.livePriceRefresh='1';
   document.head.appendChild(s);
 }
+
+/* Make the price source itself the booking/details link. */
+if(!window.__livePriceBookingLinksV1&&!document.querySelector('script[data-live-price-booking-links]')){
+  const s=document.createElement('script');
+  s.src='/tokyo-winter-trip-2026/live-price-booking-links-v1.js?v=1';
+  s.async=false;
+  s.dataset.livePriceBookingLinks='1';
+  document.head.appendChild(s);
+}
 })();
