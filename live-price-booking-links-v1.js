@@ -1,0 +1,23 @@
+(()=>{
+'use strict';
+if(window.__livePriceBookingLinksV1)return;window.__livePriceBookingLinksV1=true;
+const KEY='travelHubLivePricesV1';
+const ROUTES={tokyo:'tokyo',kansai:'kansai',hongkong:'hongkong',danang:'danang',yunnan:'yunnan',chongqing:'chongqing',harbin:'harbin'};
+const norm=s=>String(s||'').toLowerCase().normalize('NFKD').replace(/[^a-z0-9ก-๙一-龥]+/g,' ').trim();
+function read(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch{return null}}
+function tripId(){const p=location.pathname;for(const[id,r]of Object.entries(ROUTES))if(p.includes('/'+r+'/'))return id;return''}
+function safeUrl(u){try{const x=new URL(String(u||''),location.href);return /^https?:$/.test(x.protocol)?x.href:''}catch{return''}}
+function ensureStyle(){if(document.getElementById('lpr-book-style'))return;const s=document.createElement('style');s.id='lpr-book-style';s.textContent=`
+.lpr-book-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentColor;cursor:pointer}.lpr-book-link:hover,.lpr-book-link:focus{color:#176a3b}.lpr-book-link::after{content:' ↗';font-size:.72em;opacity:.75}.lpr-book-cta{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:7px 10px;border-radius:999px;background:#176a3b;color:#fff!important;text-decoration:none!important;font:800 11px 'Noto Sans Thai',system-ui}.lpr-book-cta:hover{filter:brightness(.94)}
+`;document.head.appendChild(s)}
+function wrapTitle(el,url){url=safeUrl(url);if(!el||!url)return;if(el.querySelector(':scope > a.lpr-book-link')){el.querySelector(':scope > a.lpr-book-link').href=url;return}const text=el.textContent.trim();if(!text)return;const a=document.createElement('a');a.className='lpr-book-link';a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=text;el.textContent='';el.appendChild(a)}
+function addCta(box,url,label='จอง / ดูราคานี้'){url=safeUrl(url);if(!box||!url)return;let a=box.querySelector('.lpr-book-cta');if(!a){a=document.createElement('a');a.className='lpr-book-cta';a.target='_blank';a.rel='noopener noreferrer';box.appendChild(a)}a.href=url;a.textContent=label+' ↗'}
+function matchByName(arr,name){const k=norm(name);if(!k)return null;return arr.find(x=>{const n=norm(x.name);return n===k||n.includes(k)||k.includes(n)})||null}
+function applyHotelCards(data,id){const arr=(data?.hotels||[]).filter(x=>x.tripId===id&&safeUrl(x.sourceUrl));for(const card of document.querySelectorAll('.hotelcard,.hotel-card,[data-hotel-name]')){const title=card.querySelector('h3,h2'),name=(card.getAttribute('data-hotel-name')||title?.textContent||'').trim(),h=matchByName(arr,name);if(!h)continue;wrapTitle(title,h.sourceUrl);const box=card.querySelector('.lpr-live-price');if(box)addCta(box,h.sourceUrl,h.status==='live'?'จอง / ดูราคาที่เจอ':'เปิดหน้าราคา')}}
+function applyPriceSheet(data){const sheet=document.getElementById('lpr-sheet');if(!sheet)return;const items=[...(data?.hotels||[]),...(data?.tickets||[])].filter(x=>safeUrl(x.sourceUrl));for(const row of sheet.querySelectorAll('.lpr-row')){const b=row.querySelector('b');if(!b)continue;const item=matchByName(items,b.textContent);if(!item)continue;wrapTitle(b,item.sourceUrl);if(!row.querySelector('.lpr-book-cta'))addCta(row,item.sourceUrl,(data.hotels||[]).includes(item)?'จอง / ดูราคาที่เจอ':'เปิดหน้า Official')}}
+function applyTicketSummary(data,id){const box=document.getElementById('lpr-ticket-summary');if(!box)return;const arr=(data?.tickets||[]).filter(x=>x.tripId===id&&safeUrl(x.sourceUrl));if(!arr.length)return;for(const div of [...box.children]){const text=div.textContent||'';const t=arr.find(x=>text.includes(x.name));if(!t)continue;if(div.querySelector('a.lpr-book-link'))continue;const idx=text.indexOf(':');if(idx<0)continue;const name=text.slice(0,idx).trim(),rest=text.slice(idx+1);div.textContent='';const a=document.createElement('a');a.className='lpr-book-link';a.href=safeUrl(t.sourceUrl);a.target='_blank';a.rel='noopener noreferrer';a.textContent=name;div.append(a,document.createTextNode(': '+rest.trim()))}}
+function apply(){ensureStyle();const data=read();if(!data)return;const id=tripId();if(id){applyHotelCards(data,id);applyTicketSummary(data,id)}applyPriceSheet(data)}
+let timer;function queue(){clearTimeout(timer);timer=setTimeout(apply,100)}
+function boot(){apply();new MutationObserver(queue).observe(document.body,{childList:true,subtree:true});window.addEventListener('storage',e=>{if(e.key===KEY)queue()});document.addEventListener('click',e=>{if(e.target.closest?.('#appRefreshBtn'))setTimeout(queue,800)},true)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
