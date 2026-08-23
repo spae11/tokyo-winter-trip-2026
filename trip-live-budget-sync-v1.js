@@ -5,6 +5,15 @@ if(window.__tripLiveBudgetSyncV1)return;window.__tripLiveBudgetSyncV1=true;
 const TRIP_KEY='travelHubTripPricesV1';
 const LIVE_KEY='travelHubLivePricesV2';
 const ROUTES=['tokyo','kansai','hongkong','danang','yunnan','chongqing','harbin'];
+const TRIP_NOTE={
+  tokyo:'Tokyo Winter + Disneyland + Mt. Fuji',
+  kansai:'Osaka + Kyoto + Nara + Kobe',
+  hongkong:'Hong Kong + Disneyland + Ngong Ping',
+  danang:'Da Nang + Hoi An + Ba Na Hills',
+  yunnan:'Kunming + Dali',
+  chongqing:'Chongqing + Wulong',
+  harbin:'Harbin + Yabuli + Snow Town'
+};
 const CURRENT_HOTEL={
   tokyo:'APA Hotel Asakusa Tawaramachi-Ekimae',
   kansai:'Sotetsu Fresa Inn Osaka-Namba',
@@ -31,7 +40,7 @@ function dataFor(trip){
   return{tripId:trip,checkedAt:all.checkedAtByTrip?.[trip]||all.checkedAt||'',hotels,tickets,fx:all.fx||null};
 }
 function hkMode(){return localStorage.getItem('hk-trip-mode')==='5d4n'?'5d4n':'6d5n'}
-function tripLength(trip){return trip==='hongkong'&&hkMode()==='5d4n'?{days:5,nights:4}:{days:6,nights:5}}
+function tripLength(trip){return trip==='hongkong'&&hkMode()==='5d4n'?{days:5,nights:4,label:'5D4N'}:{days:6,nights:5,label:'6D5N'}}
 function setBase(item){
   const amount=$('.px-bg-money',item);if(!amount)return;
   if(!item.dataset.liveBudgetBase)item.dataset.liveBudgetBase=String(money(amount.textContent));
@@ -53,7 +62,9 @@ function updateBudget(){
   const trip=id(),sec=$('#trip-budget-breakdown');if(!trip||!sec)return;
   const data=dataFor(trip),when=data?.checkedAt||'',dn=tripLength(trip),items=$$('.px-bg-item',sec);if(!items.length)return;
   let total=0,liveParts=0;
-  const hotel=bestHotel(data),tickets=ticketCalc(data);
+  const hotel=bestHotel(data),tickets=ticketCalc(data),hotelLabel=hotel?.name||CURRENT_HOTEL[trip]||'โรงแรมในแพลน';
+  const headNote=$('.px-bg-head .px-muted',sec);
+  if(headNote)setText(headNote,`${TRIP_NOTE[trip]||'Trip plan'} • 2 คน • ${dn.label} • โรงแรม: ${hotelLabel} • ตัวเลขด้านล่างผสม LIVE + ESTIMATE ตามผลเช็กล่าสุด`);
   for(const item of items){
     setBase(item);const name=category(item),base=baseValue(item);let value=base;
     if(/โรงแรม/i.test(name)){
@@ -91,7 +102,7 @@ function compactTickets(){
 function style(){if($('#tlbs-style'))return;const s=document.createElement('style');s.id='tlbs-style';s.textContent=`
 #lpr2TicketSummary{padding:10px 13px!important}.tlbs-ticket-head{margin:0!important;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;min-height:38px;user-select:none}.tlbs-chevron{display:grid;place-items:center;width:28px;height:28px;border-radius:999px;background:#f3efe6;font-size:16px}.px-bg-money[data-price-kind="LIVE"]{color:#176a3b!important}.px-bg-money[data-price-kind="ESTIMATE"]{color:#b21f2d!important}.tlbs-budget-status{background:#eef4f0!important;color:#355e48!important}
 `;document.head.appendChild(s)}
-function apply(){style();compactTickets();updateBudget()}
+function apply(){if(!id())return;style();compactTickets();updateBudget()}
 function refreshWatch(){let n=0;const t=setInterval(()=>{apply();if(++n>18)clearInterval(t)},500)}
 document.addEventListener('click',e=>{if(e.target.closest?.('#tripPriceRefreshBtn,#appRefreshBtn,.lpr2-refresh'))refreshWatch()},true);
 window.addEventListener('storage',e=>{if([TRIP_KEY,LIVE_KEY,'hk-trip-mode'].includes(e.key||''))apply()});
