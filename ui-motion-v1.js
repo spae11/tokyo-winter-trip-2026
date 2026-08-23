@@ -68,4 +68,11 @@ if(!window.__priceUiV2&&!document.querySelector('script[data-price-ui-v2]')){
   s.dataset.priceUiV2='1';
   document.head.appendChild(s);
 }
+if(!window.__priceBookingClickFixV1&&!document.querySelector('script[data-price-booking-click-fix]')){
+  const s=document.createElement('script');
+  s.src='/tokyo-winter-trip-2026/price-booking-click-fix-v1.js?v=1';
+  s.async=false;
+  s.dataset.priceBookingClickFix='1';
+  document.head.appendChild(s);
+}
 })();
