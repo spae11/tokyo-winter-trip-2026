@@ -22,7 +22,11 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('click',e=>{if(e.target.closest?.('[data-pfx-focus]'))requestAnimationFrame(()=>requestAnimationFrame(()=>play($('#pfxTripDashboard .pfx-trip-main'),'in',230))) });
 document.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement)||!d.open)return;[...d.children].filter(x=>x.tagName!=='SUMMARY').forEach(x=>play(x,'in',200))},true);
-/* Hotel quality policy is loaded first so price requests use only approved hotels. */
+/* Price sanity guard loads first: reject inconsistent hotel totals before they reach UI/storage. */
+if(!window.__priceSanityV1&&!document.querySelector('script[data-price-sanity-v1]')){
+  const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/price-sanity-v1.js?v=1';s.async=false;s.dataset.priceSanityV1='1';document.head.appendChild(s);
+}
+/* Hotel quality policy is loaded before the live client so requests use only approved hotels. */
 if(!window.__hotelQualityV1&&!document.querySelector('script[data-hotel-quality-v1]')){
   const s=document.createElement('script');s.src='/tokyo-winter-trip-2026/hotel-quality-v1.js?v=1';s.async=false;s.dataset.hotelQualityV1='1';document.head.appendChild(s);
 }
