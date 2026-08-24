@@ -37,6 +37,8 @@ jobs:
               s = s.replace(old, 'our-journey-v92')
           if "BASE+'shanghai/index.html'" not in s:
               s = s.replace("BASE+'harbin/index.html',BASE+'manifest.webmanifest'", "BASE+'harbin/index.html',BASE+'shanghai/index.html',BASE+'manifest.webmanifest'")
+          if "BASE+'shanghai/style.css'" not in s:
+              s = s.replace("BASE+'shanghai/index.html'", "BASE+'shanghai/index.html',BASE+'shanghai/style.css',BASE+'shanghai/data.js',BASE+'shanghai/app.js'")
           if "BASE+'shanghai-register-v1.js'" not in s:
               s = s.replace("BASE+'app-layout-polish-v1.js'];", "BASE+'app-layout-polish-v1.js',BASE+'price-sanity-v1.js',BASE+'hotel-quality-v1.js',BASE+'trip-settings-all-v1.js',BASE+'tokyo-flight-option-v1.js',BASE+'shanghai-register-v1.js'];")
           for old in ['ui-motion-v1.js?v=5','ui-motion-v1.js?v=6','ui-motion-v1.js?v=7','ui-motion-v1.js?v=8','ui-motion-v1.js?v=9']:
@@ -113,7 +115,9 @@ jobs:
               r = r.replace(old, '`ui-motion-v1.js` self-registers `/sw.js?v=92`')
           r = r.replace('GitHub Pages deployment prepares and persists the v91 source before upload: cache generation v88, Shanghai route in the core cache, Shanghai/shared modules in CORE, loader query v6, and direct Home loading of `ui-motion-v1.js?v=6`.', 'GitHub Pages deployment prepares and persists the v92 source before upload: cache generation v92, Shanghai route in CORE, shared Shanghai modules in CORE, Plan First v81 and direct Home loading of `ui-motion-v1.js?v=10`.')
           r = r.replace('after the v91 controller switch', 'after the v92 controller switch')
-          r = r.replace('- Shanghai page uses Amap links for China navigation.', '- Shanghai page uses Amap links for China navigation.\n- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.\n- Every Shanghai itinerary day has a destination image with source credit.')
+          parity_line = '- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.'
+          if parity_line not in r:
+              r = r.replace('- Shanghai page uses Amap links for China navigation.', '- Shanghai page uses Amap links for China navigation.\n'+parity_line+'\n- Every Shanghai itinerary day has a destination image with source credit.')
           if '## 2026-08-23 — PWA v92 Shanghai full trip parity' not in r:
               marker = '# Change Log\n'
               note = '''# Change Log\n\n## 2026-08-23 — PWA v92 Shanghai full trip parity\n- Rebuilt `shanghai/index.html` to match the shared trip-page structure used by the other trips instead of using a one-off Shanghai layout.\n- Added destination imagery to every Shanghai itinerary day with source credits.\n- Added native `#daysbox`, `.day`, `.daybtn`, `.timeline`, hotel, ticket, Muslim/Halal, budget and checklist sections for shared tooling compatibility.\n- Removed the one-off Shanghai bottom navigation; Shanghai now uses the same Plan First / Map / Memories / More navigation and Trip Tools behavior as other trips.\n- Added Shanghai as a native plan route in both `plan-first-v1.js` and `plan-first-v2.js`.\n- Kept Shanghai-only verified hotel + Disney Refresh and truthful LIVE/unavailable behavior.\n- Bumped installed PWA clients to v92, shared Plan First assets to v81 and `ui-motion-v1.js` to v10.\n'''
