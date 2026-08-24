@@ -38,7 +38,7 @@ A new trip is not complete until it follows the same functional rules as the act
 - Current forced app generation: **v92**.
 - Installed PWA clients must be able to self-update without reinstalling the app.
 - `ui-motion-v1.js` self-registers `/sw.js?v=92`, requests an update, and reloads once when the new service worker takes control.
-- GitHub Pages deployment prepares and persists the v92 source before upload: cache generation v92, Shanghai route in CORE, shared Shanghai modules in CORE, Plan First v81 and direct Home loading of `ui-motion-v1.js?v=10`.
+- GitHub Pages deployment prepares and persists the v92 source before upload: cache generation v92, Shanghai route and four-file Shanghai assets in CORE, shared modules, Plan First v81 and direct Home loading of `ui-motion-v1.js?v=10`.
 - Home must not depend only on an already-installed service worker to discover newly added trips.
 - Shanghai must be available after the v92 controller switch even for users upgrading from an older installed PWA.
 
@@ -63,8 +63,6 @@ Rules:
 - Shanghai hotel/ticket Refresh uses the dedicated Cloudflare handler before the generic price handler.
 - Ticket/booking source: Shanghai Disney Resort Official channel.
 - Shanghai page uses Amap links for China navigation.
-- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
-- Every Shanghai itinerary day has a destination image with source credit.
 - Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
 - Every Shanghai itinerary day has a destination image.
 - Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China. In Plan First, selecting Shanghai changes the Active Trip card first; navigation happens only after the user taps Open Plan.
@@ -200,6 +198,7 @@ Before calling a trip complete:
 - Preserved the native Plan First flow: Home → Country → Shanghai → Active Trip Card → Open Plan.
 - Kept shared Trip Settings / Trip Tools / Bottom Navigation integration and removed Shanghai-only standalone navigation behavior.
 - Added an image to all five Shanghai days.
+- Added Shanghai `index.html`, `style.css`, `data.js` and `app.js` to the PWA CORE cache and made the deployment README patch idempotent.
 
 ## 2026-08-23 — PWA v92 Shanghai full trip parity
 - Rebuilt `shanghai/index.html` to match the shared trip-page structure used by the other trips instead of using a one-off Shanghai layout.
@@ -227,7 +226,7 @@ Before calling a trip complete:
 - Fixed the deployment architecture: PWA cache/version changes are now persisted back into `main`, not only modified inside a temporary Pages artifact.
 - Source `sw.js`, `index.html`, and `ui-motion-v1.js` are upgraded to v89 before deploy.
 - Shanghai route and shared Shanghai modules are present in the persisted service-worker cache list.
-- Installed clients receive `sw.js?v=89` and reload once after the new controller takes over.
+- Installed clients receive `sw.js?v=89` and reload once after controller change.
 - Workflow concurrency no longer cancels the active Pages deployment during the source-sync commit.
 
 ## 2026-08-23 — PWA v88 forced refresh
