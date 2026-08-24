@@ -64,6 +64,8 @@ Rules:
 - Ticket/booking source: Shanghai Disney Resort Official channel.
 - Shanghai page uses Amap links for China navigation.
 - Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
+- Every Shanghai itinerary day has a destination image with source credit.
+- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
 - Every Shanghai itinerary day has a destination image.
 - Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China. In Plan First, selecting Shanghai changes the Active Trip card first; navigation happens only after the user taps Open Plan.
 
