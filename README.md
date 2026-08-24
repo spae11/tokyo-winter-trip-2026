@@ -54,6 +54,8 @@ Default structure:
 - Day 5: Souvenir / Airport
 
 Rules:
+- Shanghai uses the same four-file trip architecture as Hong Kong: `index.html`, `data.js`, `app.js`, `style.css`.
+- `index.html` is structure only; Shanghai itinerary/hotel/checklist data lives in `data.js`, behavior lives in `app.js`, and visual rules live in `style.css`.
 - Dates start blank until the user chooses them.
 - `5D4N` = **4 hotel nights**.
 - Default planning budget = **55,000 THB / 2 people**.
@@ -62,15 +64,7 @@ Rules:
 - Ticket/booking source: Shanghai Disney Resort Official channel.
 - Shanghai page uses Amap links for China navigation.
 - Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
-- Every Shanghai itinerary day has a destination image with source credit.
-- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
-- Every Shanghai itinerary day has a destination image with source credit.
-- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
-- Every Shanghai itinerary day has a destination image with source credit.
-- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
-- Every Shanghai itinerary day has a destination image with source credit.
-- Shanghai must use the same Plan First navigation, Bottom Nav, Trip Tools and day-card structure as the other trips.
-- Every Shanghai itinerary day has a destination image with source credit.
+- Every Shanghai itinerary day has a destination image.
 - Shared Trip Tools country/trip picker exposes **Shanghai + Disneyland** under China. In Plan First, selecting Shanghai changes the Active Trip card first; navigation happens only after the user taps Open Plan.
 
 ## Shanghai approved hotels
@@ -196,6 +190,14 @@ Before calling a trip complete:
 - README / Change Log updated in same round
 
 # Change Log
+
+## 2026-08-24 — Shanghai Hong Kong-template architecture
+- Replaced the one-file Shanghai standalone implementation with the Hong Kong four-file structure: `shanghai/index.html`, `shanghai/data.js`, `shanghai/app.js`, `shanghai/style.css`.
+- Moved itinerary, hotel, Disney and checklist data into `data.js`; moved page behavior, date/settings sync and Shanghai-only Refresh into `app.js`.
+- Reused Hong Kong day-card/timeline/stay/checklist layout and interaction model while keeping Shanghai Amap, hotels and Shanghai Disney data.
+- Preserved the native Plan First flow: Home → Country → Shanghai → Active Trip Card → Open Plan.
+- Kept shared Trip Settings / Trip Tools / Bottom Navigation integration and removed Shanghai-only standalone navigation behavior.
+- Added an image to all five Shanghai days.
 
 ## 2026-08-23 — PWA v92 Shanghai full trip parity
 - Rebuilt `shanghai/index.html` to match the shared trip-page structure used by the other trips instead of using a one-off Shanghai layout.
